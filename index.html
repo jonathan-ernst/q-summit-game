@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1424">
+<title>Q-Summit: Konferenztag</title>
+<style>
+  :root {
+    --bg: #0f1424;
+    --card: #1b2238;
+    --card-2: #242d48;
+    --text: #eef1f8;
+    --muted: #9aa3b8;
+    --accent: #4f8cff;
+    --good: #3ecf8e;
+    --bad: #ff5d6c;
+    --warn: #ffb547;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; justify-content: center;
+  }
+  #app {
+    width: 100%; max-width: 480px; min-height: 100%;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  h1 { font-size: 30px; margin: 0; line-height: 1.15; }
+  h2 { font-size: 22px; margin: 0; }
+  p { line-height: 1.5; margin: 0; }
+  .muted { color: var(--muted); }
+  .btn {
+    appearance: none; border: 0; border-radius: 14px; cursor: pointer;
+    background: var(--accent); color: #fff; font: inherit; font-weight: 600; font-size: 17px;
+    padding: 16px 18px; width: 100%;
+    transition: transform .08s, filter .15s;
+  }
+  .btn:active { transform: scale(.98); }
+  .btn.secondary { background: var(--card-2); }
+
+  /* Startscreen */
+  .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+  .hero .logo { font-size: 56px; }
+  .rules { background: var(--card); border-radius: 16px; padding: 16px; display: grid; gap: 10px; }
+  .rules div { display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
+
+  /* HUD */
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .stat .icon { font-size: 20px; }
+  .stat .bar { width: 100%; height: 44px; background: var(--card); border-radius: 8px; overflow: hidden; position: relative; }
+  .stat .fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--accent); transition: height .45s ease, background .3s; }
+  .stat.low .fill { background: var(--bad); }
+  .stat .val { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stat.flash-up .bar { box-shadow: 0 0 0 2px var(--good); }
+  .stat.flash-down .bar { box-shadow: 0 0 0 2px var(--bad); }
+  .clock { display: flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+  .clock .time { font-weight: 700; font-size: 18px; }
+  .clock .track { flex: 1; height: 6px; background: var(--card); border-radius: 3px; overflow: hidden; }
+  .clock .progress { height: 100%; background: var(--warn); transition: width .45s; }
+
+  /* Eventkarte */
+  .card {
+    background: var(--card); border-radius: 20px; padding: 20px;
+    display: flex; flex-direction: column; gap: 14px; flex: 1;
+    animation: cardIn .3s ease;
+  }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--card-2); display: grid; place-items: center; font-size: 28px; flex-shrink: 0; }
+  .who .name { font-weight: 700; }
+  .who .role { font-size: 14px; color: var(--muted); }
+  .card .text { font-size: 19px; line-height: 1.45; flex: 1; }
+  .options { display: grid; gap: 10px; }
+  .opt {
+    appearance: none; border: 0; cursor: pointer; text-align: left; font: inherit; color: var(--text);
+    background: var(--card-2); border-radius: 14px; padding: 14px 16px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    transition: transform .08s, background .15s;
+  }
+  .opt:hover { background: #2d3758; }
+  .opt:active { transform: scale(.98); }
+  .opt .label { font-weight: 600; font-size: 16px; line-height: 1.35; }
+  .opt .hint { font-size: 13px; opacity: .7; white-space: nowrap; letter-spacing: 1px; }
+
+  /* Toasts */
+  .toasts { position: fixed; left: 50%; top: 170px; transform: translateX(-50%); display: flex; gap: 6px; pointer-events: none; z-index: 10; flex-wrap: wrap; justify-content: center; width: 90%; max-width: 440px; }
+  .toast { padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 14px; animation: toast 1.4s ease forwards; }
+  .toast.up { background: var(--good); color: #062b1b; }
+  .toast.down { background: var(--bad); color: #2b0609; }
+  @keyframes toast { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+
+  /* Minigames */
+  .mg { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .mg-hud { display: flex; justify-content: space-between; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .cell {
+    appearance: none; border: 0; aspect-ratio: 1; border-radius: 16px; background: var(--card);
+    font-size: 40px; cursor: pointer; transition: background .15s, transform .08s; color: inherit;
+  }
+  .cell:active { transform: scale(.95); }
+  .cell.hit { background: var(--good); }
+  .cell.miss { background: var(--bad); }
+  .meter { position: relative; height: 56px; background: var(--card); border-radius: 14px; overflow: hidden; }
+  .zone { position: absolute; top: 0; bottom: 0; background: rgba(62, 207, 142, .35); border-left: 2px solid var(--good); border-right: 2px solid var(--good); }
+  .marker { position: absolute; top: 4px; bottom: 4px; width: 6px; margin-left: -3px; background: #fff; border-radius: 3px; }
+  .rounds { display: flex; gap: 8px; justify-content: center; font-size: 28px; }
+  .result { background: var(--card); border-radius: 20px; padding: 20px; display: grid; gap: 12px; text-align: center; }
+  .result .big { font-size: 48px; }
+  .fxlist { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .fx { padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 14px; }
+  .fx.up { background: rgba(62, 207, 142, .2); color: var(--good); }
+  .fx.down { background: rgba(255, 93, 108, .2); color: var(--bad); }
+
+  /* Ende */
+  .end { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+  .summary { background: var(--card); border-radius: 16px; padding: 16px; display: grid; gap: 10px; }
+  .summary .row { display: grid; grid-template-columns: 28px 1fr 40px; align-items: center; gap: 10px; }
+  .summary .track { height: 8px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
+  .summary .track div { height: 100%; background: var(--accent); }
+  .summary .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+// =====================================================================
+//  INHALTE – hier können neue Events ergänzt werden, ohne die Engine
+//  anzufassen. Jedes Event hat zwei Optionen (a/b) mit Stat-Effekten.
+//
+//  from/to   Zeitfenster in Stunden, in dem das Event auftauchen kann
+//  sets      setzt ein Flag, wenn diese Option gewählt wird
+//  requires  Event erscheint nur, wenn das Flag vorher gesetzt wurde
+// =====================================================================
+
+const STATS = [
+  { key: "team",    icon: "🤝", name: "Team" },
+  { key: "erstis",  icon: "🐣", name: "Erstis" },
+  { key: "partner", icon: "💼", name: "Partner" },
+  { key: "speaker", icon: "🎤", name: "Speaker" },
+  { key: "gaeste",  icon: "🎟️", name: "Gäste" },
+  { key: "budget",  icon: "💶", name: "Budget" },
+];
+
+const GAME_OVER = {
+  team:    "Dein Orga-Team hat gemeutert und sitzt geschlossen in der Mensa. Ohne Team keine Konferenz.",
+  erstis:  "Die Erstis haben in der WhatsApp-Gruppe kollektiv ihren Austritt verkündet. Wer baut jetzt ab?",
+  partner: "Der Hauptsponsor packt seinen Stand ein und kündigt die Partnerschaft fürs nächste Jahr.",
+  speaker: "Die Speaker-Lounge ist leer. Alle Speaker sind gegangen und posten auf LinkedIn darüber.",
+  gaeste:  "Die Gäste sind weg. Im Audimax sitzen nur noch drei Leute, und einer davon schläft.",
+  budget:  "Das Konto ist leer. Die Finanzer haben die Karte gesperrt und die Party ist abgesagt.",
+};
+
+const EVENTS = [
+  // ---------- Morgen ----------
+  { id: "verschlafen", from: 8, to: 10, avatar: "😴", who: "Paul", role: "Ersti, Ressort Logistik",
+    text: "Ich hab verschlafen 😬 Bin in 40 Minuten da. Soll ich trotzdem noch kommen?",
+    a: { label: "Klar, komm einfach!", fx: { erstis: 5, team: -5 } },
+    b: { label: "Dann Strafschicht an der Garderobe.", fx: { erstis: -10, team: 5 } } },
+
+  { id: "kaffee", from: 8, to: 10, avatar: "☕", who: "Sophie", role: "Head of Logistik",
+    text: "Der Kaffee reicht nur für die Hälfte der Gäste. Was machen wir?",
+    a: { label: "Nachbestellen, egal was es kostet.", fx: { budget: -10, gaeste: 10 } },
+    b: { label: "Wasser ist auch gesund.", fx: { gaeste: -10, team: -5 }, sets: "kein_kaffee" } },
+
+  { id: "kaffee_folge", requires: "kein_kaffee", avatar: "😤", who: "Gast", role: "Teilnehmer, sichtlich müde",
+    text: "Ernsthaft, kein Kaffee?! Ich bin um 6 Uhr in Köln losgefahren.",
+    a: { label: "Gutschein fürs Café nebenan.", fx: { budget: -5, gaeste: 5 } },
+    b: { label: "Die Mate am Partner-Stand ist gratis!", fx: { partner: 5, gaeste: -5 } } },
+
+  { id: "stand_klo", from: 8, to: 11, avatar: "🏢", who: "Frau Berger", role: "Partnerin, Beratung",
+    text: "Unser Stand steht direkt neben den Toiletten. Das ist nicht das, was wir gebucht haben.",
+    a: { label: "Wir tauschen mit einem Startup-Stand.", fx: { partner: 10, gaeste: -5 } },
+    b: { label: "Leider fix, aber gratis Drinks heute Abend.", fx: { partner: -5, budget: -5 } } },
+
+  { id: "zug", from: 8, to: 11, avatar: "🚆", who: "Assistenz der Keynote", role: "Speaker-Team",
+    text: "Der ICE hat 50 Minuten Verspätung. Die Keynote schaffen wir so nicht pünktlich.",
+    a: { label: "Programm umstellen, Panel vorziehen.", fx: { speaker: 5, gaeste: -10, team: -5 } },
+    b: { label: "Ersti fährt mit dem Auto nach Frankfurt.", fx: { speaker: 10, erstis: -5, budget: -5 } } },
+
+  { id: "beamer", from: 8, to: 12, avatar: "📽️", who: "Jonas", role: "Head of Technik",
+    text: "Der Beamer im Audimax flackert. Könnte halten, könnte auch nicht.",
+    a: { label: "Ersatzbeamer aus dem Lager holen.", fx: { team: -5, speaker: 5 } },
+    b: { label: "Wird schon gehen.", fx: { speaker: -10 }, sets: "beamer_risiko" } },
+
+  { id: "beamer_folge", requires: "beamer_risiko", avatar: "💥", who: "Jonas", role: "Head of Technik",
+    text: "Tja. Der Beamer ist mitten in der Präsentation ausgegangen.",
+    a: { label: "Speaker improvisiert ohne Folien.", fx: { speaker: -10, gaeste: 5 } },
+    b: { label: "10 Minuten Pause, ich fix das.", fx: { gaeste: -10, team: -5 } } },
+
+  { id: "badges", from: 8, to: 10, avatar: "🖨️", who: "Lukas", role: "Finanzen",
+    text: "Die Druckerei will 300 € extra, weil wir die Badges zu spät bestellt haben.",
+    a: { label: "Zahlen, Badges sind wichtig.", fx: { budget: -10, gaeste: 5 } },
+    b: { label: "Erstis schreiben Namen per Hand.", fx: { gaeste: -5, erstis: -10 } } },
+
+  { id: "liste", from: 8, to: 12, avatar: "🙋", who: "Gast", role: "„Ganz sicher angemeldet“",
+    text: "Ich steh nicht auf der Liste, aber ich hab mich 100 % angemeldet. Kann ich rein?",
+    a: { label: "Na gut, rein mit dir.", fx: { gaeste: 5, team: -5 } },
+    b: { label: "Liste ist Liste, sorry.", fx: { gaeste: -5, team: 5 } } },
+
+  { id: "erste_reihe", from: 9, to: 11, avatar: "🥺", who: "Lena", role: "Ersti, Garderobe",
+    text: "Darf ich bei der Keynote in der ersten Reihe sitzen? Die Garderobe ist eh grad leer...",
+    a: { label: "Klar, genieß es!", fx: { erstis: 10, gaeste: -5 } },
+    b: { label: "Nach der Schicht, versprochen.", fx: { erstis: -5, team: 5 } } },
+
+  // ---------- Vormittag / Mittag ----------
+  { id: "buehne", from: 9, to: 13, avatar: "📣", who: "Herr Krause", role: "Hauptsponsor",
+    text: "Wir würden gern spontan 5 Minuten auf der Hauptbühne sprechen. Nur ein kurzes Grußwort!",
+    a: { label: "Okay, 5 Minuten.", fx: { partner: 15, gaeste: -10, speaker: -5 } },
+    b: { label: "Lieber ein eigener Slot am Nachmittag.", fx: { partner: -5, speaker: 5 } } },
+
+  { id: "ueberziehen", from: 10, to: 16, avatar: "⏱️", who: "Dr. Weiß", role: "Speakerin",
+    text: "Mein Talk wird eher 60 als 30 Minuten. Das Thema ist einfach zu spannend.",
+    a: { label: "Lass laufen.", fx: { speaker: 10, gaeste: -5, team: -5 } },
+    b: { label: "Ich zeig das 5-Minuten-Schild.", fx: { speaker: -10, gaeste: 5 } } },
+
+  { id: "mittag", from: 11, to: 14, avatar: "🍝", who: "Catering", role: "Dienstleister",
+    text: "Das Mittagessen kommt 30 Minuten später. Der Lieferwagen steht im Stau.",
+    a: { label: "Spontane Networking-Session einschieben.", fx: { gaeste: 5, team: -5, partner: 5 } },
+    b: { label: "Brezeln vom Bäcker für alle.", fx: { budget: -10, gaeste: 5 } } },
+
+  { id: "ueberfordert", from: 10, to: 17, avatar: "😵", who: "Tim", role: "Ersti, Speaker-Betreuung",
+    text: "Ich glaub, ich bin überfordert. Gerade wollen alle gleichzeitig was von mir.",
+    a: { label: "Nimm dir 15 Minuten Pause.", fx: { erstis: 10, team: -5 } },
+    b: { label: "Zähne zusammenbeißen, du schaffst das!", fx: { erstis: -15, team: 5 } } },
+
+  { id: "pizza", from: 11, to: 15, avatar: "🍕", who: "Orga-Gruppe", role: "WhatsApp, 94 ungelesene",
+    text: "Das Orga-Team hat seit 6 Uhr nichts gegessen. Die Stimmung kippt.",
+    a: { label: "Pizza fürs ganze Team!", fx: { team: 15, budget: -10 } },
+    b: { label: "Essen gibt's nach der Konferenz.", fx: { team: -10 } } },
+
+  { id: "jury", from: 11, to: 15, avatar: "🧑‍⚖️", who: "Mara", role: "Head of Startup-Pitch",
+    text: "Ein Juror für den Pitch-Wettbewerb ist abgesprungen. In 20 Minuten geht's los.",
+    a: { label: "Ein Partner-Vertreter springt ein.", fx: { partner: 10, speaker: -5 } },
+    b: { label: "Ich jurier selbst.", fx: { team: -5, speaker: 5 } } },
+
+  { id: "foto", from: 10, to: 16, avatar: "📸", who: "Fotograf", role: "Presse",
+    text: "Ich brauch noch ein Foto vom Vorstand auf der Bühne. Jetzt wär perfekt.",
+    a: { label: "Klar, Vorstand auf die Bühne.", fx: { partner: 5, team: -5 } },
+    b: { label: "Fotografier lieber die Erstis.", fx: { erstis: 10, partner: -5 } } },
+
+  { id: "insta", from: 9, to: 14, avatar: "📱", who: "Nina", role: "Head of Marketing",
+    text: "Eine Insta-Story über die lange Schlange am Einlass geht gerade rum.",
+    a: { label: "Gratis-Kaffee für alle in der Schlange.", fx: { budget: -10, gaeste: 10 } },
+    b: { label: "Ignorieren, das geht vorbei.", fx: { gaeste: -10, partner: -5 } } },
+
+  { id: "lounge", from: 9, to: 17, avatar: "🛋️", who: "Max Hoffmann", role: "Gründer & Speaker",
+    text: "Kann ich einen Kumpel mit in die Speaker-Lounge nehmen? Der will nur kurz Hallo sagen.",
+    a: { label: "Klar, kein Problem.", fx: { speaker: 10, partner: -5 } },
+    b: { label: "Lounge ist nur für Speaker.", fx: { speaker: -10, partner: 5 } } },
+
+  { id: "notausgang", from: 9, to: 18, avatar: "🚪", who: "Hausmeister", role: "Uni",
+    text: "Ihr habt mit euren Kisten den Notausgang zugestellt. Das geht so nicht!",
+    a: { label: "Sofort räumen, alle mit anpacken.", fx: { team: -5, erstis: -5 } },
+    b: { label: "Nur noch kurz, versprochen.", fx: { budget: -15, team: 5 } } },
+
+  { id: "ceo", from: 10, to: 16, avatar: "🕴️", who: "Ali", role: "Head of Partner",
+    text: "Die CEO vom Hauptsponsor kommt in 10 Minuten und niemand ist für die Tour eingeteilt!",
+    a: { label: "Ich mach die Tour selbst.", fx: { partner: 15, team: -5, erstis: -5 } },
+    b: { label: "Ein Ersti übernimmt, das ist eine Chance.", fx: { partner: -5, erstis: 10 } } },
+
+  { id: "wlan", from: 9, to: 17, avatar: "📶", who: "Jonas", role: "Head of Technik",
+    text: "Das WLAN ist komplett down. Die Live-Abstimmung im Panel funktioniert nicht.",
+    a: { label: "Hotspot vom Vorstands-Handy.", fx: { team: -5, gaeste: 5, speaker: 5 } },
+    b: { label: "Digital Detox, ist doch auch mal schön.", fx: { gaeste: -10, partner: -5 } } },
+
+  { id: "praktikum", from: 11, to: 17, avatar: "🤩", who: "Mia", role: "Ersti, Einlass",
+    text: "Ein Partner hat mir ein Praktikum angeboten! Darf ich kurz zum Gespräch?",
+    a: { label: "Geh! Viel Erfolg!", fx: { erstis: 10, partner: 5, team: -5 } },
+    b: { label: "Nach dem Abbau, okay?", fx: { erstis: -10 } } },
+
+  { id: "regen", from: 11, to: 16, avatar: "🌧️", who: "Sophie", role: "Head of Logistik",
+    text: "Es fängt an zu regnen und die Food Trucks stehen draußen im Schlosshof.",
+    a: { label: "Pavillons kaufen.", fx: { budget: -10, gaeste: 5 } },
+    b: { label: "Alle rein ins Foyer.", fx: { gaeste: -5, team: -5, partner: 5 } } },
+
+  { id: "tiktok", from: 9, to: 17, avatar: "🎬", who: "Ben", role: "Ersti, Social Media",
+    text: "Darf ich ein TikTok im Backstage drehen? Ich hab eine richtig gute Idee.",
+    a: { label: "Go viral!", fx: { erstis: 10, speaker: -5 }, sets: "tiktok" },
+    b: { label: "Nein, Backstage bleibt Backstage.", fx: { erstis: -5 } } },
+
+  { id: "tiktok_folge", requires: "tiktok", avatar: "🔥", who: "Ben", role: "Ersti, Social Media",
+    text: "Das TikTok hat schon 50.000 Views! Ein Speaker ist aber im Hintergrund zu sehen...",
+    a: { label: "Repost auf dem offiziellen Account!", fx: { gaeste: 10, speaker: -10 } },
+    b: { label: "Kurz den Speaker fragen.", fx: { speaker: 5, team: -5 } } },
+
+  // ---------- Nachmittag ----------
+  { id: "panel_krank", from: 12, to: 17, avatar: "🤒", who: "Moderatorin", role: "Panel „Future of Work“",
+    text: "Eine Panelistin hat sich krankgemeldet. Wir sind nur noch zu zweit.",
+    a: { label: "Ein Partner springt als Panelist ein.", fx: { partner: 10, gaeste: -5 } },
+    b: { label: "Wir machen ein offenes Q&A mit dem Publikum.", fx: { gaeste: 10, speaker: -5 } } },
+
+  { id: "backstage", from: 13, to: 18, avatar: "🙏", who: "Gast", role: "Großer Fan",
+    text: "Kann ich die Keynote-Speakerin kurz backstage treffen? Nur ein Selfie!",
+    a: { label: "Ich frag sie mal.", fx: { gaeste: 5, speaker: -5 } },
+    b: { label: "Sorry, das geht leider nicht.", fx: { gaeste: -5, speaker: 5 } } },
+
+  { id: "budget", from: 14, to: 18, avatar: "📉", who: "Lukas", role: "Finanzen",
+    text: "Wir sind 2.000 € über Budget. Irgendwo müssen wir sparen.",
+    a: { label: "Party-Budget kürzen.", fx: { budget: 15, team: -10, erstis: -5 } },
+    b: { label: "Hauptsponsor um Zuschuss bitten.", fx: { budget: 10, partner: -10 } } },
+
+  { id: "streit", from: 12, to: 18, avatar: "⚡", who: "Clara", role: "Vorstand",
+    text: "Ich brauch dich dringend: Zwei Heads streiten sich lautstark hinter der Bühne.",
+    a: { label: "Ich schlichte sofort.", fx: { team: 10, partner: -5 } },
+    b: { label: "Die sollen das nach der Konferenz klären.", fx: { team: -10 } } },
+
+  { id: "daten", from: 14, to: 19, avatar: "📇", who: "Frau Berger", role: "Partnerin, Beratung",
+    text: "Könnt ihr uns die Kontaktdaten aller Teilnehmer schicken? Fürs Recruiting.",
+    a: { label: "Klar, schicken wir.", fx: { partner: 15, gaeste: -15 } },
+    b: { label: "Nur von denen, die zugestimmt haben.", fx: { partner: -5, gaeste: 5 } } },
+
+  // ---------- Abend ----------
+  { id: "party", from: 15, to: 19, avatar: "🎉", who: "Felix", role: "Head of Event",
+    text: "Die Party-Location sagt: maximal 300 Leute. Wir haben 450 Anmeldungen.",
+    a: { label: "Zweite Location organisieren.", fx: { budget: -15, gaeste: 10, team: -5 } },
+    b: { label: "First come, first serve, Erstis an die Tür.", fx: { gaeste: -10, erstis: -5 } } },
+
+  { id: "abbau", from: 16, to: 19, avatar: "📦", who: "Paul", role: "Ersti, Logistik",
+    text: "Wer macht eigentlich nachher den Abbau?",
+    a: { label: "Alle zusammen, Vorstand auch.", fx: { team: 5, erstis: 10 } },
+    b: { label: "Die Erstis, das ist Tradition.", fx: { erstis: -15, team: 5 } } },
+
+  { id: "dinner", from: 16, to: 19, avatar: "🍷", who: "Dr. Weiß", role: "Speakerin",
+    text: "Ich komm nächstes Jahr gern wieder. Gibt es heute Abend noch ein Speaker-Dinner?",
+    a: { label: "Ja, mit dem Vorstand!", fx: { speaker: 15, team: -5, budget: -5 } },
+    b: { label: "Nächstes Jahr bestimmt!", fx: { speaker: -5 } } },
+
+  { id: "feedback", from: 16, to: 19, avatar: "📝", who: "Nina", role: "Head of Marketing",
+    text: "Sollen wir die Feedback-Umfrage jetzt rausschicken oder morgen früh?",
+    a: { label: "Jetzt, solange alle noch euphorisch sind.", fx: { gaeste: 5, partner: 5, team: -5 } },
+    b: { label: "Morgen, das Team braucht eine Pause.", fx: { team: 5, partner: -5 } } },
+];
+
+// =====================================================================
+//  ENGINE
+// =====================================================================
+
+const START = 8 * 60;
+const END = 19 * 60;
+const MINIGAMES = [
+  { id: "einlass", at: 8 * 60 + 20 },
+  { id: "mic", at: 13 * 60 + 30 },
+];
+
+const app = document.getElementById("app");
+const toasts = document.getElementById("toasts");
+let s; // Spielzustand
+let keyHandler = null;
+
+function newState() {
+  const stats = {};
+  STATS.forEach(st => stats[st.key] = 50);
+  return { stats, time: START, used: new Set(), flags: new Set(), mgDone: new Set(), decisions: 0 };
+}
+
+const fmt = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+const statByKey = k => STATS.find(st => st.key === k);
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+
+function bestScore() {
+  try { return Number(localStorage.getItem("qs_best") || 0); } catch { return 0; }
+}
+function saveBest(v) {
+  try { if (v > bestScore()) localStorage.setItem("qs_best", String(v)); } catch {}
+}
+
+function setKeys(fn) {
+  if (keyHandler) document.removeEventListener("keydown", keyHandler);
+  keyHandler = fn;
+  if (fn) document.addEventListener("keydown", fn);
+}
+
+// ---------- Startscreen ----------
+function renderStart() {
+  setKeys(e => { if (e.key === "Enter") startGame(); });
+  const best = bestScore();
+  app.innerHTML = `
+    <div class="hero">
+      <div class="logo">🏛️</div>
+      <h1>Q-Summit<br>Konferenztag</h1>
+      <p class="muted">Du bist im Vorstand. Heute ist Konferenz. Von 8 bis 19 Uhr musst du alle bei Laune halten.</p>
+      <div class="rules">
+        ${STATS.map(st => `<div><span>${st.icon}</span><span><b>${st.name}</b></span></div>`).join("")}
+        <div class="muted" style="font-size:14px">Fällt ein Wert auf 0, ist der Tag gelaufen. Die Symbole an den Antworten zeigen, welche Werte sich ändern, aber nicht, in welche Richtung.</div>
+      </div>
+      ${best ? `<p class="muted">Bester Score bisher: <b>${best}</b></p>` : ""}
+      <button class="btn" id="start">Konferenz starten</button>
+    </div>`;
+  document.getElementById("start").onclick = startGame;
+}
+
+function startGame() {
+  s = newState();
+  next();
+}
+
+// ---------- HUD ----------
+function hud(flash = {}) {
+  const pct = Math.min(100, ((s.time - START) / (END - START)) * 100);
+  return `
+    <div class="stats">
+      ${STATS.map(st => {
+        const v = s.stats[st.key];
+        const cls = [v < 25 ? "low" : "", flash[st.key] > 0 ? "flash-up" : flash[st.key] < 0 ? "flash-down" : ""].join(" ");
+        return `<div class="stat ${cls}" title="${st.name}">
+          <div class="icon">${st.icon}</div>
+          <div class="bar"><div class="fill" style="height:${v}%"></div></div>
+          <div class="val">${v}</div>
+        </div>`;
+      }).join("")}
+    </div>
+    <div class="clock">
+      <span class="time">⏰ ${fmt(s.time)}</span>
+      <div class="track"><div class="progress" style="width:${pct}%"></div></div>
+      <span class="muted">19:00</span>
+    </div>`;
+}
+
+// ---------- Ablauf ----------
+function next(flash = {}) {
+  if (s.time >= END) return renderEnd();
+  const mg = MINIGAMES.find(m => s.time >= m.at && !s.mgDone.has(m.id));
+  if (mg) {
+    s.mgDone.add(mg.id);
+    return mg.id === "einlass" ? playEinlass() : playMic();
+  }
+  const ev = pickEvent();
+  if (!ev) return renderEnd();
+  renderEvent(ev, flash);
+}
+
+function pickEvent() {
+  const h = s.time / 60;
+  const ok = e => !s.used.has(e.id) && (!e.requires || s.flags.has(e.requires));
+  const followUps = EVENTS.filter(e => ok(e) && e.requires);
+  if (followUps.length && Math.random() < 0.6) return followUps[0];
+  let pool = EVENTS.filter(e => ok(e) && !e.requires && (e.from ?? 0) <= h && h < (e.to ?? 24));
+  if (!pool.length) pool = EVENTS.filter(e => ok(e));
+  return pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
+}
+
+function renderEvent(ev, flash) {
+  const hint = opt => Object.keys(opt.fx).map(k => statByKey(k).icon).join(" ");
+  app.innerHTML = `
+    ${hud(flash)}
+    <div class="card">
+      <div class="who">
+        <div class="avatar">${ev.avatar}</div>
+        <div><div class="name">${ev.who}</div><div class="role">${ev.role}</div></div>
+      </div>
+      <div class="text">${ev.text}</div>
+      <div class="options">
+        <button class="opt" data-o="a"><span class="label">${ev.a.label}</span><span class="hint">${hint(ev.a)}</span></button>
+        <button class="opt" data-o="b"><span class="label">${ev.b.label}</span><span class="hint">${hint(ev.b)}</span></button>
+      </div>
+    </div>`;
+  app.querySelectorAll(".opt").forEach(btn => btn.onclick = () => choose(ev, ev[btn.dataset.o]));
+  setKeys(e => {
+    if (e.key === "1" || e.key === "ArrowLeft") choose(ev, ev.a);
+    if (e.key === "2" || e.key === "ArrowRight") choose(ev, ev.b);
+  });
+}
+
+function applyFx(fx) {
+  for (const [k, d] of Object.entries(fx)) {
+    s.stats[k] = Math.max(0, Math.min(100, s.stats[k] + d));
+  }
+  showToasts(fx);
+}
+
+function choose(ev, opt) {
+  setKeys(null);
+  s.used.add(ev.id);
+  s.decisions++;
+  if (opt.sets) s.flags.add(opt.sets);
+  applyFx(opt.fx);
+  s.time += rand(20, 35);
+  const dead = STATS.find(st => s.stats[st.key] <= 0);
+  if (dead) return renderGameOver(dead);
+  next(opt.fx);
+}
+
+function showToasts(fx) {
+  toasts.innerHTML = Object.entries(fx).map(([k, d]) =>
+    `<span class="toast ${d > 0 ? "up" : "down"}">${statByKey(k).icon} ${d > 0 ? "+" : ""}${d}</span>`).join("");
+}
+
+// ---------- Minigame-Rahmen ----------
+function mgIntro(title, text, start) {
+  setKeys(e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); start(); } });
+  app.innerHTML = `
+    ${hud()}
+    <div class="mg">
+      <div class="result">
+        <div class="big">🎮</div>
+        <h2>${title}</h2>
+        <p class="muted">${text}</p>
+        <button class="btn" id="go">Los!</button>
+      </div>
+    </div>`;
+  document.getElementById("go").onclick = start;
+}
+
+function mgResult(emoji, title, text, fx) {
+  applyFx(fx);
+  toasts.innerHTML = ""; // Effekte stehen hier schon als Chips auf der Karte
+  s.time += 20;
+  const chips = Object.entries(fx).map(([k, d]) =>
+    `<span class="fx ${d > 0 ? "up" : "down"}">${statByKey(k).icon} ${d > 0 ? "+" : ""}${d}</span>`).join("");
+  const dead = STATS.find(st => s.stats[st.key] <= 0);
+  const cont = () => dead ? renderGameOver(dead) : next(fx);
+  setKeys(e => { if (e.key === "Enter") cont(); });
+  app.innerHTML = `
+    ${hud(fx)}
+    <div class="mg">
+      <div class="result">
+        <div class="big">${emoji}</div>
+        <h2>${title}</h2>
+        <p class="muted">${text}</p>
+        <div class="fxlist">${chips}</div>
+        <button class="btn" id="cont">Weiter</button>
+      </div>
+    </div>`;
+  document.getElementById("cont").onclick = cont;
+}
+
+// ---------- Minigame 1: Einlass-Rush ----------
+function playEinlass() {
+  mgIntro("Einlass-Rush", "Die Türen öffnen! Tippe die Gäste mit Ticket 🧑‍💼 an, um sie zu scannen. Finger weg von 🕶️, die haben kein Ticket.", runEinlass);
+}
+
+function runEinlass() {
+  setKeys(null);
+  const DURATION = 15000;
+  let score = 0, ended = false;
+  app.innerHTML = `
+    ${hud()}
+    <div class="mg">
+      <div class="mg-hud"><span id="t">15.0 s</span><span id="sc">0 gescannt</span></div>
+      <div class="grid">${'<button class="cell"></button>'.repeat(12)}</div>
+    </div>`;
+  const cells = [...app.querySelectorAll(".cell")];
+  const tEl = document.getElementById("t"), scEl = document.getElementById("sc");
+  const t0 = performance.now();
+
+  cells.forEach(c => c.onclick = () => {
+    if (ended || !c.dataset.kind) return;
+    if (c.dataset.kind === "guest") { score++; c.classList.add("hit"); }
+    else { score = Math.max(0, score - 2); c.classList.add("miss"); }
+    c.dataset.kind = ""; c.textContent = "";
+    scEl.textContent = `${score} gescannt`;
+    setTimeout(() => c.classList.remove("hit", "miss"), 200);
+  });
+
+  const spawn = setInterval(() => {
+    const free = cells.filter(c => !c.dataset.kind);
+    if (!free.length) return;
+    const c = free[Math.floor(Math.random() * free.length)];
+    const fake = Math.random() < 0.25;
+    c.dataset.kind = fake ? "fake" : "guest";
+    c.textContent = fake ? "🕶️" : "🧑‍💼";
+    const life = Math.max(650, 1200 - (performance.now() - t0) / 30);
+    setTimeout(() => { if (c.textContent) { c.dataset.kind = ""; c.textContent = ""; } }, life);
+  }, 520);
+
+  const tick = setInterval(() => {
+    const left = Math.max(0, DURATION - (performance.now() - t0));
+    tEl.textContent = `${(left / 1000).toFixed(1)} s`;
+    if (left <= 0) {
+      ended = true; clearInterval(spawn); clearInterval(tick);
+      if (score >= 12) mgResult("🏆", `${score} Gäste gescannt!`, "Der Einlass lief wie geschmiert. Keine Schlange, keine Insta-Story.", { gaeste: 15, erstis: 5 });
+      else if (score >= 7) mgResult("👍", `${score} Gäste gescannt`, "Ein bisschen Schlange, aber alle sind drin.", { gaeste: 5 });
+      else mgResult("🐌", `Nur ${score} Gäste gescannt`, "Die Schlange reicht bis zum Wasserturm.", { gaeste: -10, team: -5 });
+    }
+  }, 100);
+}
+
+// ---------- Minigame 2: Mic-Check ----------
+function playMic() {
+  mgIntro("Mic-Check", "Gleich startet das Nachmittags-Panel. Tippe auf „Stopp“, wenn der Regler im grünen Bereich ist. Drei Mikros, jedes ein bisschen schneller.", runMic);
+}
+
+function runMic() {
+  const ROUNDS = 3;
+  let round = 0, hits = 0, pos = 0, dir = 1, speed = 70, zone, timer, last, locked = false;
+  const results = [];
+
+  app.innerHTML = `
+    ${hud()}
+    <div class="mg">
+      <div class="mg-hud"><span id="r">Mikro 1/3</span><span id="h">0 Treffer</span></div>
+      <div class="rounds" id="rounds">🎤 🎤 🎤</div>
+      <div class="meter"><div class="zone" id="zone"></div><div class="marker" id="marker"></div></div>
+      <button class="btn" id="stop">Stopp!</button>
+    </div>`;
+  const zEl = document.getElementById("zone"), mEl = document.getElementById("marker");
+
+  function newZone() {
+    const w = 16 - round * 2;
+    zone = { start: rand(10, 90 - w), w };
+    zEl.style.left = zone.start + "%";
+    zEl.style.width = zone.w + "%";
+  }
+  function loop() {
+    const t = performance.now();
+    const dt = last ? (t - last) / 1000 : 0;
+    last = t;
+    pos += dir * speed * dt;
+    if (pos >= 100) { pos = 100; dir = -1; }
+    if (pos <= 0) { pos = 0; dir = 1; }
+    mEl.style.left = pos + "%";
+  }
+  function stop() {
+    if (locked) return;
+    locked = true;
+    clearInterval(timer);
+    const hit = pos >= zone.start && pos <= zone.start + zone.w;
+    if (hit) hits++;
+    results.push(hit ? "✅" : "❌");
+    document.getElementById("rounds").textContent = results.concat(Array(ROUNDS - results.length).fill("🎤")).join(" ");
+    document.getElementById("h").textContent = `${hits} Treffer`;
+    round++;
+    setTimeout(() => {
+      if (round >= ROUNDS) return finish();
+      document.getElementById("r").textContent = `Mikro ${round + 1}/3`;
+      speed *= 1.45; last = null; locked = false;
+      newZone(); timer = setInterval(loop, 16);
+    }, 600);
+  }
+  function finish() {
+    setKeys(null);
+    if (hits === 3) mgResult("🎙️", "Perfekter Sound!", "Alle Mikros laufen, das Panel startet pünktlich.", { speaker: 15 });
+    else if (hits === 2) mgResult("🔊", "Läuft größtenteils", "Ein Mikro rauscht ein bisschen, aber passt schon.", { speaker: 5 });
+    else if (hits === 1) mgResult("📢", "Fiepen im Saal", "Rückkopplung. Das ganze Audimax hält sich die Ohren zu.", { speaker: -5, gaeste: -5 });
+    else mgResult("🔇", "Totalausfall", "Die Panelisten müssen sich ein Handmikro teilen.", { speaker: -15, gaeste: -5 });
+  }
+
+  document.getElementById("stop").onclick = stop;
+  setKeys(e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); } });
+  newZone();
+  timer = setInterval(loop, 16);
+}
+
+// ---------- Enden ----------
+function summary() {
+  return `<div class="summary">${STATS.map(st => `
+    <div class="row"><span>${st.icon}</span>
+      <div class="track"><div style="width:${s.stats[st.key]}%"></div></div>
+      <span class="num">${s.stats[st.key]}</span></div>`).join("")}</div>`;
+}
+
+function renderGameOver(stat) {
+  setKeys(e => { if (e.key === "Enter") startGame(); });
+  app.innerHTML = `
+    <div class="end">
+      <div style="font-size:56px">${stat.icon}</div>
+      <h1>Game over um ${fmt(s.time)}</h1>
+      <p>${GAME_OVER[stat.key]}</p>
+      ${summary()}
+      <p class="muted">${s.decisions} Entscheidungen getroffen</p>
+      <button class="btn" id="again">Nochmal versuchen</button>
+      <button class="btn secondary" id="menu">Zum Start</button>
+    </div>`;
+  document.getElementById("again").onclick = startGame;
+  document.getElementById("menu").onclick = renderStart;
+}
+
+function renderEnd() {
+  const vals = Object.values(s.stats);
+  const score = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length + Math.min(...vals) / 2);
+  const prevBest = bestScore();
+  saveBest(score);
+  const [emoji, title, text] =
+    score >= 80 ? ["🏆", "Legendärer Vorstand", "Über diese Konferenz wird noch in fünf Jahren geredet. Alle wollen nächstes Jahr wieder dabei sein."] :
+    score >= 70 ? ["🥂", "Starke Konferenz", "Ein paar Pannen, aber Partner, Speaker und Team gehen glücklich auf die Party."] :
+    score >= 58 ? ["😮‍💨", "Überlebt", "Es war chaotisch, aber die Konferenz hat stattgefunden. Das Team braucht erstmal Schlaf."] :
+                  ["🫠", "Knapp vorbei am Desaster", "Formal hat die Konferenz stattgefunden. Die Feedback-Umfrage öffnest du lieber nicht."];
+  setKeys(e => { if (e.key === "Enter") startGame(); });
+  app.innerHTML = `
+    <div class="end">
+      <div style="font-size:56px">${emoji}</div>
+      <h1>${title}</h1>
+      <p>${text}</p>
+      ${summary()}
+      <p><b>Score: ${score}</b> ${score > prevBest ? "· Neuer Rekord! 🎉" : `<span class="muted">· Rekord: ${Math.max(prevBest, score)}</span>`}</p>
+      <button class="btn" id="again">Nochmal spielen</button>
+    </div>`;
+  document.getElementById("again").onclick = startGame;
+}
+
+renderStart();
+</script>
+</body>
+</html>
