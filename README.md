@@ -6,7 +6,7 @@ Ein Pixel-Art-Spiel im Browser: Du bist Chair der Q-Summit und läufst zwei Konf
 
 `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Datei, ohne Installation. Nur die Pixel-Schriften werden von Google Fonts geladen, ohne Internet fällt es auf eine Standardschrift zurück.
 
-**Steuerung:** Tippen oder klicken zum Laufen, WASD oder Pfeiltasten, E zum Reden, P fürs Handy.
+**Steuerung:** Tippen oder klicken zum Laufen, WASD oder Pfeiltasten, E zum Reden, P fürs Handy, Esc für Pause.
 
 ## Was drin ist
 
@@ -16,6 +16,7 @@ Ein Pixel-Art-Spiel im Browser: Du bist Chair der Q-Summit und läufst zwei Konf
 - **Handy:** Gruppenchats (Board, Team, Erstis, Partner, Finance, Marketing, Mama) mit Hintergrund-Nachrichten und Entscheidungen per Antwort
 - **Szenen:** Intro, Opening Speech, Themenabend, Pitchbattle-Siegerehrung, Closing Speech und Afterparty
 - **Minigames:** Goodie Bags packen, Badge-Ausgabe, Mic-Check (Opening und Pitchbattle)
+- **Pause & Dashboard** (⏸ oder Esc): Übersicht mit Score und Verlauf aller Werte, Ersti-Schichtplan (8 Gruppen auf Check-in, Garderobe, Booths, Speaker, Catering und Pause verteilen), Maßnahmen einmal pro Tag, Tagesablauf und Log aller Entscheidungen
 - **Tag und Nacht:** Abends wird es dunkel, Lichterketten und Bühnenlicht gehen an, bei der Afterparty gibt es Disco-Licht
 
 ## Inhalte ergänzen
@@ -27,6 +28,7 @@ Alles Inhaltliche steht oben im Script, vor dem Abschnitt `ENGINE`:
 - `SCENES`: Story-Szenen mit Uhrzeit
 - `TEAM`: Namen, Rollen, Haarfarbe und Stammplatz der Teammitglieder
 - `LOCS`: Orte auf der Karte
+- `STATIONS`, `ACTIONS`, `AGENDA`: Schichtplan, Maßnahmen und Programm im Dashboard
 
 Ein Event sieht so aus:
 

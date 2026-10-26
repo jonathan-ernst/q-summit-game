@@ -157,6 +157,7 @@
   #overlay { position: absolute; inset: 0; z-index: 10; background: rgba(7, 22, 80, .94); overflow-y: auto; display: flex; justify-content: center; }
   #overlay.title { background: linear-gradient(180deg, rgba(7,22,80,.1) 0%, rgba(7,22,80,.5) 30%, rgba(7,22,80,.97) 58%); }
   .ov { width: 100%; max-width: 480px; padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 14px; min-height: 100%; }
+  .ov > * { flex-shrink: 0; }
   .ov.center { justify-content: center; }
   .ov.bottom { justify-content: flex-end; }
   .btn { appearance: none; border: 0; border-radius: 12px; cursor: pointer; background: #fff; color: var(--bg); font-weight: 800; font-size: 17px; padding: 16px 18px; width: 100%; box-shadow: 0 5px 0 #8ea3e6; transition: transform .08s; }
@@ -211,6 +212,79 @@
   .badge .bq { font-size: 11px; color: #5a6aa0; padding-top: 8px; font-weight: 700; }
   .badge .bname { font-weight: 800; font-size: 16px; padding: 2px 6px 12px; }
   .badge.wrong { animation: shake .3s; outline: 3px solid var(--bad); }
+
+  /* ---------- Pause & Dashboard ---------- */
+  #pausebtn { position: relative; }
+  #pausedot { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: var(--bad); border: 2px solid var(--bg); }
+  #pausedot:empty { display: block; }
+  #overlay.pause { background: #071650; }
+  .ps-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .ps-title { font-family: "Press Start 2P", monospace; font-size: 13px; line-height: 1.5; }
+  .ps-time { font-size: 13px; color: var(--muted); }
+  .tabs { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { appearance: none; border: 0; background: var(--card); border-radius: 999px; padding: 8px 12px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; position: relative; }
+  .tab.on { background: #fff; color: var(--bg); }
+  .tab .warn { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); margin-left: 5px; vertical-align: middle; }
+  .ps-body { display: grid; gap: 10px; }
+  .score-card { background: var(--card); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 14px; }
+  .score-card .big { font-family: "Press Start 2P", monospace; font-size: 26px; }
+  .score-card small { color: var(--muted); display: block; font-size: 12px; margin-top: 4px; }
+  .stat-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { background: var(--card); border-radius: 12px; padding: 10px 12px; display: grid; gap: 4px; }
+  .stat-card .sc-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; color: var(--muted); }
+  .stat-card .sc-val { font-family: "Press Start 2P", monospace; font-size: 16px; color: #fff; }
+  .stat-card .sc-val.low { color: var(--bad); }
+  .stat-card .tr { font-size: 12px; font-weight: 800; }
+  .stat-card .tr.up { color: var(--good); } .stat-card .tr.down { color: var(--bad); } .stat-card .tr.flat { color: var(--muted); }
+  .stat-card svg { width: 100%; height: 28px; display: block; }
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .fact { background: var(--card); border-radius: 12px; padding: 10px; text-align: center; }
+  .fact b { display: block; font-family: "Press Start 2P", monospace; font-size: 13px; margin-bottom: 6px; }
+  .fact span { font-size: 11px; color: var(--muted); }
+  .note { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .station { background: var(--card); border-radius: 12px; padding: 10px 12px; display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; align-items: center; }
+  .station.bad { box-shadow: inset 3px 0 0 var(--bad); }
+  .station.ok { box-shadow: inset 3px 0 0 var(--good); }
+  .station .st-name { font-weight: 700; font-size: 14px; }
+  .station .st-info { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+  .station .st-info .bad { color: var(--bad); font-weight: 700; }
+  .station .st-info .ok { color: var(--good); font-weight: 700; }
+  .stepper { display: flex; align-items: center; gap: 8px; }
+  .stepper button { appearance: none; border: 0; width: 34px; height: 34px; border-radius: 8px; background: var(--card-3); font-size: 18px; font-weight: 800; cursor: pointer; }
+  .stepper button:disabled { opacity: .3; cursor: default; }
+  .stepper .pips { display: flex; gap: 3px; min-width: 74px; justify-content: center; }
+  .pip { width: 9px; height: 14px; border-radius: 2px; background: #00000055; }
+  .pip.on { background: var(--fill); }
+  .pip.need { outline: 1px dashed var(--warn); }
+  .pool { display: flex; justify-content: space-between; align-items: center; background: var(--card-2); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+  .pool b { font-family: "Press Start 2P", monospace; font-size: 12px; }
+  .action { background: var(--card); border-radius: 12px; padding: 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 4px 12px; align-items: center; }
+  .action .ac-ic { font-size: 26px; grid-row: span 2; }
+  .action .ac-name { font-weight: 700; font-size: 14px; }
+  .action .ac-desc { font-size: 12px; color: var(--muted); grid-column: 2; }
+  .action .fxlist { grid-column: 2; justify-content: flex-start; gap: 4px; }
+  .action .fx { font-size: 12px; padding: 3px 7px; }
+  .action button { grid-row: 1 / span 3; grid-column: 3; appearance: none; border: 0; background: #fff; color: var(--bg); font-weight: 800; border-radius: 8px; padding: 9px 12px; cursor: pointer; font-size: 13px; }
+  .action button:disabled { background: var(--card-3); color: var(--muted); cursor: default; }
+  .agenda { display: grid; gap: 6px; }
+  .ag { display: grid; grid-template-columns: 48px 1fr; gap: 10px; background: var(--card); border-radius: 10px; padding: 9px 12px; align-items: center; }
+  .ag .ag-t { font-family: "Press Start 2P", monospace; font-size: 9px; color: var(--muted); }
+  .ag b { font-size: 14px; display: block; }
+  .ag small { font-size: 12px; color: var(--muted); }
+  .ag.past { opacity: .45; }
+  .ag.now { background: var(--card-3); box-shadow: inset 3px 0 0 var(--warn); }
+  .ag.now .ag-t { color: var(--warn); }
+  .log { display: grid; gap: 6px; }
+  .lg { background: var(--card); border-radius: 10px; padding: 9px 12px; display: grid; gap: 4px; }
+  .lg .lg-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); gap: 8px; }
+  .lg .lg-top b { color: #fff; }
+  .lg .lg-label { font-size: 14px; }
+  .lg .fxlist { justify-content: flex-start; gap: 4px; }
+  .lg .fx { font-size: 12px; padding: 3px 7px; }
+  .ps-foot { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .ps-foot .btn { grid-column: 1 / -1; }
+  .ps-foot .btn.secondary { grid-column: auto; font-size: 14px; padding: 12px; }
   @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 </style>
 </head>
@@ -219,7 +293,7 @@
   <div id="hud">
     <div class="hud-top">
       <div id="clock" class="pix">Q-SUMMIT</div>
-      <button class="iconbtn" id="mute" title="Ton an/aus">🔊</button>
+      <button class="iconbtn" id="pausebtn" title="Pause & Dashboard (Esc)">⏸<span id="pausedot" hidden></span></button>
     </div>
     <div class="stats" id="stats"></div>
   </div>
@@ -746,6 +820,7 @@ const SCENES = [
     { say: ["Amelie", "Um 8:30 öffnet der Check-in. Wo jemand ein ❗ über dem Kopf hat, braucht er dich. Aber warte nicht zu lang, sonst entscheiden die Leute ohne dich."] },
     { say: ["Amelie", "Und behalt dein Handy im Blick 📱 In den Chats brennt's auch ständig."] },
     { say: ["Tipp", "Tippe irgendwo hin, um zu laufen, oder nutze WASD/Pfeiltasten. Tippe Leute mit ❗ an, um mit ihnen zu reden."] },
+    { say: ["Tipp", "Über ⏸ oben rechts kommst du ins Dashboard. Dort siehst du alle Werte und verteilst die Erstis auf die Stationen. Am Check-in fehlen gleich Leute!"] },
   ] },
   { id: "opening", day: 0, at: 9 * 60 + 50, steps: [
     { seat: true },
@@ -824,6 +899,57 @@ const LAST_PAIRS = [["Weber", "Werner"], ["Schmidt", "Schmitt"], ["Becker", "Bä
 // Goodie-Bag-Inhalt
 const GOODIES_OK = [["📓", "Notizblock"], ["🖊️", "Kuli"], ["☕", "Tasse"], ["🧦", "Socken"], ["🍫", "Koro-Riegel"], ["🍋", "Heiße Zitrone"]];
 const GOODIES_WRONG = [["🔌", "Kabel"], ["🎈", "Luftballon"], ["🍹", "Aperol"], ["🌯", "Bodhi Wrap"], ["🪧", "Schild"], ["🎤", "Mikro"], ["🍕", "Pizza"], ["🧯", "Feuerlöscher"]];
+
+// Ersti-Schichtplan im Dashboard: 8 Gruppen à 5 Erstis werden auf Stationen verteilt.
+// demand(tag, minute) = wie viele Gruppen die Station gerade braucht.
+// Fehlt eine Gruppe, verliert der verknüpfte Wert bei jeder Schichtprüfung Punkte.
+const ERSTI_GROUPS = 8;
+const SHIFT_EVERY = 45; // Spielminuten zwischen zwei Schichtprüfungen
+const STATIONS = [
+  { id: "checkin",   icon: "🧾", name: "Check-in",            stat: "participants",
+    demand: (d, m) => m < (d === 0 ? 10 * 60 + 30 : 10 * 60) ? (d === 0 ? 3 : 2) : m < 18 * 60 ? 1 : 0 },
+  { id: "garderobe", icon: "🧥", name: "Garderobe & Infopoint", stat: "participants",
+    demand: (d, m) => m >= 17 * 60 ? 2 : 1 },
+  { id: "booths",    icon: "⛺", name: "Booth-Support",        stat: "partner",
+    demand: (d, m) => m >= 10 * 60 && m < 18 * 60 ? 2 : m < 19 * 60 ? 1 : 0 },
+  { id: "speaker",   icon: "🎤", name: "Speaker-Betreuung",    stat: "speaker",
+    demand: (d, m) => m < 19 * 60 ? 2 : 0 },
+  { id: "food",      icon: "🥣", name: "Catering & Müslibar",  stat: "team",
+    demand: (d, m) => (m < 10 * 60 || (m >= 11 * 60 + 30 && m < 14 * 60) || (d === 0 && m >= 18 * 60 && m < 21 * 60)) ? 2 : 1 },
+];
+const START_ALLOC = { checkin: 2, garderobe: 1, booths: 1, speaker: 2, food: 1, pause: 1 };
+
+// Maßnahmen im Dashboard, jede einmal pro Tag
+const ACTIONS = [
+  { id: "pizza",   icon: "🍕", name: "Pizza fürs Team",        desc: "Das Orga-Team bekommt endlich was zu essen.", fx: { team: 12, budget: -8 },
+    chat: ["team", "Franz", "PIZZA IST DA 🍕🍕🍕 Danke Chair!!"] },
+  { id: "kaffee",  icon: "☕", name: "Kaffee-Runde für alle",  desc: "Extra Kaffee-Station im Innovillage.", fx: { participants: 10, budget: -8 } },
+  { id: "speaker", icon: "🎁", name: "Speaker-Geschenke",      desc: "Kleine Q-Geschenkboxen für alle Speaker.", fx: { speaker: 10, budget: -7 } },
+  { id: "drinks",  icon: "🥂", name: "Partner-Lounge-Drinks",  desc: "Drinks für die Partner an den Booths.", fx: { partner: 10, budget: -8 } },
+  { id: "shout",   icon: "📣", name: "Ersti-Shoutout",          desc: "Ein großes Danke an die Erstis im Chat.", fx: { erstis: 8 },
+    chat: ["erstis", "Sophie", "Der Chair sagt: Ihr seid die Besten!! 💙🐣"] },
+  { id: "sponsor", icon: "🤝", name: "Sponsor um Zuschuss bitten", desc: "Bringt Geld, nervt aber die Partner.", fx: { budget: 14, partner: -8 } },
+];
+
+// Programm für den Ablauf-Tab: [tag, minute, titel, ort]
+const AGENDA = [
+  [0, 7 * 60 + 30, "Aufbau & Goodie Bags packen", "Treppenabsatz"],
+  [0, 8 * 60 + 30, "Check-in & Frühstück an der Koro-Müslibar", "Haupteingang & Hays Forum"],
+  [0, 9 * 60 + 50, "Opening Speech", "SO108"],
+  [0, 10 * 60 + 40, "Workshops, Campfire Sessions & Speeddatings", "Hays Forum & Innovillage"],
+  [0, 12 * 60, "Lunch von Happy Slice", "Essenszelte"],
+  [0, 13 * 60 + 30, "Panels & Fireside Chats", "SO108"],
+  [0, 17 * 60, "Networking im Innovillage", "Innovillage"],
+  [0, 19 * 60, "Themenabend & Flagship Dinner", "Innovillage"],
+  [1, 8 * 60, "Frühstück & Check-in", "Hays Forum"],
+  [1, 9 * 60, "Female Brunch, Qube & Workshops", "Café, Qube & Hays Forum"],
+  [1, 12 * 60, "Lunch: Maloa Poke Bowls", "Essenszelte"],
+  [1, 13 * 60 + 30, "Pitchbattle-Vorrunde", "SO108"],
+  [1, 15 * 60 + 40, "Pitchbattle-Siegerehrung", "SO108"],
+  [1, 16 * 60 + 15, "Networking & Hackathon-Finale", "Innovillage"],
+  [1, 18 * 60 + 30, "Closing Speech", "SO108"],
+  [1, 20 * 60, "Afterparty", "Innovillage"],
+];
 
 // =====================================================================
 //  ENGINE
@@ -1204,6 +1330,8 @@ function newState() {
     scenesDone: new Set(), mgDone: new Set(), ambientUsed: new Set(), chat, seq: 1,
     phoneOpen: false, phoneChat: null, camTarget: null, confetti: [], party: false, stageLights: 0,
     phaseKey: "", pendingTalk: null, tapMark: null, curMg: null, t: 0, titleT: 0,
+    alloc: { ...START_ALLOC }, nextShift: DAYS[0].start + SHIFT_EVERY, hist: [], nextHist: DAYS[0].start,
+    log: [], actionsUsed: new Set(), pauseTab: "overview",
   };
 }
 
@@ -1376,6 +1504,7 @@ function resolveTask(task, opt, late) {
     }
   }
   applyFx(opt.fx);
+  addLog(task.who, opt.label, opt.fx, late);
   if (late) { s.missed++; sfx.late(); setTimeout(() => s && infoToast(`⏰ Zu spät! ${task.who} hat ohne dich entschieden`), 50); }
   updateTaskBar();
   checkGameOver();
@@ -1390,6 +1519,7 @@ function expireTasks() {
       releaseNPC(task.npc);
       s.missed++; sfx.late();
       applyFx(task.q.bad, true);
+      addLog(task.who, "Minigame verpasst", task.q.bad, true);
       infoToast(`⏰ ${task.who} musste es ohne dich machen`);
       updateTaskBar();
       if (checkGameOver()) return;
@@ -1503,7 +1633,7 @@ function openTaskDialog(task) {
       options: [
         { label: "Los geht's! 🎮", onPick: () => startMg(task) },
         { label: "Keine Zeit, sorry.", hint: hint({ fx: task.q.bad }), onPick: () => {
-          s.tasks = s.tasks.filter(t => t !== task); releaseNPC(npc); applyFx(task.q.bad); updateTaskBar(); checkGameOver(); } },
+          s.tasks = s.tasks.filter(t => t !== task); releaseNPC(npc); applyFx(task.q.bad); addLog(task.who, "Keine Zeit für das Minigame", task.q.bad); updateTaskBar(); checkGameOver(); } },
       ] });
   } else {
     const ev = task.ev;
@@ -1689,6 +1819,7 @@ function mgIntro(title, text, start) {
 }
 function mgResult(emoji, title, text, fx) {
   applyFx(fx, true);
+  addLog(s.curMg?.who || "Minigame", `🎮 ${title}`, fx);
   mgKeys = e => { if (e.key === "Enter") endMg(); };
   showOverlay(`<div class="ov center"><div class="result">
     <div class="big">${emoji}</div><h2>${title}</h2><p class="muted">${text}</p>
@@ -1836,6 +1967,187 @@ function runMic(baseSpeed) {
   newZone(); timer = setInterval(loop, 16);
 }
 
+// ---------------- Management ----------------
+function addLog(who, label, fx, late) {
+  s.log.push({ day: s.day, min: s.min, who, label, fx, late });
+}
+function scoreNow() {
+  const vals = Object.values(s.stats);
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length + Math.min(...vals) / 2);
+}
+function recordHist() {
+  s.hist.push({ day: s.day, min: s.min, stats: { ...s.stats } });
+}
+
+// Bewertet eine Station: Wie viele Gruppen fehlen gerade?
+function stationStatus(st) {
+  const need = st.demand(s.day, s.min), have = s.alloc[st.id];
+  return { need, have, missing: Math.max(0, need - have) };
+}
+function pauseEffect() {
+  const p = s.alloc.pause;
+  return p === 0 ? -3 : p === 1 ? 1 : 3;
+}
+function freeGroups() {
+  return ERSTI_GROUPS - Object.values(s.alloc).reduce((a, b) => a + b, 0);
+}
+function understaffed() {
+  return STATIONS.filter(st => stationStatus(st).missing > 0);
+}
+
+function shiftTick() {
+  const fx = {};
+  const add = (k, d) => { if (d) fx[k] = (fx[k] || 0) + d; };
+  for (const st of STATIONS) add(st.stat, -2 * stationStatus(st).missing);
+  // Bonus für Werte, deren Stationen komplett besetzt sind
+  for (const key of new Set(STATIONS.map(st => st.stat))) {
+    const all = STATIONS.filter(st => st.stat === key);
+    if (all.some(st => st.demand(s.day, s.min) > 0) && all.every(st => stationStatus(st).missing === 0)) add(key, 1);
+  }
+  add("erstis", pauseEffect());
+  for (const k of Object.keys(fx)) if (!fx[k]) delete fx[k];
+  if (!Object.keys(fx).length) return;
+  applyFx(fx, true);
+  const bad = understaffed();
+  if (bad.length) {
+    addLog("Schichtplan", `Unterbesetzt: ${bad.map(st => st.name).join(", ")}`, fx);
+    infoToast(`⚠️ Unterbesetzt: ${bad.map(st => st.icon).join(" ")} · ⏸ Schichtplan`);
+  } else if (s.alloc.pause === 0) {
+    addLog("Schichtplan", "Erstis ohne Pause", fx);
+  }
+  checkGameOver();
+}
+
+function openPause(tab) {
+  if (!s || !["play", "dialog"].includes(s.mode)) return;
+  if (s.mode === "dialog") closeDialog();
+  closePhone(); $("sheet").hidden = true; keys.clear();
+  s.mode = "pause";
+  if (tab) s.pauseTab = tab;
+  screenKeys = e => { if (e.key === "Escape") closePause(); };
+  renderPause();
+}
+function closePause() {
+  screenKeys = null;
+  hideOverlay();
+  s.mode = "play";
+}
+
+function sparkline(key) {
+  const pts = s.hist.filter(h => h.day === s.day).map(h => h.stats[key]).concat(s.stats[key]);
+  if (pts.length < 2) pts.unshift(pts[0]);
+  const step = 100 / (pts.length - 1);
+  const line = pts.map((v, i) => `${(i * step).toFixed(1)},${(28 - v / 100 * 26 - 1).toFixed(1)}`).join(" ");
+  const col = s.stats[key] < 25 ? "#ff5d6c" : "#6fb1ff";
+  return `<svg viewBox="0 0 100 28" preserveAspectRatio="none"><line x1="0" x2="100" y1="${28 - 25 / 100 * 26 - 1}" y2="${28 - 25 / 100 * 26 - 1}" stroke="#ff5d6c55" stroke-dasharray="2 2" stroke-width="1" vector-effect="non-scaling-stroke"/><polyline points="${line}" fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+}
+function trend(key) {
+  const past = [...s.hist].reverse().find(h => h.day === s.day && s.min - h.min >= 55);
+  if (!past) return `<span class="tr flat">·</span>`;
+  const d = s.stats[key] - past.stats[key];
+  return d > 0 ? `<span class="tr up">▲ ${d}</span>` : d < 0 ? `<span class="tr down">▼ ${-d}</span>` : `<span class="tr flat">± 0</span>`;
+}
+
+function renderPause() {
+  const tab = s.pauseTab;
+  const warn = understaffed().length > 0 || s.alloc.pause === 0;
+  const tabs = [["overview", "📊 Übersicht"], ["erstis", "🐣 Schichtplan"], ["actions", "💡 Maßnahmen"], ["agenda", "🗓️ Ablauf"], ["log", "📜 Log"]];
+  let body = "";
+  if (tab === "overview") {
+    const score = scoreNow();
+    const unread = Object.values(s.chat).reduce((a, c) => a + c.unread, 0);
+    const weakest = STATS.reduce((a, b) => s.stats[a.key] <= s.stats[b.key] ? a : b);
+    body = `
+      <div class="score-card"><div class="big">${score}</div><div><b>Aktueller Score</b><small>Durchschnitt aller Werte plus Bonus für den schwächsten. Am schwächsten gerade: ${weakest.icon} ${weakest.name}.</small></div></div>
+      <div class="stat-cards">${STATS.map(st => `
+        <div class="stat-card"><div class="sc-top"><span>${st.icon} ${st.name}</span>${trend(st.key)}</div>
+        <div class="sc-val ${s.stats[st.key] < 25 ? "low" : ""}">${s.stats[st.key]}</div>${sparkline(st.key)}</div>`).join("")}</div>
+      <div class="facts">
+        <div class="fact"><b>${s.decisions}</b><span>Entscheidungen</span></div>
+        <div class="fact"><b>${s.missed}</b><span>verpasst</span></div>
+        <div class="fact"><b>${s.tasks.length}</b><span>offene Aufgaben</span></div>
+        <div class="fact"><b>${unread}</b><span>ungelesen</span></div>
+        <div class="fact"><b>${battery()}%</b><span>Akku</span></div>
+        <div class="fact"><b>${freeGroups()}</b><span>freie Ersti-Gruppen</span></div>
+      </div>
+      <p class="note">Die gestrichelte Linie zeigt die kritische Grenze. Unter 25 blinkt der Wert, bei 0 ist die Q vorbei.</p>`;
+  } else if (tab === "erstis") {
+    const free = freeGroups();
+    const row = (id, icon, name, info, cls, need) => {
+      const have = s.alloc[id];
+      const pips = Array.from({ length: Math.max(have, need, 3) }, (_, i) => `<span class="pip ${i < have ? "on" : ""} ${i < need ? "need" : ""}"></span>`).join("");
+      return `<div class="station ${cls}"><div class="st-name">${icon} ${name}</div>
+        <div class="stepper"><button data-id="${id}" data-d="-1" ${have ? "" : "disabled"}>−</button><div class="pips">${pips}</div><button data-id="${id}" data-d="1" ${free ? "" : "disabled"}>+</button></div>
+        <div class="st-info">${info}</div></div>`;
+    };
+    const rows = STATIONS.map(st => {
+      const { need, have, missing } = stationStatus(st);
+      const icon = statByKey(st.stat).icon;
+      const info = missing ? `<span class="bad">Fehlt ${missing} Gruppe${missing > 1 ? "n" : ""}</span> · braucht gerade ${need} · ${icon} −${2 * missing} pro Schicht`
+        : need === 0 ? `Gerade nicht gebraucht · Gruppen hier verschenkt` : `<span class="ok">Gut besetzt</span> · braucht gerade ${need}${have > need ? ` · ${have - need} zu viel` : ""}`;
+      return row(st.id, st.icon, st.name, info, missing ? "bad" : need ? "ok" : "", need);
+    }).join("");
+    const pe = pauseEffect();
+    const pauseInfo = pe < 0 ? `<span class="bad">Keine Pause!</span> · 🐣 ${pe} pro Schicht` : `<span class="ok">Erholung</span> · 🐣 +${pe} pro Schicht`;
+    body = `
+      <p class="note">40 Erstis in ${ERSTI_GROUPS} Gruppen. Alle ${SHIFT_EVERY} Spielminuten wird geprüft: Fehlt an einer Station eine Gruppe, sinkt der verknüpfte Wert. Der Bedarf ändert sich über den Tag, also immer mal wieder reinschauen.</p>
+      <div class="pool"><span>Freie Gruppen</span><b>${free}</b></div>
+      ${rows}
+      ${row("pause", "😴", "Pause", pauseInfo, pe < 0 ? "bad" : "ok", 1)}
+      <p class="note">Nächste Schichtprüfung um ${fmt(s.nextShift)}.</p>`;
+  } else if (tab === "actions") {
+    body = `<p class="note">Jede Maßnahme geht einmal pro Tag. Überleg dir gut, wann du sie brauchst.</p>` + ACTIONS.map(a => {
+      const used = s.actionsUsed.has(`${s.day}:${a.id}`);
+      return `<div class="action"><span class="ac-ic">${a.icon}</span><span class="ac-name">${a.name}</span>
+        <button data-a="${a.id}" ${used ? "disabled" : ""}>${used ? "Erledigt" : "Machen"}</button>
+        <span class="ac-desc">${a.desc}</span><div class="fxlist">${fxChips(a.fx)}</div></div>`;
+    }).join("");
+  } else if (tab === "agenda") {
+    const items = AGENDA.filter(a => a[0] === s.day);
+    body = `<div class="agenda">${items.map((a, i) => {
+      const next = items[i + 1];
+      const cls = s.min >= a[1] && (!next || s.min < next[1]) ? "now" : s.min >= a[1] ? "past" : "";
+      return `<div class="ag ${cls}"><span class="ag-t">${cls === "now" ? "JETZT" : fmt(a[1])}</span><div><b>${a[2]}</b><small>${a[3]}</small></div></div>`;
+    }).join("")}</div>`;
+  } else {
+    const entries = [...s.log].reverse();
+    body = entries.length ? `<div class="log">${entries.map(l => `
+      <div class="lg"><div class="lg-top"><span><b>${l.who}</b>${l.late ? " · ⏰ zu spät" : ""}</span><span>${DAYS[l.day].title} · ${fmt(l.min)}</span></div>
+      <div class="lg-label">${l.label}</div><div class="fxlist">${fxChips(l.fx)}</div></div>`).join("")}</div>`
+      : `<p class="note">Noch keine Entscheidungen. Lauf zu Leuten mit ❗ oder beantworte Chats.</p>`;
+  }
+  showOverlay(`<div class="ov">
+    <div class="ps-head"><div class="ps-title">⏸ PAUSE</div><div class="ps-time">${DAYS[s.day].title} · ${fmt(s.min)}</div></div>
+    <div class="tabs">${tabs.map(([id, label]) => `<button class="tab ${tab === id ? "on" : ""}" data-tab="${id}">${label}${id === "erstis" && warn ? `<span class="warn"></span>` : ""}</button>`).join("")}</div>
+    <div class="ps-body">${body}</div>
+    <div class="ps-foot">
+      <button class="btn" id="resume">Weiter ▶</button>
+      <button class="btn secondary" id="psmute">${muted ? "🔇 Ton aus" : "🔊 Ton an"}</button>
+      <button class="btn secondary" id="psmenu">Hauptmenü</button>
+    </div></div>`, "pause");
+  const o = ov();
+  o.querySelectorAll(".tab").forEach(b => b.onclick = () => { s.pauseTab = b.dataset.tab; renderPause(); });
+  o.querySelectorAll(".stepper button").forEach(b => b.onclick = () => {
+    const id = b.dataset.id, d = +b.dataset.d;
+    if (d > 0 && freeGroups() <= 0) return;
+    s.alloc[id] = Math.max(0, s.alloc[id] + d);
+    sfx.pick();
+    const y = o.scrollTop; renderPause(); o.scrollTop = y;
+  });
+  o.querySelectorAll(".action button").forEach(b => b.onclick = () => {
+    const a = ACTIONS.find(a => a.id === b.dataset.a);
+    s.actionsUsed.add(`${s.day}:${a.id}`);
+    applyFx(a.fx, true); sfx.good();
+    addLog("Du", `${a.icon} ${a.name}`, a.fx);
+    if (a.chat) pushMsg(a.chat[0], { from: a.chat[1], text: a.chat[2], silent: true });
+    if (checkGameOver()) return;
+    const y = o.scrollTop; renderPause(); o.scrollTop = y;
+  });
+  $("resume").onclick = closePause;
+  $("psmute").onclick = () => { muted = !muted; renderPause(); };
+  $("psmenu").onclick = () => { screenKeys = null; renderTitle(); };
+}
+
 // ---------------- Screens ----------------
 function summary() {
   return `<div class="summary">${STATS.map(st => `<div class="row"><span>${st.icon}</span>
@@ -1862,7 +2174,7 @@ function renderTitle() {
     <p class="muted">Du bist Chair der Q-Summit. Zwei Konferenztage im Schloss, sechs Divisions, ein Handy, das nie still ist. Halte alle bei Laune bis zur Afterparty.</p>
     <div class="panel">
       <div class="grid2">${STATS.map(st => `<div><span>${st.icon}</span><b>${st.name}</b></div>`).join("")}</div>
-      <div class="controls">❗ Leute brauchen dich: hinlaufen und entscheiden<br>📱 Chats beantworten, bevor die Zeit abläuft<br>🎮 Minigames bei Goodie Bags, Check-in und Mic-Check<br>Tippen zum Laufen · WASD/Pfeile · E zum Reden · P fürs Handy</div>
+      <div class="controls">❗ Leute brauchen dich: hinlaufen und entscheiden<br>📱 Chats beantworten, bevor die Zeit abläuft<br>🎮 Minigames bei Goodie Bags, Check-in und Mic-Check<br>⏸ Im Dashboard Erstis einteilen und Maßnahmen starten<br>Tippen zum Laufen · WASD/Pfeile · E zum Reden · P fürs Handy · Esc für Pause</div>
     </div>
     ${best ? `<p class="muted">Bester Score bisher: <b>${best}</b></p>` : ""}
     <button class="btn" id="start">Q starten</button>
@@ -1900,6 +2212,7 @@ function beginDay() {
 
 function endDay() {
   s.day = 1; s.min = DAYS[1].start; s.nextSpawn = s.min + 20;
+  s.nextShift = s.min + SHIFT_EVERY; s.nextHist = s.min;
   for (const [k, d] of Object.entries(OVERNIGHT.fx)) s.stats[k] = Math.min(100, s.stats[k] + d);
   s.tasks = []; s.stageLights = 0;
   for (const c of Object.values(s.chat)) for (const m of c.msgs) if (m.task) m.answered = true;
@@ -1928,8 +2241,7 @@ function renderGameOver(stat) {
 function renderEnd() {
   s.mode = "screen";
   resetUi();
-  const vals = Object.values(s.stats);
-  const score = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length + Math.min(...vals) / 2);
+  const score = scoreNow();
   const prevBest = bestScore();
   saveBest(score);
   const [emoji, title, text] =
@@ -2037,6 +2349,8 @@ function update(dt) {
     if (s.min >= s.nextSpawn) { s.nextSpawn = s.min + rand(28, 42); spawnEvent(); }
     s.nextAmbient -= dt;
     if (s.nextAmbient <= 0) { s.nextAmbient = 9 + Math.random() * 12; ambientTick(); }
+    if (s.min >= s.nextHist) { s.nextHist = s.min + 15; recordHist(); }
+    if (s.min >= s.nextShift) { s.nextShift = s.min + SHIFT_EVERY; shiftTick(); if (s.mode !== "play") return; }
     expireTasks();
     if (s.mode === "play" && s.day === 0 && s.min >= DAYS[0].end) { endDay(); return; }
   }
@@ -2176,6 +2490,7 @@ function updateHud() {
   if (c !== lastClock) { $("clock").textContent = c; lastClock = c; }
   if (s.t - lastTaskUpdate > .5) {
     lastTaskUpdate = s.t; updateTaskBar();
+    $("pausedot").hidden = !(understaffed().length || s.alloc.pause === 0);
     const pt = $("phtimer");
     if (pt && s.phoneChat) { const t = s.tasks.find(t => t.kind === "chat" && t.chat === s.phoneChat); if (t) pt.textContent = `⏰ ${Math.max(0, Math.ceil(t.deadline - s.min))} min`; }
   }
@@ -2223,7 +2538,12 @@ document.addEventListener("keydown", e => {
   if (["arrowup", "arrowdown", "arrowleft", "arrowright", " ", "tab"].includes(k)) e.preventDefault();
   if (k === "e" || k === " " || k === "enter") { if (talkTarget) openTaskDialog(talkTarget.task); return; }
   if (k === "p" || k === "tab") { s.phoneOpen ? closePhone() : openPhone(); return; }
-  if (k === "escape") { if (s.phoneOpen) closePhone(); $("sheet").hidden = true; return; }
+  if (k === "escape") {
+    if (s.phoneOpen) closePhone();
+    else if (!$("sheet").hidden) $("sheet").hidden = true;
+    else openPause();
+    return;
+  }
   if (!s.phoneOpen) keys.add(k);
 });
 document.addEventListener("keyup", e => keys.delete(e.key.toLowerCase()));
@@ -2232,7 +2552,7 @@ window.addEventListener("blur", () => keys.clear());
 $("talkbtn").onclick = () => talkTarget && openTaskDialog(talkTarget.task);
 $("phonebtn").onclick = () => { if (!s || !["play", "dialog"].includes(s.mode)) return; s.phoneOpen ? closePhone() : openPhone(); };
 $("taskbtn").onclick = () => { if (!s || !["play", "dialog"].includes(s.mode)) return; $("sheet").hidden ? renderSheet() : ($("sheet").hidden = true); };
-$("mute").onclick = () => { muted = !muted; $("mute").textContent = muted ? "🔇" : "🔊"; };
+$("pausebtn").onclick = () => { if (s && s.mode === "pause") closePause(); else openPause(understaffed().length ? "erstis" : null); };
 
 // ---------------- Start ----------------
 let lastT = performance.now(), rafRunning = false;
