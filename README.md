@@ -13,9 +13,9 @@ Ein Pixel-Art-Spiel im Browser: Du bist Chair der Q-Summit und läufst zwei Konf
 - **Karte:** Ehrenhof mit blauem Teppich, Foyer mit Check-in, Goodie Bags und Garderobe, SO108 mit Mainstage, Hays Forum mit Müslibar, Qube, Speaker-Lounge, Hackathon-Raum und das Innovillage mit Booths, Essenszelten, Entertainment-Ecke und Themenabend-Bühne
 - **Leute:** das Team aus dem Organigramm, Participants, Investoren und Partner an den Booths. Sie laufen nach Tagesablauf: morgens am Check-in, zur Opening Speech in SO108, mittags an den Essenszelten, abends am Themenabend
 - **Aufgaben:** Wer ein ❗ über dem Kopf hat, braucht eine Entscheidung. Wer zu lange wartet, entscheidet selbst, und zwar schlechter
-- **Handy:** Gruppenchats (Board, Team, Erstis, Partner, Finance, Marketing, Mama) mit Hintergrund-Nachrichten und Entscheidungen per Antwort
+- **Handy:** Gruppenchats (Board, Team, Erstis, Partner, Finance, Marketing, Hackathon, Mama) mit Hintergrund-Nachrichten, Entscheidungen per Antwort und Reaktionen auf frühere Entscheidungen
 - **Szenen:** Intro, Opening Speech, Themenabend, Pitchbattle-Siegerehrung, Closing Speech und Afterparty
-- **Minigames:** Goodie Bags packen, Badge-Ausgabe, Mic-Check (Opening und Pitchbattle)
+- **Minigames:** Goodie Bags packen, Badge-Ausgabe, Infopoint (Wegfragen beantworten), Mic-Check (Opening und Pitchbattle)
 - **Pause & Dashboard** (⏸ oder Esc): Übersicht mit Score und Verlauf aller Werte, Ersti-Schichtplan (8 Gruppen auf Check-in, Garderobe, Booths, Speaker, Catering und Pause verteilen), Maßnahmen einmal pro Tag, Tagesablauf und Log aller Entscheidungen
 - **Tag und Nacht:** Abends wird es dunkel, Lichterketten und Bühnenlicht gehen an, bei der Afterparty gibt es Disco-Licht
 
@@ -24,7 +24,7 @@ Ein Pixel-Art-Spiel im Browser: Du bist Chair der Q-Summit und läufst zwei Konf
 Alles Inhaltliche steht oben im Script, vor dem Abschnitt `ENGINE`:
 
 - `EVENTS`: Entscheidungen. Mit `loc` wartet die Person an diesem Ort, mit `chat` kommt die Frage aufs Handy
-- `AMBIENT`: Chat-Nachrichten ohne Entscheidung
+- `AMBIENT`: Chat-Nachrichten ohne Entscheidung. Mit `requires: "flag"` kommen sie nur nach einer bestimmten Entscheidung
 - `SCENES`: Story-Szenen mit Uhrzeit
 - `TEAM`: Namen, Rollen, Haarfarbe und Stammplatz der Teammitglieder
 - `LOCS`: Orte auf der Karte

@@ -213,6 +213,20 @@
   .badge .bname { font-weight: 800; font-size: 16px; padding: 2px 6px 12px; }
   .badge.wrong { animation: shake .3s; outline: 3px solid var(--bad); }
 
+  /* ---------- Infopoint ---------- */
+  .ask { background: var(--card); border-radius: 18px; padding: 16px; display: grid; gap: 8px; text-align: center; position: relative; }
+  .ask .face { font-size: 40px; }
+  .ask .q { font-family: "VT323", monospace; font-size: 26px; line-height: 1.1; }
+  .qbar { height: 8px; background: #00000055; border-radius: 4px; overflow: hidden; }
+  .qbar div { height: 100%; background: var(--warn); }
+  .places { display: grid; gap: 10px; }
+  .place { appearance: none; border: 3px solid transparent; background: var(--card-2); border-radius: 14px; padding: 14px; font-size: 17px; font-weight: 800; display: flex; gap: 12px; align-items: center; cursor: pointer; transition: transform .08s; }
+  .place:active { transform: scale(.97); }
+  .place .pi { font-size: 26px; }
+  .place.right { border-color: var(--good); background: #1c5a4a; }
+  .place.wrongp { border-color: var(--bad); animation: shake .3s; }
+  .streak { font-family: "Press Start 2P", monospace; font-size: 10px; color: var(--warn); text-align: center; min-height: 14px; }
+
   /* ---------- Pause & Dashboard ---------- */
   #pausebtn { position: relative; }
   #pausedot { position: absolute; top: -3px; right: -3px; width: 10px; height: 10px; border-radius: 50%; background: var(--bad); border: 2px solid var(--bg); }
@@ -406,6 +420,7 @@ const CHATS = [
   { id: "partner",   name: "Partner Division", av: "💼", sub: "Lennart, Nick, Ciaran, Lenny, Jaan, Valentin, Annika, Du" },
   { id: "finance",   name: "Finance",          av: "💶", sub: "Lea, Kevin, Johannes, Du" },
   { id: "marketing", name: "Marketing 📸",      av: "📸", sub: "Jordis, Emi, Franz, Adrian, Andreas, Du" },
+  { id: "hackathon", name: "Hackathon 💻",      av: "💻", sub: "Laura, Ben, 64 Teilnehmende" },
   { id: "mama",      name: "Mama",             av: "👩", sub: "zuletzt online heute" },
 ];
 
@@ -727,10 +742,141 @@ const EVENTS = [
     text: "Feedback-Umfrage jetzt rausschicken oder erst nach der Afterparty? 📝",
     a: { label: "Jetzt, solange alle euphorisch sind.", fx: { participants: 5, partner: 5, team: -5 } },
     b: { label: "Später, das Team braucht eine Pause.", fx: { team: 5, partner: -5 } } },
+
+  // ===================== Mehr Chaos =====================
+  { id: "photobooth", from: 9, to: 18, loc: "hall", who: "Emi",
+    text: "Die Photo-Booth ist der Renner. Die Schlange blockiert inzwischen den halben Gang zum Hays Forum.",
+    a: { label: "Zweite Photo-Booth aufbauen.", fx: { budget: -5, participants: 5, team: -5 } },
+    b: { label: "Ein Foto pro Person, Ersti passt auf.", fx: { participants: -5, erstis: -5 } } },
+
+  { id: "barcelona", from: 11, to: 17, loc: "so108", who: "Jordis",
+    text: "Für die „Q goes Barcelona“-Verlosung haben sich 600 Leute eingetragen. Das Losglas ist viel zu klein 😅",
+    a: { label: "Live auf der Mainstage ziehen!", fx: { participants: 10, speaker: -5 } },
+    b: { label: "Später digital ziehen und per Mail schicken.", fx: { participants: -5, team: 5 } } },
+
+  { id: "koro_logo", day: 1, from: 8, to: 12, chat: "partner", who: "Lennart",
+    text: "Koro fragt, ob ihr Logo an der Müslibar größer sein kann. Bester OC-Partner, ihr wisst 💜",
+    a: { label: "Klar, für Koro machen wir das.", fx: { partner: 10, team: -5 } },
+    b: { label: "Alle Logos bleiben gleich groß.", fx: { partner: -5 } } },
+
+  { id: "drohne", day: 1, from: 9, to: 15, loc: "eingang", who: "Franz",
+    text: "Ich hab eine Drohne dabei! Ein Shot vom ganzen Ehrenhof wäre krank. Die Uni hat aber nie zugestimmt...",
+    a: { label: "Flieg! Nur kurz.", fx: { participants: 5, team: 5 }, sets: "drohne" },
+    b: { label: "Lieber nicht, wir fragen nächstes Jahr.", fx: { team: -5 } } },
+
+  { id: "drohne_folge", requires: "drohne", loc: "eingang", who: "Hausmeister", role: "Universität Mannheim",
+    text: "Wer lässt hier eine Drohne über dem Schloss fliegen?! Das gibt Ärger mit der Verwaltung.",
+    a: { label: "Entschuldigen und Video löschen.", fx: { participants: -5, team: -5 } },
+    b: { label: "Strafgebühr zahlen, das Video ist es wert.", fx: { budget: -15 } } },
+
+  { id: "investor_spaet", day: 2, from: 9, to: 13, chat: "partner", who: "Nick",
+    text: "Der wichtigste VC fürs Qube steckt im Stau, 40 Minuten später. Die Startups sind schon nervös 😬",
+    a: { label: "Pitch-Reihenfolge tauschen und warten.", fx: { partner: 5, participants: -5 } },
+    b: { label: "Ohne ihn anfangen.", fx: { partner: -10, participants: 5 } } },
+
+  { id: "aufzug", from: 10, to: 17, chat: "erstis", who: "Ersti Tom",
+    text: "HILFE ich stecke mit drei Getränkekisten im Aufzug fest 😭",
+    a: { label: "Bin unterwegs, ich ruf den Hausmeister.", fx: { team: -5, erstis: 10 } },
+    b: { label: "Der fährt gleich wieder, keine Panik.", fx: { erstis: -10 } } },
+
+  { id: "wasser", from: 10, to: 18, loc: "lounge", who: "Annika",
+    text: "In der Speaker-Lounge gibt es kein Wasser mehr, und gleich kommt die nächste Keynote-Speakerin.",
+    a: { label: "Ersti mit zwei Kisten losschicken.", fx: { speaker: 5, erstis: -5 } },
+    b: { label: "Leitungswasser in Karaffen.", fx: { speaker: -5, budget: 5 } } },
+
+  { id: "rollups", from: 8, to: 16, loc: "eingang", who: "Emi",
+    text: "Der Wind hat alle Roll-Ups am Eingang umgeworfen. Eins ist gerade auf einen Gast gefallen.",
+    a: { label: "Mit Sandsäcken beschweren.", fx: { team: -5, participants: 5 } },
+    b: { label: "Roll-Ups reinholen.", fx: { partner: -5 } } },
+
+  { id: "panel_streit", from: 11, to: 17, loc: "buehne", who: "Luca",
+    text: "Zwei Panelisten streiten sich auf der Bühne richtig heftig. Das Publikum liebt es, die Moderatorin schwitzt.",
+    a: { label: "Moderatorin soll bremsen.", fx: { speaker: 5, participants: -5 } },
+    b: { label: "Laufen lassen, beste Show des Tages.", fx: { participants: 10, speaker: -10 } } },
+
+  { id: "linkedin", from: 9, to: 16, chat: "marketing", who: "Andreas",
+    text: "Kannst du kurz ein LinkedIn-Video von der Bühne aufnehmen? Dauert nur 10 Minuten 🙏",
+    a: { label: "Klar, mach ich.", fx: { partner: 5, participants: 5, team: -10 } },
+    b: { label: "Keine Zeit, nimm Jonathan.", fx: { partner: -5 } } },
+
+  { id: "laptop", from: 8, to: 14, chat: "partner", who: "Annika",
+    text: "Ein Speaker hat seinen Laptop im ICE liegen lassen. Die Folien sind nur da drauf 😩",
+    a: { label: "Er soll frei sprechen, das kann er.", fx: { speaker: -5, participants: 5 } },
+    b: { label: "Slot nach hinten schieben, DB anrufen.", fx: { speaker: 5, participants: -5, team: -5 } } },
+
+  { id: "wlan_karten", day: 1, from: 9, to: 12, loc: "checkin", who: "Anna",
+    text: "Auf allen WLAN-Karten steht das falsche Passwort. 400 Leute fragen uns gerade danach.",
+    a: { label: "Passwort auf ein großes Schild malen.", fx: { erstis: -5, participants: 5 } },
+    b: { label: "Hotspot-Passwort durchsagen lassen.", fx: { speaker: -5, participants: 5 } } },
+
+  { id: "presse", from: 10, to: 16, loc: "eingang", who: "Jonathan",
+    text: "Der Mannheimer Morgen will jetzt sofort ein Interview mit dem Chair. Sonst schreiben sie ohne Zitat.",
+    a: { label: "Ich komme, 10 Minuten.", fx: { partner: 5, team: -5 } },
+    b: { label: "Jonathan übernimmt das.", fx: { partner: -5, team: 5 } } },
+
+  { id: "kuehlung", from: 12, to: 19, loc: "food", who: "Sophie",
+    text: "Der Kühlwagen ist ausgefallen. Alle Getränke im Innovillage werden langsam warm.",
+    a: { label: "Eis kaufen, ganz viel Eis.", fx: { budget: -10, participants: 5 } },
+    b: { label: "Warme Mate ist auch Mate.", fx: { participants: -10 } } },
+
+  { id: "spontan_speaker", from: 11, to: 17, loc: "so108", who: "Valentin",
+    text: "Ein bekannter Gründer sitzt im Publikum und will spontan 10 Minuten auf die Bühne.",
+    a: { label: "Ja! So was macht die Q aus.", fx: { participants: 10, speaker: -5 }, sets: "spontan" },
+    b: { label: "Programm ist Programm.", fx: { participants: -5, speaker: 5 } } },
+
+  { id: "spontan_folge", requires: "spontan", loc: "buehne", who: "Otto",
+    text: "Der Spontan-Speaker redet jetzt seit 25 Minuten. Der nächste Speaker steht schon an der Treppe.",
+    a: { label: "Licht dimmen, das versteht er.", fx: { speaker: 5, participants: -5 } },
+    b: { label: "Nächsten Slot kürzen.", fx: { speaker: -10, participants: 5 } } },
+
+  { id: "mensa", from: 11, to: 15, loc: "hall", who: "Hausmeister", role: "Universität Mannheim",
+    text: "Eure Participants besetzen alle Tische, die eigentlich für die Studierenden gedacht sind.",
+    a: { label: "Erstis räumen höflich ab.", fx: { erstis: -5, participants: -5 } },
+    b: { label: "Zusätzliche Stehtische ausleihen.", fx: { budget: -10 } } },
+
+  { id: "jury_konflikt", day: 2, from: 12, to: 15, loc: "qube", who: "Ciaran",
+    text: "Ein Juror im Pitchbattle ist investiert in einen der Finalisten. Das hat gerade jemand rausgefunden.",
+    a: { label: "Juror sofort tauschen.", fx: { partner: -5, participants: 10 } },
+    b: { label: "Offenlegen und weitermachen.", fx: { partner: 5, participants: -5 } } },
+
+  { id: "dj_krank", day: 2, from: 12, to: 18, chat: "team", who: "Emi",
+    text: "Der Afterparty-DJ hat Fieber 🤒 Wir brauchen einen Plan B!",
+    a: { label: "Teuren Ersatz-DJ buchen.", fx: { budget: -15, participants: 10 } },
+    b: { label: "Ben hat doch Boxen und eine Playlist.", fx: { participants: -5, team: 5 }, sets: "ben_dj" } },
+
+  { id: "ben_dj_folge", requires: "ben_dj", chat: "hackathon", who: "Ben",
+    text: "Ok ich mach DJ 🎧 Aber ich brauche jemanden, der heute Abend meine Hackathon-Siegerehrung übernimmt.",
+    a: { label: "Laura übernimmt.", fx: { team: -5, participants: 5 } },
+    b: { label: "Ich mach das selbst.", fx: { team: 5, speaker: -5 } } },
+
+  { id: "plus_one", day: 2, from: 13, to: 19, chat: "partner", who: "Lenny",
+    text: "Drei Partner wollen jeweils fünf Kollegen mit auf die Afterparty bringen. Geht das?",
+    a: { label: "Klar, je mehr desto besser.", fx: { partner: 10, participants: -5, budget: -5 } },
+    b: { label: "Nur mit Badge.", fx: { partner: -5, participants: 5 } } },
+
+  { id: "hackathon_mainstage", day: 2, from: 12, to: 17, loc: "hackathon", who: "Laura",
+    text: "Das Siegerteam vom Hackathon will auch 5 Minuten auf die Mainstage. Die haben 30 Stunden nicht geschlafen.",
+    a: { label: "Ja, die haben es verdient!", fx: { participants: 10, speaker: -5 } },
+    b: { label: "Lieber ein großer Post auf Insta.", fx: { participants: -5, partner: 5 } } },
+
+  { id: "lkw", day: 2, from: 14, to: 19, loc: "innovillage", who: "Amelie",
+    text: "Der Verleih will die Zelte zwei Stunden früher abholen. Der LKW steht schon vor dem Schloss.",
+    a: { label: "Wegschicken, wir brauchen die Zelte noch.", fx: { budget: -10, partner: 5 } },
+    b: { label: "Die ersten Booths schon abbauen.", fx: { partner: -10, team: -5 } } },
+
+  { id: "erstis_party", day: 2, from: 15, to: 19, chat: "board", who: "Vanessa",
+    text: "Die Erstis fragen, ob sie schon zur Afterparty dürfen, wenn ihre Station leer ist 🥺",
+    a: { label: "Ja, sie haben es verdient.", fx: { erstis: 10, team: -5 } },
+    b: { label: "Erst wenn alles abgebaut ist.", fx: { erstis: -10, team: 5 } } },
+
+  { id: "bewertung", from: 13, to: 20, chat: "marketing", who: "Jordis",
+    text: "Jemand hat auf Google geschrieben, die Q sei „überorganisiert“ 🙃 Sollen wir antworten?",
+    a: { label: "Mit Humor antworten.", fx: { participants: 5, team: -5 } },
+    b: { label: "Ignorieren.", fx: { team: 5 } } },
 ];
 
 // Hintergrund-Nachrichten in den Chats (keine Entscheidung nötig).
-// from_/to: Zeitfenster in Stunden, day: nur an diesem Tag
+// from_/to: Zeitfenster in Stunden, day: nur an diesem Tag, requires: nur nach dieser Entscheidung
 const AMBIENT = [
   { chat: "team", from: "Franz", text: "Wer hat das Gaffa? 🙏" },
   { chat: "team", from: "Jordis", text: "Bitte alle um 9:15 zum Gruppenfoto auf die Treppe!! 📸", day: 1, to: 9.2 },
@@ -785,6 +931,47 @@ const AMBIENT = [
   { chat: "mama", from: "Mama", text: "Papa hat dich auf Instagram gesehen!! 👏" },
   { chat: "mama", from: "Mama", text: "Ruf mal an, wenn du Zeit hast ❤️" },
   { chat: "mama", from: "Mama", text: "Ist das die Konferenz mit dem blauen Teppich?" },
+  { chat: "mama", from: "Mama", text: "Tante Gabi fragt, ob du da Chef bist 😊" },
+  { chat: "mama", from: "Mama", text: "Hast du eine Jacke dabei? Es soll regnen ☔", day: 1 },
+  { chat: "mama", from: "Mama", text: "Schlaf heute Nacht ein bisschen, ja? 🙏", day: 1, from_: 19 },
+  { chat: "mama", from: "Mama", text: "Wir sind so stolz auf dich ❤️❤️", day: 2, from_: 17 },
+  { chat: "team", from: "Lenny", text: "Wer hat meine Powerbank? Die blaue mit Sticker" },
+  { chat: "team", from: "Madeleine", text: "Koro hat nochmal 3 Kisten Riegel gebracht 🍫" },
+  { chat: "team", from: "Andreas", text: "Der Post vom Opening hat 400 Likes 🚀", day: 1, from_: 11 },
+  { chat: "team", from: "Nick", text: "Im Qube hat gerade ein Startup ein Term Sheet bekommen 🦁", day: 2, from_: 11 },
+  { chat: "team", from: "Luca", text: "Bitte nicht mit Getränken in SO108 🙏 Die Hausmeister gucken" },
+  { chat: "team", from: "Julius", text: "Wer heute noch nichts gegessen hat: Hand hoch ✋" },
+  { chat: "team", from: "Amelie", text: "Wer hat den Schlüssel für den Lagerraum??" },
+  { chat: "team", from: "Emi", text: "Die Schilder kommen auf Insta so gut an 😍 Alle fragen, wer die gemalt hat" },
+  { chat: "team", from: "Jordis", text: "Abstimmung Gruppenfoto: Treppe oder Ehrenhof? 📸" },
+  { chat: "team", from: "Valentin", text: "Speaker-Feedback bisher: 10/10 💜" },
+  { chat: "team", from: "Ciaran", text: "Ein VC hat gefragt, ob wir nächstes Jahr ein zweites Qube machen 👀", day: 2 },
+  { chat: "team", from: "Franz", text: "Rekord an der Fußballwand: 11 Treffer in 30 Sekunden ⚽🔥" },
+  { chat: "team", from: "Vanessa", text: "Mittagspause-Rotation: bitte im Plan eintragen!", from_: 11, to: 14 },
+  { chat: "erstis", from: "Ersti Lina", text: "Ich hab gerade einen Speaker zur Lounge gebracht und er hat mir seine Visitenkarte gegeben 🥹" },
+  { chat: "erstis", from: "Ersti Mara", text: "Die Garderobe ist wieder leer, wir haben Kapazität!", from_: 13 },
+  { chat: "erstis", from: "Ersti Tom", text: "Meine Füße 🦶😭" , from_: 15 },
+  { chat: "erstis", from: "Ersti Paul", text: "Darf ich mir auch eine Goodie Bag nehmen?? 👉👈" },
+  { chat: "erstis", from: "Ersti Lina", text: "Wer will tauschen: Check-in gegen Booth-Support?" },
+  { chat: "board", from: "Lennart", text: "Hauptsponsor will nächstes Jahr verlängern 💼🔥", day: 2, from_: 13 },
+  { chat: "board", from: "Julius", text: "Teamstimmung ist gut, aber alle sind müde" , from_: 15 },
+  { chat: "board", from: "Jonathan", text: "Closing-Folien sind fertig. Wer liest gegen?", day: 2, from_: 14, to: 18 },
+  { chat: "finance", from: "Kevin", text: "Kassenbuch ist up to date 📒" },
+  { chat: "finance", from: "Johannes", text: "Wer hat die Quittung vom Baumarkt?? 🧾" },
+  { chat: "marketing", from: "Jordis", text: "Reel vom Themenabend kommt morgen früh 🎷", day: 1, from_: 20 },
+  { chat: "marketing", from: "Emi", text: "Wir sind in der Mannheimer Instagram-Story-Bubble trending 🔥" },
+  { chat: "hackathon", from: "Laura", text: "Noch 6 Stunden bis zur Abgabe ⏳", day: 1, from_: 9, to: 12 },
+  { chat: "hackathon", from: "Ben", text: "Pizza für die Hackathon-Teams ist unterwegs 🍕" },
+  { chat: "hackathon", from: "Laura", text: "Team 7 hat aus Versehen ihr ganzes Repo gelöscht 💀" },
+  { chat: "hackathon", from: "Ben", text: "Abgaben sind drin! 18 Projekte 🎉", day: 2, from_: 11 },
+  { chat: "hackathon", from: "Laura", text: "Jemand schläft unter dem Tisch. Sollen wir ihn wecken?" },
+  // Reaktionen auf frühere Entscheidungen
+  { chat: "erstis", from: "Ersti Ben", text: "Mama hat mein TikTok gesehen 😭😭", requires: "tiktok" },
+  { chat: "marketing", from: "Franz", text: "Der Drohnenshot ist online 🚁 Absoluter Wahnsinn", requires: "drohne" },
+  { chat: "team", from: "Otto", text: "Wer hat das Kabel hinter der Bühne nur mit Gaffa geklebt 😬", requires: "kabel_risiko" },
+  { chat: "team", from: "Luca", text: "Beamer flackert wieder. Ich sag nichts. 🫠", requires: "beamer_risiko" },
+  { chat: "team", from: "Jordis", text: "Der Spontan-Speaker geht gerade viral 📈", requires: "spontan" },
+  { chat: "hackathon", from: "Ben", text: "Playlist für heute Abend steht 🎧🔥", requires: "ben_dj" },
 ];
 
 const START_MSGS = [
@@ -806,6 +993,9 @@ const MG_QUESTS = [
   { id: "opening_mic", day: 0, at: 9 * 60 + 10, who: "Otto", loc: "buehne",
     text: "Gleich ist Opening! Checkst du mit mir die Mikros auf der Mainstage?",
     bad: { speaker: -10, participants: -5 }, play: () => playMic("Mic-Check: Opening", "Gleich hältst du mit Jonathan die Opening Speech. Tippe auf „Stopp“, wenn der Regler im grünen Bereich ist.", 70) },
+  { id: "infopoint", day: 1, at: 9 * 60 + 30, who: "Julius", loc: "hall",
+    text: "Am Infopoint ist die Hölle los, alle fragen nach dem Weg! Übernimmst du kurz?",
+    bad: { participants: -10, erstis: -5 }, play: () => playInfopoint() },
   { id: "pitch_mic", day: 1, at: 14 * 60 + 20, who: "Nick", loc: "buehne",
     text: "Das Pitchbattle-Finale startet bald. Die Mikros müssen sitzen!",
     bad: { speaker: -10, participants: -5 }, play: () => playMic("Mic-Check: Pitchbattle", "Das Pitchbattle-Finale startet. Die Mikros müssen sitzen, diesmal etwas schneller.", 95) },
@@ -899,6 +1089,20 @@ const LAST_PAIRS = [["Weber", "Werner"], ["Schmidt", "Schmitt"], ["Becker", "Bä
 // Goodie-Bag-Inhalt
 const GOODIES_OK = [["📓", "Notizblock"], ["🖊️", "Kuli"], ["☕", "Tasse"], ["🧦", "Socken"], ["🍫", "Koro-Riegel"], ["🍋", "Heiße Zitrone"]];
 const GOODIES_WRONG = [["🔌", "Kabel"], ["🎈", "Luftballon"], ["🍹", "Aperol"], ["🌯", "Bodhi Wrap"], ["🪧", "Schild"], ["🎤", "Mikro"], ["🍕", "Pizza"], ["🧯", "Feuerlöscher"]];
+
+// Infopoint: Fragen nach dem Weg und die richtigen Orte
+const INFO_PLACES = {
+  "SO108": "🎤", "Hays Forum": "🥣", "Garderobe": "🧥", "Innovillage": "⛺", "Qube": "🦁", "Hackathon-Raum": "💻",
+  "Essenszelte": "🍕", "Entertainment-Ecke": "🏒", "Check-in": "🧾", "Speaker-Lounge": "🛋️", "Treppenabsatz": "🛍️",
+};
+const INFO_QUESTIONS = [
+  ["Wo ist die Mainstage?", "SO108"], ["Wo gibt's Frühstück?", "Hays Forum"], ["Wo kann ich meine Jacke abgeben?", "Garderobe"],
+  ["Wo sind die Partner-Booths?", "Innovillage"], ["Wo pitchen Startups vor Investoren?", "Qube"], ["Wo ist der Hackathon?", "Hackathon-Raum"],
+  ["Wo gibt's Mittagessen?", "Essenszelte"], ["Wo steht der Airhockey-Tisch?", "Entertainment-Ecke"], ["Ich hab mein Badge verloren!", "Check-in"],
+  ["Wo finde ich die Speaker?", "Speaker-Lounge"], ["Wo ist das Pitchbattle?", "SO108"], ["Gibt's noch Goodie Bags?", "Treppenabsatz"],
+  ["Wo ist die Müslibar?", "Hays Forum"], ["Wo ist die Fußballwand?", "Entertainment-Ecke"], ["Wo kann man Startups treffen?", "Innovillage"],
+  ["Wo gibt's die Poke Bowls?", "Essenszelte"], ["Wo ist die Closing Speech?", "SO108"], ["Ich bin Speaker, wo kann ich mich vorbereiten?", "Speaker-Lounge"],
+];
 
 // Ersti-Schichtplan im Dashboard: 8 Gruppen à 5 Erstis werden auf Stationen verteilt.
 // demand(tag, minute) = wie viele Gruppen die Station gerade braucht.
@@ -1735,7 +1939,10 @@ function renderPhone() {
 
 function ambientTick() {
   const h = s.min / 60;
-  const pool = AMBIENT.filter((m, i) => !s.ambientUsed.has(i) && (!m.day || m.day === s.day + 1) && (m.from_ ?? 0) <= h && h < (m.to ?? 24));
+  const pool = AMBIENT.filter((m, i) => !s.ambientUsed.has(i) && (!m.day || m.day === s.day + 1) && (m.from_ ?? 0) <= h && h < (m.to ?? 24) && (!m.requires || s.flags.has(m.requires)));
+  // Reaktionen auf Entscheidungen kommen bevorzugt
+  const reactions = pool.filter(m => m.requires);
+  if (reactions.length && Math.random() < .6) { const m = reactions[0]; s.ambientUsed.add(AMBIENT.indexOf(m)); return pushMsg(m.chat, { from: m.from, text: m.text }); }
   if (!pool.length) return;
   const m = pick(pool);
   s.ambientUsed.add(AMBIENT.indexOf(m));
@@ -1968,6 +2175,62 @@ function runMic(baseSpeed) {
   $("stop").onclick = stop;
   mgKeys = e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); } };
   newZone(); timer = setInterval(loop, 16);
+}
+
+function playInfopoint() {
+  mgIntro("Infopoint", "Participants fragen dich nach dem Weg. Tippe schnell den richtigen Ort an. Jede Frage hat nur ein paar Sekunden, und Serien geben Extrapunkte.", runInfopoint);
+}
+function runInfopoint() {
+  mgKeys = null;
+  const PER_Q = 4000;
+  let score = 0, streak = 0, best = 0, ended = false, qTimer, qStart, locked = false, lastQ = -1;
+  showOverlay(`<div class="ov"><div class="mg"><div class="mg-title">INFOPOINT</div>
+    <div class="mg-hud"><span id="t">25.0 s</span><span id="sc">0 Punkte</span></div>
+    <div class="ask"><div class="face" id="face"></div><div class="q" id="q"></div><div class="qbar"><div id="qbar"></div></div></div>
+    <div class="streak" id="streak"></div><div class="places" id="places"></div></div></div>`);
+  countdown(25000, $("t"), finish);
+  function nextQ() {
+    if (ended) return;
+    locked = false;
+    let i; do { i = Math.floor(Math.random() * INFO_QUESTIONS.length); } while (i === lastQ);
+    lastQ = i;
+    const [q, answer] = INFO_QUESTIONS[i];
+    const wrong = shuffle(Object.keys(INFO_PLACES).filter(p => p !== answer)).slice(0, 2);
+    $("face").textContent = pick(["🧑", "👩", "👨", "🧑‍💼", "👩‍💼", "👨‍💼", "🧑‍🎓", "👩‍🎓"]);
+    $("q").textContent = `„${q}“`;
+    $("places").innerHTML = shuffle([answer, ...wrong]).map(p => `<button class="place" data-p="${p}" data-ok="${p === answer}"><span class="pi">${INFO_PLACES[p]}</span>${p}</button>`).join("");
+    $("places").querySelectorAll(".place").forEach(b => b.onclick = () => answerQ(b));
+    qStart = performance.now();
+    clearInterval(qTimer);
+    qTimer = setInterval(() => {
+      const left = Math.max(0, 1 - (performance.now() - qStart) / PER_Q);
+      const bar = $("qbar"); if (bar) bar.style.width = left * 100 + "%";
+      if (left <= 0 && !locked) { locked = true; streak = 0; sfx.bad(); $("streak").textContent = "⏰ Zu langsam!"; setTimeout(nextQ, 350); }
+    }, 50);
+  }
+  function answerQ(b) {
+    if (ended || locked) return;
+    locked = true;
+    if (b.dataset.ok === "true") {
+      streak++; best = Math.max(best, streak);
+      score += streak >= 3 ? 2 : 1;
+      b.classList.add("right"); sfx.good();
+      $("streak").textContent = streak >= 3 ? `🔥 ${streak}er-Serie · doppelte Punkte` : "";
+    } else {
+      streak = 0; b.classList.add("wrongp"); sfx.bad();
+      $("places").querySelector('[data-ok="true"]').classList.add("right");
+      $("streak").textContent = "";
+    }
+    $("sc").textContent = `${score} Punkte`;
+    setTimeout(nextQ, 350);
+  }
+  function finish() {
+    ended = true; clearInterval(qTimer);
+    if (score >= 12) mgResult("🧭", `${score} Punkte am Infopoint!`, `Beste Serie: ${best}. Niemand irrt mehr durchs Schloss.`, { participants: 15, erstis: 5 });
+    else if (score >= 7) mgResult("🗺️", `${score} Punkte`, `Beste Serie: ${best}. Die meisten haben ihren Weg gefunden.`, { participants: 5 });
+    else mgResult("😵‍💫", `Nur ${score} Punkte`, "Ein Speaker sucht SO108 immer noch in der Mensa.", { participants: -10, speaker: -5 });
+  }
+  nextQ();
 }
 
 // ---------------- Management ----------------

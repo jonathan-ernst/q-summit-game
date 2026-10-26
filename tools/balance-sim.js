@@ -43,6 +43,7 @@ window.simRun = function (policy, opts = {}) {
       badges: [{ participants: 15, erstis: 5 }, { participants: 5 }, { participants: -10, partner: -5 }],
       opening_mic: [{ speaker: 15 }, { speaker: 5 }, { speaker: -5, participants: -5 }],
       pitch_mic: [{ speaker: 15 }, { speaker: 5 }, { speaker: -5, participants: -5 }],
+      infopoint: [{ participants: 15, erstis: 5 }, { participants: 5 }, { participants: -10, speaker: -5 }],
     }[task.q.id][tier];
     mgResult("x", "Bot", "", res);
     endMg();
