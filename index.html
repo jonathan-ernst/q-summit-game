@@ -959,6 +959,7 @@ const MS_PER_MIN = 420;   // echte Millisekunden pro Spielminute
 const TASK_TIME = 110;    // Spielminuten, bis jemand ohne dich entscheidet
 const CHAT_TIME = 90;
 const MAX_WORLD_TASKS = 3;
+const LATE_TEAM_PENALTY = 3; // Extra-Abzug beim Team, wenn jemand ohne dich entscheiden musste
 
 const $ = id => document.getElementById(id);
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -1503,8 +1504,10 @@ function resolveTask(task, opt, late) {
       setTimeout(() => s && s.chat[task.chat] && pushMsg(task.chat, { from: task.who, text: happy ? pick(["👍", "Top, danke! 🙏", "Perfekt 💙", "Alles klar, mach ich!", "🔥🔥"]) : pick(["Okay… 😬", "Hm, okay 😅", "Wenn du meinst 🙃", "Na gut."]), silent: true }), 1400);
     }
   }
-  applyFx(opt.fx);
-  addLog(task.who, opt.label, opt.fx, late);
+  // Wer zu spät kommt, kriegt die schlechtere Option und zusätzlich Frust im Team
+  const fx = late ? { ...opt.fx, team: (opt.fx.team || 0) - LATE_TEAM_PENALTY } : opt.fx;
+  applyFx(fx);
+  addLog(task.who, opt.label, fx, late);
   if (late) { s.missed++; sfx.late(); setTimeout(() => s && infoToast(`⏰ Zu spät! ${task.who} hat ohne dich entschieden`), 50); }
   updateTaskBar();
   checkGameOver();
@@ -1999,11 +2002,6 @@ function shiftTick() {
   const fx = {};
   const add = (k, d) => { if (d) fx[k] = (fx[k] || 0) + d; };
   for (const st of STATIONS) add(st.stat, -2 * stationStatus(st).missing);
-  // Bonus für Werte, deren Stationen komplett besetzt sind
-  for (const key of new Set(STATIONS.map(st => st.stat))) {
-    const all = STATIONS.filter(st => st.stat === key);
-    if (all.some(st => st.demand(s.day, s.min) > 0) && all.every(st => stationStatus(st).missing === 0)) add(key, 1);
-  }
   add("erstis", pauseEffect());
   for (const k of Object.keys(fx)) if (!fx[k]) delete fx[k];
   if (!Object.keys(fx).length) return;
@@ -2200,7 +2198,7 @@ function renderDayIntro() {
     <div class="tagline">Q-Summit · ${d.title}</div>
     <h1 class="pix" style="font-size:20px;line-height:1.5">${s.day === 0 ? "Die Türen öffnen gleich." : "Guten Morgen, Chair."}</h1>
     <p class="muted">${d.sub}. Von ${fmt(d.start)} bis ${fmt(d.end)} Uhr.</p>
-    ${s.day > 0 ? `<p>${OVERNIGHT.text}</p><div class="fxlist" style="justify-content:flex-start">${fxChips(OVERNIGHT.fx)}</div>${summary()}` : ""}
+    ${s.day > 0 ? `<p>${OVERNIGHT.text} Der Ersti-Schichtplan ist wieder auf den Morgen eingestellt.</p><div class="fxlist" style="justify-content:flex-start">${fxChips(OVERNIGHT.fx)}</div>${summary()}` : ""}
     <button class="btn" id="go">${d.title} starten</button></div>`);
   $("go").onclick = beginDay;
 }
@@ -2213,6 +2211,7 @@ function beginDay() {
 function endDay() {
   s.day = 1; s.min = DAYS[1].start; s.nextSpawn = s.min + 20;
   s.nextShift = s.min + SHIFT_EVERY; s.nextHist = s.min;
+  s.alloc = { ...START_ALLOC };
   for (const [k, d] of Object.entries(OVERNIGHT.fx)) s.stats[k] = Math.min(100, s.stats[k] + d);
   s.tasks = []; s.stageLights = 0;
   for (const c of Object.values(s.chat)) for (const m of c.msgs) if (m.task) m.answered = true;
@@ -2231,7 +2230,7 @@ function renderGameOver(stat) {
     <h1 class="pix" style="font-size:18px;line-height:1.5">GAME OVER</h1>
     <p class="muted">${DAYS[s.day].title}, ${fmt(s.min)} Uhr</p>
     <p>${GAME_OVER[stat.key]}</p>${summary()}
-    <p class="muted">${s.decisions} Entscheidungen · ${s.missed} verpasst</p>
+    <p class="muted">${s.decisions} ${s.decisions === 1 ? "Entscheidung" : "Entscheidungen"} · ${s.missed} verpasst</p>
     <button class="btn" id="again">Nochmal versuchen</button>
     <button class="btn secondary" id="menu">Zum Start</button></div>`);
   $("again").onclick = startGame;
@@ -2255,7 +2254,7 @@ function renderEnd() {
     <h1 class="pix" style="font-size:18px;line-height:1.5">${title}</h1>
     <p>${text}</p>${summary()}
     <p><b>Score: ${score}</b> ${score > prevBest ? "· Neuer Rekord! 🎉" : `<span class="muted">· Rekord: ${Math.max(prevBest, score)}</span>`}</p>
-    <p class="muted">${s.decisions} Entscheidungen · ${s.missed} verpasst</p>
+    <p class="muted">${s.decisions} ${s.decisions === 1 ? "Entscheidung" : "Entscheidungen"} · ${s.missed} verpasst</p>
     <p class="tagline" style="text-align:center">Feel the Q Spirit 💙</p>
     <button class="btn" id="again">Nochmal spielen</button></div>`);
   $("again").onclick = startGame;
@@ -2393,7 +2392,9 @@ function render() {
   ctx.fillStyle = "#040c30"; ctx.fillRect(0, 0, cw, ch);
   if (!s) return;
   const p = s.player;
-  const target = s.camTarget || { x: p.x, y: p.y - 8 };
+  const target = { ...(s.camTarget || { x: p.x, y: p.y - 8 }) };
+  // Bei offenem Dialog das Ziel ins obere Drittel schieben, damit der Dialog nichts verdeckt
+  if (!$("dialog").hidden) target.y += ch * .2;
   const mw = W * TS, mh = H * TS;
   const k = s.mode === "title" ? 1 : .15;
   cam.x += (target.x - cw / 2 - cam.x) * k;
@@ -2422,7 +2423,7 @@ function render() {
   // Namensschilder
   ctx.font = "bold 6px sans-serif"; ctx.textAlign = "center";
   if (s.mode !== "title") for (const n of s.npcs) {
-    if (!n.name || n.kind === "static") continue;
+    if (!n.name || n.kind === "static" || s.party || s.mode === "scene") continue;
     const near = Math.hypot(n.x - p.x, n.y - p.y) < 44;
     if (!near && !n.task) continue;
     const w = Math.ceil(ctx.measureText(n.name).width) + 4;

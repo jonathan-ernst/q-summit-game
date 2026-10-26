@@ -43,3 +43,17 @@ Ein Event sieht so aus:
 - `from` / `to`: Uhrzeit (Stunden), in der das Event auftauchen kann
 - `fx`: Stat-Änderungen. Möglich sind `team`, `erstis`, `partner`, `speaker`, `participants` und `budget`
 - `sets: "flag"` an einer Option und `requires: "flag"` an einem anderen Event: Damit lassen sich Folge-Events bauen
+
+## Balance testen
+
+`tools/balance-sim.js` spielt die echte Engine im Zeitraffer mit Bots durch. Dafür das Spiel über einen lokalen Server öffnen (zum Beispiel `python3 -m http.server` im Projektordner), dann in der Browser-Konsole:
+
+```js
+await import("./tools/balance-sim.js");
+simMany("human", 50);                  // normaler Spieler
+simMany("human", 50, { skipRate: .2 }); // verpasst jede 5. Aufgabe
+simMany("good", 30); simMany("random", 30); simMany("lazy", 20);
+localStorage.removeItem("qs_best");     // Bot-Rekorde wieder löschen
+```
+
+Stand jetzt: Gut gespielt landet bei etwa 89 Punkten („Legendär“), normal bei etwa 80 („Starke Q“), wer jede fünfte Aufgabe verpasst bei etwa 64 und überlebt in 4 von 5 Fällen. Zufälliges Klicken überlebt fast nie.
