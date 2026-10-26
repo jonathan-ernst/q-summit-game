@@ -2,9 +2,11 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#071650">
 <title>Q-Summit: Feel the Q Spirit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #071650;
@@ -19,99 +21,173 @@
     --warn: #ffd166;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; height: 100%; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; }
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: #040c30; color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    display: flex; justify-content: center;
+    -webkit-user-select: none; user-select: none;
   }
-  #app {
-    width: 100%; max-width: 480px; min-height: 100%;
-    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
-    display: flex; flex-direction: column; gap: 14px;
-  }
-  h1 { font-size: 30px; margin: 0; line-height: 1.15; }
-  h2 { font-size: 22px; margin: 0; }
-  p { line-height: 1.5; margin: 0; }
+  button { font: inherit; color: inherit; }
+  .pix { font-family: "Press Start 2P", monospace; }
   .muted { color: var(--muted); }
-  .btn {
-    appearance: none; border: 0; border-radius: 14px; cursor: pointer;
-    background: #fff; color: var(--bg); font: inherit; font-weight: 700; font-size: 17px;
-    padding: 16px 18px; width: 100%;
-    transition: transform .08s;
-  }
-  .btn:active { transform: scale(.98); }
-  .btn.secondary { background: var(--card-2); color: var(--text); }
+  p { margin: 0; line-height: 1.5; }
+  h1, h2 { margin: 0; }
 
-  /* Startscreen */
-  .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; }
-  .qlogo {
-    width: 72px; height: 72px; border-radius: 22px; background: #fff; color: var(--bg);
-    display: grid; place-items: center; font-weight: 900; font-size: 44px;
-  }
-  .tagline { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  .rules { background: var(--card); border-radius: 16px; padding: 16px; display: grid; gap: 10px; }
-  .rules .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
-  .rules .grid2 div { display: flex; gap: 8px; align-items: center; }
+  #game { position: fixed; inset: 0; margin: 0 auto; max-width: 960px; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
 
-  /* HUD */
-  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
-  .stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .stat .icon { font-size: 20px; }
-  .stat .bar { width: 100%; height: 44px; background: var(--card); border-radius: 8px; overflow: hidden; position: relative; }
-  .stat .fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--fill); transition: height .45s ease, background .3s; }
+  /* ---------- HUD ---------- */
+  #hud { padding: max(8px, env(safe-area-inset-top)) 10px 8px; display: grid; gap: 7px; border-bottom: 3px solid #020a2c; z-index: 5; background: var(--bg); }
+  .hud-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  #clock { font-size: 11px; letter-spacing: 1px; white-space: nowrap; }
+  .iconbtn { appearance: none; border: 0; background: var(--card); border-radius: 8px; font-size: 15px; width: 34px; height: 28px; cursor: pointer; }
+  .stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+  .stat { display: flex; align-items: center; gap: 4px; background: var(--card); border-radius: 6px; padding: 4px; transition: box-shadow .3s; }
+  .stat .ic { font-size: 13px; line-height: 1; }
+  .stat .bar { flex: 1; height: 7px; background: #00000066; border-radius: 3px; overflow: hidden; }
+  .stat .fill { height: 100%; background: var(--fill); transition: width .45s; }
   .stat.low .fill { background: var(--bad); }
-  .stat .val { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .stat.flash-up .bar { box-shadow: 0 0 0 2px var(--good); }
-  .stat.flash-down .bar { box-shadow: 0 0 0 2px var(--bad); }
-  .clock { display: flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
-  .clock .time { font-weight: 700; font-size: 17px; white-space: nowrap; }
-  .clock .track { flex: 1; height: 6px; background: var(--card); border-radius: 3px; overflow: hidden; }
-  .clock .progress { height: 100%; background: var(--warn); transition: width .45s; }
+  .stat.low { animation: pulse 1s infinite; }
+  .stat.up { box-shadow: 0 0 0 2px var(--good); }
+  .stat.down { box-shadow: 0 0 0 2px var(--bad); }
+  @keyframes pulse { 50% { background: #5a1830; } }
 
-  /* Eventkarte */
-  .card {
-    background: var(--card); border-radius: 20px; padding: 20px;
-    display: flex; flex-direction: column; gap: 14px; flex: 1;
-    animation: cardIn .3s ease;
-  }
-  @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-  .who { display: flex; align-items: center; gap: 12px; }
-  .avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--card-2); display: grid; place-items: center; font-size: 28px; flex-shrink: 0; }
-  .who .name { font-weight: 700; }
-  .who .role { font-size: 14px; color: var(--muted); }
-  .card .text { font-size: 19px; line-height: 1.45; flex: 1; }
-  .options { display: grid; gap: 10px; }
-  .opt {
-    appearance: none; border: 0; cursor: pointer; text-align: left; font: inherit; color: var(--text);
-    background: var(--card-2); border-radius: 14px; padding: 14px 16px;
-    display: flex; justify-content: space-between; align-items: center; gap: 12px;
-    transition: transform .08s, background .15s;
-  }
-  .opt:hover { background: var(--card-3); }
-  .opt:active { transform: scale(.98); }
-  .opt .label { font-weight: 600; font-size: 16px; line-height: 1.35; }
-  .opt .hint { font-size: 13px; opacity: .75; white-space: nowrap; letter-spacing: 1px; }
+  /* ---------- Welt ---------- */
+  #view { position: relative; flex: 1; min-height: 0; }
+  #world { width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; cursor: pointer; }
 
-  /* Toasts */
-  .toasts { position: fixed; left: 50%; top: 170px; transform: translateX(-50%); display: flex; gap: 6px; pointer-events: none; z-index: 10; flex-wrap: wrap; justify-content: center; width: 90%; max-width: 440px; }
-  .toast { padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 14px; animation: toast 1.4s ease forwards; }
+  #bottombar { display: flex; gap: 8px; padding: 8px 10px max(8px, env(safe-area-inset-bottom)); border-top: 3px solid #020a2c; z-index: 5; background: var(--bg); }
+  #taskbtn { appearance: none; border: 0; flex: 1; min-width: 0; background: var(--card); border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer; }
+  #taskbtn .tb-count { font-family: "Press Start 2P", monospace; font-size: 10px; background: var(--warn); color: #3a2600; border-radius: 6px; padding: 5px 6px; flex-shrink: 0; }
+  #taskbtn .tb-count.zero { background: var(--card-3); color: var(--muted); }
+  #taskbtn .tb-text { font-size: 14px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #taskbtn .tb-text small { display: block; color: var(--muted); font-size: 12px; }
+  #phonebtn { appearance: none; border: 0; position: relative; width: 58px; background: #e9edef; border-radius: 12px; font-size: 26px; cursor: pointer; flex-shrink: 0; }
+  #phonebtn.ring { animation: ring .5s 2; }
+  @keyframes ring { 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+  #phonebadge { position: absolute; top: -6px; right: -6px; background: #25d366; color: #04210f; font-size: 12px; font-weight: 800; border-radius: 999px; padding: 2px 7px; border: 2px solid var(--bg); }
+  #phonebadge:empty { display: none; }
+
+  #talkbtn { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); appearance: none; border: 3px solid #fff; background: #0b1a5c; box-shadow: 0 0 0 3px #0b1a5c, 0 6px 0 #0007; border-radius: 6px; padding: 12px 16px; font-family: "Press Start 2P", monospace; font-size: 10px; cursor: pointer; z-index: 4; animation: bob 1s infinite; white-space: nowrap; }
+  @keyframes bob { 50% { transform: translate(-50%, -3px); } }
+
+  .toasts { position: absolute; left: 50%; top: 10px; transform: translateX(-50%); display: flex; gap: 6px; pointer-events: none; z-index: 7; flex-wrap: wrap; justify-content: center; width: 92%; }
+  .toast { padding: 6px 10px; border-radius: 999px; font-weight: 800; font-size: 14px; animation: toast 1.6s ease forwards; box-shadow: 0 3px 0 #0005; }
   .toast.up { background: var(--good); color: #062b1b; }
   .toast.down { background: var(--bad); color: #2b0609; }
-  @keyframes toast { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+  .toast.info { background: var(--warn); color: #3a2600; }
+  @keyframes toast { 0% { opacity: 0; transform: translateY(8px); } 12% { opacity: 1; transform: none; } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-12px); } }
 
-  /* Minigames */
+  /* ---------- Dialog ---------- */
+  #dialog { position: absolute; left: 8px; right: 8px; bottom: 10px; background: #0b1a5c; border: 3px solid #fff; box-shadow: 0 0 0 3px #0b1a5c, 0 8px 0 #0007; border-radius: 6px; padding: 12px; display: grid; gap: 10px; z-index: 6; max-width: 620px; margin: 0 auto; animation: dlgIn .18s ease; }
+  @keyframes dlgIn { from { transform: translateY(20px); opacity: 0; } }
+  .dlg-head { display: flex; gap: 10px; align-items: center; }
+  .dlg-portrait { width: 44px; height: 60px; background: var(--card-2); border-radius: 6px; flex-shrink: 0; display: grid; place-items: center; font-size: 28px; overflow: hidden; }
+  .dlg-portrait canvas { width: 40px; height: 60px; image-rendering: pixelated; }
+  .dlg-name { font-family: "Press Start 2P", monospace; font-size: 10px; line-height: 1.4; }
+  .dlg-role { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .dlg-timer { margin-left: auto; font-family: "Press Start 2P", monospace; font-size: 9px; color: var(--warn); white-space: nowrap; }
+  .dlg-text { font-family: "VT323", monospace; font-size: 23px; line-height: 1.15; min-height: 52px; cursor: pointer; }
+  .dlg-opts { display: grid; gap: 8px; }
+  .dlg-opt { appearance: none; border: 2px solid #ffffff55; background: var(--card-2); border-radius: 8px; padding: 11px 12px; display: flex; justify-content: space-between; gap: 10px; align-items: center; text-align: left; cursor: pointer; font-weight: 600; font-size: 15px; line-height: 1.3; transition: transform .08s, border-color .15s; }
+  .dlg-opt:hover { border-color: #fff; }
+  .dlg-opt:active { transform: scale(.98); }
+  .dlg-opt .k { font-family: "Press Start 2P", monospace; font-size: 9px; color: var(--warn); margin-right: 8px; }
+  .dlg-opt .hint { font-size: 12px; opacity: .8; white-space: nowrap; letter-spacing: 1px; }
+  .dlg-later { appearance: none; background: none; border: 0; color: var(--muted); font-size: 13px; justify-self: end; cursor: pointer; padding: 2px 4px; }
+
+  /* ---------- Handy ---------- */
+  #phone { position: absolute; inset: 0; z-index: 8; background: #0b141a; display: flex; flex-direction: column; color: #e9edef; animation: slideup .22s ease; }
+  @keyframes slideup { from { transform: translateY(40px); opacity: 0; } }
+  .ph-status { display: flex; justify-content: space-between; padding: max(8px, env(safe-area-inset-top)) 16px 6px; font-size: 13px; font-weight: 700; background: #111b21; }
+  .ph-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #202c33; min-height: 58px; }
+  .ph-head .ph-title { font-weight: 700; font-size: 18px; flex: 1; min-width: 0; }
+  .ph-head .ph-sub { font-size: 12px; color: #8696a0; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ph-back, .ph-close { appearance: none; border: 0; background: none; color: #e9edef; font-size: 24px; cursor: pointer; padding: 0 6px; }
+  .ph-list { flex: 1; overflow-y: auto; }
+  .ph-row { display: flex; gap: 12px; padding: 11px 14px; align-items: center; border-bottom: 1px solid #1f2a30; cursor: pointer; }
+  .ph-row:active { background: #202c33; }
+  .ph-av { width: 46px; height: 46px; border-radius: 50%; background: #2a3942; display: grid; place-items: center; font-size: 22px; flex-shrink: 0; }
+  .ph-main { flex: 1; min-width: 0; }
+  .ph-name { font-weight: 600; display: flex; justify-content: space-between; gap: 8px; font-size: 16px; }
+  .ph-time { font-size: 12px; color: #8696a0; font-weight: 400; flex-shrink: 0; }
+  .ph-time.new { color: #25d366; }
+  .ph-prev { font-size: 14px; color: #8696a0; display: flex; justify-content: space-between; gap: 8px; margin-top: 3px; }
+  .ph-prev span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ph-unread { background: #25d366; color: #0b141a; border-radius: 999px; font-size: 12px; font-weight: 700; padding: 1px 7px; flex-shrink: 0; }
+  .ph-msgs { flex: 1; overflow-y: auto; padding: 10px 12px; display: flex; flex-direction: column; gap: 5px;
+    background-color: #0b141a; background-image: radial-gradient(#ffffff08 1px, transparent 1px); background-size: 18px 18px; }
+  .ph-day { align-self: center; background: #182229; color: #8696a0; font-size: 12px; padding: 4px 10px; border-radius: 8px; margin: 6px 0; }
+  .bub { max-width: 82%; padding: 6px 9px 4px; border-radius: 9px; font-size: 15px; line-height: 1.35; animation: bubIn .2s ease; }
+  @keyframes bubIn { from { transform: scale(.92); opacity: 0; } }
+  .bub.in { background: #202c33; align-self: flex-start; border-top-left-radius: 2px; }
+  .bub.out { background: #005c4b; align-self: flex-end; border-top-right-radius: 2px; }
+  .bub .from { font-size: 13px; font-weight: 700; margin-bottom: 1px; }
+  .bub .t { font-size: 11px; color: #ffffff80; text-align: right; margin-top: 1px; }
+  .bub.urgent { box-shadow: 0 0 0 2px var(--warn); }
+  .bub.big { font-size: 40px; background: none; padding: 0; }
+  .ph-replies { padding: 8px 8px max(8px, env(safe-area-inset-bottom)); display: grid; gap: 6px; background: #202c33; }
+  .ph-replies .lbl { font-size: 12px; color: #8696a0; padding: 0 4px; display: flex; justify-content: space-between; }
+  .ph-reply { appearance: none; border: 0; background: #2a3942; border-radius: 18px; padding: 10px 14px; text-align: left; display: flex; justify-content: space-between; gap: 10px; cursor: pointer; font-size: 15px; }
+  .ph-reply:active { background: #005c4b; }
+  .ph-reply .hint { opacity: .75; font-size: 12px; letter-spacing: 1px; white-space: nowrap; }
+  .ph-input { display: flex; gap: 8px; padding: 8px 10px max(8px, env(safe-area-inset-bottom)); background: #202c33; align-items: center; }
+  .ph-input div { flex: 1; background: #2a3942; border-radius: 20px; padding: 10px 14px; color: #8696a0; font-size: 15px; }
+
+  #notif { position: absolute; top: 8px; left: 8px; right: 8px; z-index: 9; background: #1f2c34f2; border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; transform: translateY(-140%); transition: transform .3s ease; cursor: pointer; color: #e9edef; box-shadow: 0 6px 20px #0008; max-width: 560px; margin: 0 auto; }
+  #notif.show { transform: none; }
+  #notif .n-av { width: 36px; height: 36px; border-radius: 50%; background: #2a3942; display: grid; place-items: center; font-size: 18px; flex-shrink: 0; }
+  #notif .n-title { font-size: 13px; font-weight: 700; }
+  #notif .n-text { font-size: 14px; color: #c7d0d6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #notif .n-body { min-width: 0; flex: 1; }
+
+  /* ---------- Aufgabenliste ---------- */
+  #sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; background: #0b1a5c; border-top: 3px solid #fff; border-radius: 14px 14px 0 0; padding: 14px; max-height: 70%; overflow-y: auto; display: grid; gap: 10px; animation: slideup .2s ease; }
+  .sh-head { display: flex; justify-content: space-between; align-items: center; }
+  .sh-row { background: var(--card); border-radius: 10px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; }
+  .sh-row .sh-av { font-size: 22px; }
+  .sh-row .sh-main { flex: 1; min-width: 0; }
+  .sh-row .sh-main b { display: block; font-size: 14px; }
+  .sh-row .sh-main small { color: var(--muted); font-size: 12px; }
+  .sh-row .sh-time { font-family: "Press Start 2P", monospace; font-size: 9px; color: var(--warn); }
+  .sh-row .sh-time.crit { color: var(--bad); }
+  .sh-go { appearance: none; border: 0; background: #fff; color: var(--bg); font-weight: 800; border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 13px; }
+
+  /* ---------- Overlays ---------- */
+  #overlay { position: absolute; inset: 0; z-index: 10; background: rgba(7, 22, 80, .94); overflow-y: auto; display: flex; justify-content: center; }
+  #overlay.title { background: linear-gradient(180deg, rgba(7,22,80,.1) 0%, rgba(7,22,80,.5) 30%, rgba(7,22,80,.97) 58%); }
+  .ov { width: 100%; max-width: 480px; padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 14px; min-height: 100%; }
+  .ov.center { justify-content: center; }
+  .ov.bottom { justify-content: flex-end; }
+  .btn { appearance: none; border: 0; border-radius: 12px; cursor: pointer; background: #fff; color: var(--bg); font-weight: 800; font-size: 17px; padding: 16px 18px; width: 100%; box-shadow: 0 5px 0 #8ea3e6; transition: transform .08s; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #8ea3e6; }
+  .btn.secondary { background: var(--card-2); color: #fff; box-shadow: 0 5px 0 #050f3a; }
+  .title-logo { font-family: "Press Start 2P", monospace; font-size: 32px; line-height: 1.2; text-shadow: 4px 4px 0 #1f4fd8, 8px 8px 0 #020a2c; }
+  .tagline { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .panel { background: var(--card); border-radius: 14px; padding: 14px; display: grid; gap: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; font-size: 14px; }
+  .grid2 div { display: flex; gap: 8px; align-items: center; }
+  .controls { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .summary { background: var(--card); border-radius: 14px; padding: 14px; display: grid; gap: 9px; }
+  .summary .row { display: grid; grid-template-columns: 24px 1fr 34px; align-items: center; gap: 10px; }
+  .summary .track { height: 8px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
+  .summary .track div { height: 100%; background: var(--fill); }
+  .summary .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: 14px; }
+  .fxlist { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .fx { padding: 6px 10px; border-radius: 999px; font-weight: 800; font-size: 14px; }
+  .fx.up { background: rgba(62, 207, 142, .2); color: var(--good); }
+  .fx.down { background: rgba(255, 93, 108, .2); color: var(--bad); }
+
+  /* ---------- Minigames ---------- */
   .mg { display: flex; flex-direction: column; gap: 14px; flex: 1; }
-  .mg-hud { display: flex; justify-content: space-between; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 18px; }
+  .mg-title { font-family: "Press Start 2P", monospace; font-size: 12px; text-align: center; color: var(--warn); }
+  .mg-hud { display: flex; justify-content: space-between; font-weight: 800; font-variant-numeric: tabular-nums; font-size: 18px; }
+  .result { background: var(--card); border-radius: 18px; padding: 20px; display: grid; gap: 12px; text-align: center; }
+  .result .big { font-size: 48px; }
+  .result h2 { font-size: 20px; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .cell {
-    appearance: none; border: 0; border-radius: 16px; background: var(--card);
-    cursor: pointer; transition: background .15s, transform .08s; color: inherit; font: inherit;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-    aspect-ratio: 1; padding: 6px;
-  }
-  .cell .e { font-size: 34px; }
+  .cell { appearance: none; border: 0; border-radius: 14px; background: var(--card); cursor: pointer; transition: background .15s, transform .08s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; aspect-ratio: 1; padding: 6px; }
+  .cell .e { font-size: 32px; }
   .cell .l { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.2; }
   .cell:active { transform: scale(.95); }
   .cell.hit { background: var(--good); }
@@ -124,53 +200,51 @@
   .zone { position: absolute; top: 0; bottom: 0; background: rgba(62, 207, 142, .35); border-left: 2px solid var(--good); border-right: 2px solid var(--good); }
   .marker { position: absolute; top: 4px; bottom: 4px; width: 6px; margin-left: -3px; background: #fff; border-radius: 3px; }
   .rounds { display: flex; gap: 8px; justify-content: center; font-size: 28px; }
-  .result { background: var(--card); border-radius: 20px; padding: 20px; display: grid; gap: 12px; text-align: center; }
-  .result .big { font-size: 48px; }
-  .fxlist { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-  .fx { padding: 6px 10px; border-radius: 999px; font-weight: 700; font-size: 14px; }
-  .fx.up { background: rgba(62, 207, 142, .2); color: var(--good); }
-  .fx.down { background: rgba(255, 93, 108, .2); color: var(--bad); }
-
-  /* Badge-Ausgabe */
-  .guest { background: var(--card); border-radius: 20px; padding: 18px; text-align: center; display: grid; gap: 6px; }
-  .guest .face { font-size: 44px; }
-  .guest .gname { font-size: 22px; font-weight: 700; }
+  .guest { background: var(--card); border-radius: 18px; padding: 16px; text-align: center; display: grid; gap: 6px; }
+  .guest .face { font-size: 42px; }
+  .guest .gname { font-size: 22px; font-weight: 800; }
   .guest .grole { font-size: 15px; color: var(--muted); }
   .badges { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .badge {
-    appearance: none; border: 0; cursor: pointer; font: inherit; color: #0b1640;
-    background: #fff; border-radius: 12px; overflow: hidden; padding: 0; text-align: center;
-    transition: transform .08s;
-  }
+  .badge { appearance: none; border: 0; cursor: pointer; color: #0b1640; background: #fff; border-radius: 12px; overflow: hidden; padding: 0; text-align: center; transition: transform .08s; }
   .badge:active { transform: scale(.96); }
   .badge .stripe { color: #fff; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 6px 4px; }
   .badge .bq { font-size: 11px; color: #5a6aa0; padding-top: 8px; font-weight: 700; }
-  .badge .bname { font-weight: 700; font-size: 16px; padding: 2px 6px 12px; }
+  .badge .bname { font-weight: 800; font-size: 16px; padding: 2px 6px 12px; }
   .badge.wrong { animation: shake .3s; outline: 3px solid var(--bad); }
   @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-
-  /* Tageswechsel / Ende */
-  .end { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
-  .summary { background: var(--card); border-radius: 16px; padding: 16px; display: grid; gap: 10px; }
-  .summary .row { display: grid; grid-template-columns: 28px 1fr 40px; align-items: center; gap: 10px; }
-  .summary .track { height: 8px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
-  .summary .track div { height: 100%; background: var(--fill); }
-  .summary .num { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
 </style>
 </head>
 <body>
-<div id="app"></div>
-<div class="toasts" id="toasts"></div>
+<div id="game">
+  <div id="hud">
+    <div class="hud-top">
+      <div id="clock" class="pix">Q-SUMMIT</div>
+      <button class="iconbtn" id="mute" title="Ton an/aus">🔊</button>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+  <div id="view">
+    <canvas id="world"></canvas>
+    <div class="toasts" id="toasts"></div>
+    <button id="talkbtn" hidden>Reden</button>
+    <div id="dialog" hidden></div>
+    <div id="sheet" hidden></div>
+  </div>
+  <div id="bottombar">
+    <button id="taskbtn"><span class="tb-count zero" id="taskcount">0</span><span class="tb-text" id="tasktext">Keine offenen Aufgaben</span></button>
+    <button id="phonebtn" title="Handy">📱<span id="phonebadge"></span></button>
+  </div>
+  <div id="phone" hidden></div>
+  <div id="notif"></div>
+  <div id="overlay" hidden></div>
+</div>
 
 <script>
+"use strict";
 // =====================================================================
-//  INHALTE – hier können neue Events ergänzt werden, ohne die Engine
-//  anzufassen. Jedes Event hat zwei Optionen (a/b) mit Stat-Effekten.
-//
-//  day       1 oder 2; weglassen = an beiden Tagen möglich
-//  from/to   Zeitfenster in Stunden, in dem das Event auftauchen kann
-//  sets      setzt ein Flag, wenn diese Option gewählt wird
-//  requires  Event erscheint nur, wenn das Flag vorher gesetzt wurde
+//  INHALTE
+//  Neue Events, Chat-Nachrichten und Szenen können hier ergänzt werden,
+//  ohne die Engine weiter unten anzufassen.
 // =====================================================================
 
 const STATS = [
@@ -187,7 +261,6 @@ const DAYS = [
   { start: 8 * 60,      end: 20 * 60, title: "Tag 2", sub: "Qube, Pitchbattle, Closing Speech & Afterparty" },
 ];
 
-// Was über Nacht passiert, bevor Tag 2 startet
 const OVERNIGHT = {
   text: "Ein paar Stunden Schlaf fürs Team, und über Nacht sind zwei Partnerzahlungen eingegangen.",
   fx: { team: 15, erstis: 10, budget: 15 },
@@ -202,317 +275,543 @@ const GAME_OVER = {
   budget:       "Das Konto ist leer. Finance hat die Karte gesperrt und die Afterparty ist abgesagt.",
 };
 
+// Orte auf der Karte (Kachel-Koordinaten)
+const LOCS = {
+  eingang:       { x: 22, y: 31, label: "Haupteingang" },
+  checkin:       { x: 18, y: 23, label: "Check-in" },
+  treppe:        { x: 18, y: 15, label: "Treppenabsatz" },
+  hall:          { x: 25, y: 20, label: "Foyer" },
+  so108:         { x: 8,  y: 18, label: "SO108" },
+  buehne:        { x: 10, y: 14, label: "Mainstage SO108" },
+  hays:          { x: 32, y: 17, label: "Hays Forum" },
+  qube:          { x: 30, y: 23, label: "Qube" },
+  lounge:        { x: 39, y: 21, label: "Speaker-Lounge" },
+  hackathon:     { x: 39, y: 24, label: "Hackathon-Raum" },
+  innovillage:   { x: 12, y: 5,  label: "Innovillage" },
+  food:          { x: 34, y: 5,  label: "Essenszelte" },
+  entertainment: { x: 33, y: 10, label: "Entertainment-Ecke" },
+  abend:         { x: 22, y: 4,  label: "Themenabend-Bühne" },
+};
+
+// Das Team aus dem Organigramm. Du selbst spielst den Chair.
+const TEAM = {
+  Amelie:    { role: "Head of Operations",          home: "hall",          hair: "#6b4226", long: true, glasses: true },
+  Anna:      { role: "Operations · Participants",   home: "checkin",       hair: "#2b1d14", long: true },
+  Luca:      { role: "Operations · Concept",        home: "so108",         hair: "#7a5230" },
+  Otto:      { role: "Operations · Concept",        home: "so108",         hair: "#a57442" },
+  Sophie:    { role: "Operations · OC",             home: "hays",          hair: "#5a3a22", long: true },
+  Madeleine: { role: "Operations · OC",             home: "treppe",        hair: "#e3c27a", long: true },
+  Lennart:   { role: "Head of Partner",             home: "innovillage",   hair: "#d9b35f", glasses: true },
+  Nick:      { role: "Partner · Startup & VC",      home: "qube",          hair: "#5a3a22" },
+  Ciaran:    { role: "Partner · Startup & VC",      home: "qube",          hair: "#d8b46a" },
+  Lenny:     { role: "Partner · Corporate",         home: "innovillage",   hair: "#6b4a2a" },
+  Jaan:      { role: "Partner · Corporate",         home: "innovillage",   hair: "#8a6038" },
+  Valentin:  { role: "Partner · Speaker",           home: "lounge",        hair: "#2b1d14" },
+  Annika:    { role: "Partner · Speaker",           home: "lounge",        hair: "#2b1d14", long: true },
+  Lea:       { role: "Head of Finance",             home: "hays",          hair: "#3a2618", long: true },
+  Kevin:     { role: "Finance",                     home: "hays",          hair: "#2b1d14", glasses: true },
+  Johannes:  { role: "Finance",                     home: "hays",          hair: "#2b1d14" },
+  Jonathan:  { role: "Head of PR",                  home: "hall",          hair: "#6b4226" },
+  Adrian:    { role: "PR · Growth & Partnerships",  home: "innovillage",   hair: "#3a2618" },
+  Andreas:   { role: "PR · Growth & Partnerships",  home: "innovillage",   hair: "#8a6038" },
+  Jordis:    { role: "PR · Marketing",              home: "innovillage",   hair: "#5a3a22", long: true },
+  Emi:       { role: "PR · Marketing",              home: "eingang",       hair: "#e3c27a", long: true },
+  Franz:     { role: "PR · Marketing",              home: "entertainment", hair: "#7a5230" },
+  Vanessa:   { role: "Chair · HC",                  home: "hall",          hair: "#e8cf8a", long: true },
+  Julius:    { role: "Chair · HC",                  home: "hall",          hair: "#6b4226" },
+  Laura:     { role: "Chair · Hackathon",           home: "hackathon",     hair: "#e3c27a", long: true },
+  Ben:       { role: "Chair · Hackathon",           home: "hackathon",     hair: "#e8d9a0" },
+};
+const PLAYER_LOOK = { hair: "#6b4226", skin: "#f1c7a5", shirt: "#1f4fd8", team: true, chair: true };
+
+// Gruppenchats auf dem Handy
+const CHATS = [
+  { id: "board",     name: "Q26 Board 💙",     av: "💙", sub: "Jonathan, Lea, Amelie, Lennart, Vanessa, Julius, Du" },
+  { id: "team",      name: "Q26 Team",         av: "🔵", sub: "112 Mitglieder" },
+  { id: "erstis",    name: "OC Erstis 🐣",      av: "🐣", sub: "Sophie, Madeleine, 38 Erstis" },
+  { id: "partner",   name: "Partner Division", av: "💼", sub: "Lennart, Nick, Ciaran, Lenny, Jaan, Valentin, Annika, Du" },
+  { id: "finance",   name: "Finance",          av: "💶", sub: "Lea, Kevin, Johannes, Du" },
+  { id: "marketing", name: "Marketing 📸",      av: "📸", sub: "Jordis, Emi, Franz, Adrian, Andreas, Du" },
+  { id: "mama",      name: "Mama",             av: "👩", sub: "zuletzt online heute" },
+];
+
+// Events. loc = Ort in der Welt (jemand wartet dort mit ❗), chat = kommt als Nachricht aufs Handy.
+//  day       1 oder 2; weglassen = an beiden Tagen möglich
+//  from/to   Zeitfenster in Stunden
+//  sets      setzt ein Flag, wenn diese Option gewählt wird
+//  requires  Event erscheint nur, wenn das Flag vorher gesetzt wurde
 const EVENTS = [
-  // ===================== TAG 1: Morgen =====================
-  { id: "teppich", day: 1, from: 7, to: 9, avatar: "🟦", who: "Amelie", role: "Head of Operations",
-    text: "Der blaue Teppich am Haupteingang ist zu kurz, die letzten drei Treppenstufen sind nackt.",
+  // ===================== TAG 1 =====================
+  { id: "teppich", day: 1, from: 7, to: 9, loc: "eingang", who: "Amelie",
+    text: "Der blaue Teppich ist zu kurz, die letzten drei Treppenstufen sind nackt!",
     a: { label: "Mit Gaffa und einem Roll-Up kaschieren.", fx: { team: -5, participants: -5 } },
     b: { label: "Neues Stück besorgen, der Teppich ist Tradition.", fx: { budget: -10, participants: 5 } } },
 
-  { id: "ballons", day: 1, from: 7, to: 9, avatar: "🎈", who: "Sophie", role: "Operations · OC",
+  { id: "ballons", day: 1, from: 7, to: 9, loc: "eingang", who: "Sophie",
     text: "Die Ballonsäulen am Eingang sind über Nacht halb in sich zusammengefallen.",
     a: { label: "Erstis pusten 200 neue auf.", fx: { erstis: -10, participants: 5 } },
     b: { label: "Banner und Roll-Ups reichen auch.", fx: { participants: -5, budget: 5 } } },
 
-  { id: "schild", day: 1, from: 7, to: 11, avatar: "🪧", who: "Luca", role: "Operations · Concept",
-    text: "Auf einem selbstgemalten Schild steht „Cube“ statt „Qube“. Der Pfeil zeigt außerdem in die Mensa.",
+  { id: "schild", day: 1, from: 7, to: 11, loc: "hall", who: "Luca",
+    text: "Auf einem selbstgemalten Schild steht „Cube“ statt „Qube“. Und der Pfeil zeigt in die Mensa.",
     a: { label: "Neu malen, die Schilder sind unser Ding.", fx: { team: -5, participants: 5, erstis: 5 } },
     b: { label: "Lassen, das ist Charme.", fx: { participants: -10 } } },
 
-  { id: "checkin", day: 1, from: 8, to: 10, avatar: "🧾", who: "Anna", role: "Operations · Participants",
-    text: "Die Schlange am Check-in links vom Haupteingang reicht schon bis vors Schloss.",
+  { id: "checkin", day: 1, from: 8, to: 10, loc: "checkin", who: "Anna",
+    text: "Die Schlange am Check-in reicht schon bis vors Schloss!",
     a: { label: "Erstis von der Garderobe an einen zweiten Tisch.", fx: { participants: 10, erstis: -5, team: -5 } },
     b: { label: "Durchhalten, das geht gleich schneller.", fx: { participants: -10 } } },
 
-  { id: "goodies", day: 1, from: 8, to: 11, avatar: "🛍️", who: "Madeleine", role: "Operations · OC",
+  { id: "goodies", day: 1, from: 8, to: 11, loc: "treppe", who: "Madeleine",
     text: "Oben am Treppenabsatz gehen die Goodie Bags aus. Es fehlen noch etwa 80 Stück.",
     a: { label: "Partner-Merch zu Mini-Bags umpacken.", fx: { partner: -5, participants: 5, erstis: -5 } },
     b: { label: "Wer zu spät kommt, bekommt keine.", fx: { participants: -10 } } },
 
-  { id: "mandelmus", day: 1, from: 8, to: 11, avatar: "🥣", who: "Sophie", role: "Operations · OC",
-    text: "Das weiße Mandelmus an der Koro-Müslibar im Hays Forum ist nach 20 Minuten leer. Leute stehen enttäuscht davor.",
+  { id: "mandelmus", day: 1, from: 8, to: 11, loc: "hays", who: "Sophie",
+    text: "Das weiße Mandelmus an der Koro-Müslibar ist nach 20 Minuten leer. Die Leute stehen enttäuscht davor.",
     a: { label: "Koro anrufen, ob sie Nachschub haben.", fx: { partner: 5, participants: 5, team: -5 } },
     b: { label: "Erdnussmus tut's auch.", fx: { participants: -5, partner: -5 } } },
 
-  { id: "taxi", day: 1, from: 7, to: 10, avatar: "🚕", who: "Annika", role: "Partner · Speaker",
-    text: "Der Opening-Speaker steht am Mannheimer Hauptbahnhof und findet kein Taxi.",
+  { id: "taxi", day: 1, from: 7, to: 10, chat: "partner", who: "Annika",
+    text: "Hilfe 😬 Der Opening-Speaker steht am Hbf und findet kein Taxi. Was machen wir?",
     a: { label: "Jemand aus dem Team holt ihn mit dem Auto.", fx: { speaker: 10, team: -5 } },
     b: { label: "Sind doch nur 10 Minuten zu Fuß.", fx: { speaker: -10 } } },
 
-  { id: "opening", day: 1, from: 8, to: 10, avatar: "🎙️", who: "Jonathan", role: "Head of PR",
-    text: "Opening Speech in 15 Minuten, aber SO108 ist erst halb voll. Starten wir pünktlich?",
-    a: { label: "10 Minuten warten, bis der Saal voll ist.", fx: { participants: 5, speaker: -5, partner: -5 } },
-    b: { label: "Pünktlich, Q-Time ist Q-Time.", fx: { speaker: 5, participants: -10 } } },
-
-  { id: "kabel", day: 1, from: 8, to: 12, avatar: "🔌", who: "Otto", role: "Operations · Concept",
-    text: "Hinter der Mainstage in SO108 liegt ein riesiger Kabelsalat. Ein Speaker wäre fast gestolpert.",
+  { id: "kabel", day: 1, from: 8, to: 12, loc: "buehne", who: "Otto",
+    text: "Hinter der Mainstage liegt ein riesiger Kabelsalat. Ein Speaker wäre gerade fast gestolpert.",
     a: { label: "Alles sauber neu verlegen.", fx: { team: -10, speaker: 10 } },
     b: { label: "Gaffa drüber und hoffen.", fx: { speaker: -5 }, sets: "kabel_risiko" } },
 
-  { id: "kabel_folge", requires: "kabel_risiko", avatar: "💥", who: "Otto", role: "Operations · Concept",
-    text: "Jemand ist über das Gaffa-Kabel gestolpert, und das Licht auf der Mainstage ist aus.",
+  { id: "kabel_folge", requires: "kabel_risiko", loc: "buehne", who: "Otto",
+    text: "Jemand ist übers Gaffa-Kabel gestolpert, und das Licht auf der Mainstage ist aus.",
     a: { label: "5 Minuten Pause, wir fixen das.", fx: { participants: -10, team: -5 } },
     b: { label: "Speaker macht im Handylicht weiter.", fx: { speaker: -10, participants: 5 } } },
 
-  { id: "content", day: 1, from: 9, to: 14, avatar: "📱", who: "Jordis", role: "PR · Marketing",
-    text: "Wir haben 3 Stunden Material gefilmt. Was soll die erste große Story auf dem Q-Account werden?",
+  { id: "content", day: 1, from: 9, to: 14, chat: "marketing", who: "Jordis",
+    text: "Wir haben 3 Stunden Material 🎥 Was wird die erste große Story auf dem Q-Account?",
     a: { label: "Die Partner-Booths im Innovillage.", fx: { partner: 10, erstis: -5 } },
     b: { label: "Behind the Scenes mit Team und Erstis.", fx: { team: 5, erstis: 10, partner: -10 } } },
 
-  { id: "creator", from: 9, to: 15, avatar: "🤳", who: "Emi", role: "PR · Marketing",
-    text: "Ein bekannter Creator steht am Check-in, ist aber nicht angemeldet und will rein.",
+  { id: "creator", from: 9, to: 15, loc: "eingang", who: "Emi",
+    text: "Ein bekannter Creator steht am Eingang, ist aber nicht angemeldet und will rein.",
     a: { label: "Reinlassen, Reichweite!", fx: { partner: 5, participants: -5 } },
     b: { label: "Liste ist Liste.", fx: { participants: 5, partner: -5 } } },
 
-  { id: "initiative", day: 1, from: 9, to: 13, avatar: "🎓", who: "Adrian", role: "PR · Growth & Partnerships",
-    text: "Eine Studierendeninitiative aus München fragt spontan, ob sie einen kleinen Stand im Innovillage aufbauen darf.",
+  { id: "initiative", day: 1, from: 9, to: 13, loc: "innovillage", who: "Adrian",
+    text: "Eine Studierendeninitiative aus München fragt, ob sie spontan einen kleinen Stand aufbauen darf.",
     a: { label: "Klar, wir machen Platz.", fx: { partner: -5, participants: 5, team: -5 } },
     b: { label: "Gern nächstes Jahr, offiziell.", fx: { participants: -5 } } },
 
-  { id: "rotation", from: 10, to: 15, avatar: "🔄", who: "Jaan", role: "Partner · Corporate",
+  { id: "rotation", from: 10, to: 15, loc: "innovillage", who: "Jaan",
     text: "Ein Corporate will seinen Booth zur Mittagsrotation nicht für das nächste Startup räumen.",
     a: { label: "Rotation ist Rotation.", fx: { partner: -10, participants: 5 } },
     b: { label: "Bleiben lassen, das Startup bekommt einen Stehtisch.", fx: { partner: 5, participants: -5, team: -5 } } },
 
-  { id: "workshop_voll", from: 9, to: 16, avatar: "🧑‍🏫", who: "Luca", role: "Operations · Concept",
+  { id: "workshop_voll", from: 9, to: 16, loc: "hays", who: "Luca",
     text: "Zum Partner-Workshop kommen 60 Leute, der Raum hat aber nur 30 Plätze.",
     a: { label: "Zweite Session am Nachmittag ansetzen.", fx: { team: -5, participants: 10, partner: 5, budget: -5 } },
     b: { label: "Tür zu bei 30.", fx: { participants: -10, partner: 5 } } },
 
-  { id: "campfire", from: 10, to: 17, avatar: "🏕️", who: "Otto", role: "Operations · Concept",
+  { id: "campfire", from: 10, to: 17, loc: "innovillage", who: "Otto",
     text: "In der Campfire Session redet nur der Partner, und alle Participants schauen aufs Handy.",
     a: { label: "Moderator soll die Runde öffnen.", fx: { partner: -5, participants: 10 } },
     b: { label: "Laufen lassen, ist sein Slot.", fx: { partner: 5, participants: -10 } } },
 
-  { id: "fireside", from: 10, to: 17, avatar: "🔥", who: "Valentin", role: "Partner · Speaker",
+  { id: "fireside", from: 10, to: 17, loc: "lounge", who: "Valentin",
     text: "Die Fireside-Chat-Speakerin will die Fragen vorher nicht sehen. Unser Moderator ist leicht panisch.",
     a: { label: "Wir vertrauen ihr und dem Moderator.", fx: { speaker: 10, team: -5 } },
     b: { label: "Fragen trotzdem schicken.", fx: { speaker: -10, team: 5 } } },
 
-  { id: "pizza", day: 1, from: 11, to: 14, avatar: "🍕", who: "Madeleine", role: "Operations · OC",
+  { id: "pizza", day: 1, from: 11, to: 14, loc: "food", who: "Madeleine",
     text: "Happy Slice meldet: Ein Ofen ist ausgefallen. Die Hälfte der Pizzen kommt 40 Minuten später.",
     a: { label: "Lunch-Slots nach Formaten staffeln.", fx: { team: -10, participants: 5 } },
     b: { label: "Koro-Riegel als Überbrückung verteilen.", fx: { partner: -5, participants: -5 } } },
 
-  { id: "glaeser", day: 1, from: 10, to: 16, avatar: "🍸", who: "Kevin", role: "Finance",
-    text: "Für den Themenabend wurden aus Versehen 200 Martini-Gläser doppelt bestellt.",
+  { id: "glaeser", day: 1, from: 10, to: 16, chat: "finance", who: "Kevin",
+    text: "Kurze Frage 🙃 Für den Themenabend wurden 200 Martini-Gläser doppelt bestellt.",
     a: { label: "Zurückschicken, auch mit Gebühr.", fx: { budget: -5, team: -5 } },
     b: { label: "Behalten, wer weiß wofür.", fx: { budget: -10, team: 5 } } },
 
-  { id: "rechnung", from: 9, to: 16, avatar: "🧾", who: "Lea", role: "Head of Finance",
-    text: "Ein Partner hat seine Rechnung noch nicht bezahlt, will aber heute einen zusätzlichen Workshop-Slot.",
+  { id: "rechnung", from: 9, to: 16, chat: "finance", who: "Lea",
+    text: "Ein Partner hat seine Rechnung noch nicht bezahlt, will aber heute einen extra Workshop-Slot. Deine Entscheidung.",
     a: { label: "Slot erst nach Zahlung.", fx: { budget: 10, partner: -10 } },
     b: { label: "Slot geben, Rechnung klären wir später.", fx: { partner: 10, budget: -5 } } },
 
-  { id: "uber", from: 9, to: 18, avatar: "💸", who: "Johannes", role: "Finance",
-    text: "Die Speaker-Fahrten laufen aus dem Ruder: 900 € statt der geplanten 300 €.",
+  { id: "uber", from: 9, to: 18, chat: "finance", who: "Johannes",
+    text: "Die Speaker-Fahrten laufen aus dem Ruder: 900 € statt der geplanten 300 € 💸",
     a: { label: "Ab jetzt fahren Erstis mit dem Shuttle.", fx: { erstis: -10, budget: 10 } },
     b: { label: "Speaker first, egal was es kostet.", fx: { speaker: 5, budget: -10 } } },
 
-  { id: "airhockey", from: 10, to: 18, avatar: "🏒", who: "Luca", role: "Operations · Concept",
-    text: "Der Airhockey-Tisch im Innovillage ist kaputt. Dabei sollte Entertainment dieses Jahr endlich besser werden.",
+  { id: "airhockey", from: 10, to: 18, loc: "entertainment", who: "Luca",
+    text: "Der Airhockey-Tisch ist kaputt. Dabei sollte Entertainment dieses Jahr endlich besser werden.",
     a: { label: "Reparieren lassen.", fx: { budget: -10, participants: 10 } },
     b: { label: "Mini-Minigolf größer aufbauen.", fx: { team: -5, participants: 5, erstis: -5 } } },
 
-  { id: "fussballwand", from: 11, to: 18, avatar: "⚽", who: "Franz", role: "PR · Marketing",
-    text: "Ein Partner-CEO fordert dich an der Fußballwand zum Duell heraus, live auf Insta.",
+  { id: "fussballwand", from: 11, to: 18, loc: "entertainment", who: "Franz",
+    text: "Ein Partner-CEO fordert dich an der Fußballwand zum Duell heraus, live auf Insta!",
     a: { label: "Challenge accepted!", fx: { partner: 10, participants: 5, team: -10 } },
     b: { label: "Sorry, das nächste Meeting wartet.", fx: { partner: -5 } } },
 
-  { id: "armband", from: 10, to: 17, avatar: "📿", who: "Vanessa", role: "Chair · HC",
+  { id: "armband", from: 10, to: 17, loc: "entertainment", who: "Vanessa",
     text: "Die Erstis wollen lieber in der Armband-Bastelecke helfen als beim Booth-Support.",
     a: { label: "Eine Stunde, dann wieder zurück.", fx: { erstis: 10, partner: -5 } },
     b: { label: "Erst der Job, dann der Spaß.", fx: { erstis: -10, partner: 5 } } },
 
-  { id: "pause", from: 11, to: 18, avatar: "😵‍💫", who: "Julius", role: "Chair · HC",
-    text: "Zwei Erstis aus dem OC hatten seit 7 Uhr keine Pause. Einer sitzt gerade blass auf der Treppe.",
+  { id: "pause", from: 11, to: 18, loc: "treppe", who: "Julius",
+    text: "Zwei Erstis hatten seit 7 Uhr keine Pause. Einer sitzt gerade blass auf der Treppe.",
     a: { label: "Sofort Ablösung organisieren.", fx: { erstis: 10, team: -5 } },
     b: { label: "Noch eine Stunde, dann ist es ruhiger.", fx: { erstis: -15 } } },
 
-  { id: "hackathon_wlan", day: 1, from: 9, to: 17, avatar: "💻", who: "Laura", role: "Chair · Hackathon",
+  { id: "hackathon_wlan", day: 1, from: 9, to: 17, loc: "hackathon", who: "Laura",
     text: "Im Hackathon-Raum bricht das WLAN ein, und die Teams müssen in drei Stunden abgeben.",
     a: { label: "LAN-Kabel von der Mainstage abzweigen.", fx: { speaker: -5, participants: 10, team: -5 } },
     b: { label: "Hotspots und Abgabe eine Stunde später.", fx: { budget: -5, participants: -5 } } },
 
-  { id: "speeddating", from: 10, to: 17, avatar: "👫", who: "Ciaran", role: "Partner · Startup & VC",
+  { id: "speeddating", from: 10, to: 17, loc: "hays", who: "Ciaran",
     text: "Beim Speeddating sitzen 40 Founder, aber nur 6 Investoren sind gekommen.",
     a: { label: "Partner aus dem Innovillage dazuholen.", fx: { partner: -5, participants: 10 } },
     b: { label: "Gruppen-Speeddating mit je 7 Foundern.", fx: { participants: -5, partner: 5 } } },
 
-  { id: "dachgarten", day: 1, from: 13, to: 18, avatar: "🌇", who: "Andreas", role: "PR · Growth & Partnerships",
-    text: "Ein Partner will parallel zum Nachmittagsprogramm Participants zu seinem eigenen Event auf den Dachgarten abziehen.",
+  { id: "dachgarten", day: 1, from: 13, to: 18, chat: "partner", who: "Andreas",
+    text: "Ein Partner will parallel zum Programm Participants zu seinem Event auf den Dachgarten abziehen 🌇",
     a: { label: "Okay, das ist doch Networking.", fx: { partner: 10, speaker: -10 } },
     b: { label: "Gern, aber erst nach dem Programm.", fx: { partner: -5, speaker: 5 } } },
 
-  { id: "regen", from: 11, to: 17, avatar: "🌧️", who: "Amelie", role: "Head of Operations",
-    text: "Es fängt an zu regnen, und die Essenszelte im Innovillage tropfen.",
+  { id: "regen", from: 11, to: 17, loc: "food", who: "Amelie",
+    text: "Es fängt an zu regnen, und die Essenszelte tropfen!",
     a: { label: "Zusätzliche Pavillons besorgen.", fx: { budget: -10, participants: 5 } },
     b: { label: "Essensausgabe ins Schloss verlegen.", fx: { team: -10, partner: 5 } } },
 
-  { id: "tiktok", from: 9, to: 17, avatar: "🎬", who: "Ein Ersti", role: "Marketing-Support",
+  { id: "tiktok", from: 9, to: 17, loc: "so108", who: "Ersti Ben", role: "Marketing-Support",
     text: "Darf ich ein TikTok im Backstage von SO108 drehen? Ich hab eine richtig gute Idee!",
     a: { label: "Go viral!", fx: { erstis: 10, speaker: -5 }, sets: "tiktok" },
     b: { label: "Backstage bleibt Backstage.", fx: { erstis: -5, speaker: 5 } } },
 
-  { id: "tiktok_folge", requires: "tiktok", avatar: "📈", who: "Jordis", role: "PR · Marketing",
-    text: "Das Backstage-TikTok hat 50.000 Views! Aber ein Speaker ist im Hintergrund ziemlich unvorteilhaft zu sehen.",
+  { id: "tiktok_folge", requires: "tiktok", chat: "marketing", who: "Jordis",
+    text: "Das Backstage-TikTok hat 50.000 Views 🔥 Aber ein Speaker ist im Hintergrund ziemlich unvorteilhaft zu sehen...",
     a: { label: "Auf den offiziellen Account reposten.", fx: { participants: 10, speaker: -10 } },
     b: { label: "Erst den Speaker fragen.", fx: { speaker: 5, team: -5 } } },
 
-  { id: "flagship", day: 1, from: 17, to: 21, avatar: "🍽️", who: "Lennart", role: "Head of Partner",
-    text: "Zwei Investoren wollen spontan zum Flagship Dinner, sind aber nicht angemeldet. Die Tische sind voll.",
+  { id: "flagship", day: 1, from: 17, to: 21, chat: "partner", who: "Lennart",
+    text: "Zwei Investoren wollen spontan zum Flagship Dinner, sind aber nicht angemeldet. Tische sind voll 😵",
     a: { label: "Zwei Team-Plätze freimachen.", fx: { partner: 10, team: -10 } },
     b: { label: "Leider voll, nächstes Jahr früher anmelden.", fx: { partner: -10 } } },
 
-  { id: "band", day: 1, from: 17, to: 21, avatar: "🎷", who: "Emi", role: "PR · Marketing",
-    text: "Die Band für den Themenabend steckt im Stau. Der Start verschiebt sich um 45 Minuten.",
+  { id: "band", day: 1, from: 17, to: 19, chat: "team", who: "Emi",
+    text: "Die Band für den Themenabend steckt im Stau 🚗 Start verschiebt sich um 45 Minuten!",
     a: { label: "Cocktails früher aufmachen.", fx: { budget: -10, participants: 5 } },
     b: { label: "Playlist vom Handy überbrückt.", fx: { participants: -10 } } },
 
-  { id: "aperol", day: 1, from: 18, to: 22, avatar: "🍹", who: "Madeleine", role: "Operations · OC",
+  { id: "aperol", day: 1, from: 19, to: 22, loc: "abend", who: "Madeleine",
     text: "Der Aperol ist nach einer Stunde leer. Gin Tonic und Martini laufen noch.",
     a: { label: "Aperol nachkaufen.", fx: { budget: -10, participants: 5 } },
     b: { label: "Martini zum Signature Drink erklären.", fx: { participants: -5, team: 5 } } },
 
-  { id: "wraps", day: 1, from: 17, to: 21, avatar: "🌯", who: "Sophie", role: "Operations · OC",
+  { id: "wraps", day: 1, from: 18, to: 21, loc: "food", who: "Sophie",
     text: "Die Bodhi Wraps reichen nicht, weil auch viele Corporates gegessen haben statt zum Dinner zu gehen.",
     a: { label: "Das Team verzichtet heute auf Wraps.", fx: { team: -10, participants: 5 } },
     b: { label: "Wer zuerst kommt, isst zuerst.", fx: { participants: -10, partner: 5 } } },
 
-  { id: "corporates_gehen", day: 1, from: 19, to: 22, avatar: "🚪", who: "Lenny", role: "Partner · Corporate",
+  { id: "corporates_gehen", day: 1, from: 19, to: 22, loc: "abend", who: "Lenny",
     text: "Die Corporates fragen, ob nach dem Themenabend noch was für sie kommt. Sonst fahren sie ins Hotel.",
     a: { label: "Kleine Lounge im Schloss organisieren.", fx: { partner: 10, budget: -10, team: -5 } },
     b: { label: "Morgen gibt's ja die Afterparty.", fx: { partner: -5 } } },
 
+  { id: "garderobe", day: 1, from: 9, to: 13, loc: "treppe", who: "Ersti Mara", role: "Garderobe",
+    text: "Die Garderobe ist komplett voll! Wohin mit den ganzen Jacken??",
+    a: { label: "Ab in den Backstage-Raum.", fx: { speaker: -5, participants: 5 } },
+    b: { label: "Garderobe schließen, sorry.", fx: { participants: -10 } } },
+
+  { id: "verlaufen", from: 9, to: 16, loc: "hays", who: "Speaker", role: "Keynote in 10 Minuten",
+    text: "Entschuldigung, ich suche SO108? Hier gibt es nur Müsli.",
+    a: { label: "Ich bring Sie persönlich hin.", fx: { speaker: 10, team: -5 } },
+    b: { label: "Einfach den Schildern folgen!", fx: { speaker: -10 } } },
+
   // ===================== TAG 2 =====================
-  { id: "kater", day: 2, from: 8, to: 10, avatar: "🥴", who: "Vanessa", role: "Chair · HC",
-    text: "Das halbe Team kommt sehr müde vom Themenabend. Der Check-in macht in 20 Minuten auf.",
+  { id: "kater", day: 2, from: 8, to: 10, chat: "board", who: "Vanessa",
+    text: "Das halbe Team ist sehr müde vom Themenabend 🥴 Check-in macht in 20 Minuten auf.",
     a: { label: "Erst Frühstück an der Müslibar fürs Team.", fx: { team: 10, participants: -5 } },
     b: { label: "Kaffee und los.", fx: { team: -10 } } },
 
-  { id: "badge_weg", day: 2, from: 8, to: 11, avatar: "🏷️", who: "Anna", role: "Operations · Participants",
-    text: "40 Leute haben ihr Badge gestern beim Themenabend verloren und stehen jetzt ohne am Check-in.",
+  { id: "badge_weg", day: 2, from: 8, to: 11, loc: "checkin", who: "Anna",
+    text: "40 Leute haben ihr Badge gestern beim Themenabend verloren und stehen jetzt ohne da.",
     a: { label: "Neue Badges drucken.", fx: { budget: -5, participants: 5, erstis: -5 } },
-    b: { label: "Name und Mailadresse auf der Liste checken.", fx: { participants: -5, team: -5 } } },
+    b: { label: "Name auf der Liste checken.", fx: { participants: -5, team: -5 } } },
 
-  { id: "qube_feedback", day: 2, from: 9, to: 14, avatar: "🦁", who: "Nick", role: "Partner · Startup & VC",
+  { id: "qube_feedback", day: 2, from: 9, to: 14, loc: "qube", who: "Nick",
     text: "Ein Investor im Qube will nach jedem Pitch 10 Minuten Feedback geben. Der Zeitplan platzt.",
     a: { label: "Lass ihn, das ist Gold für die Startups.", fx: { partner: 10, participants: -5, team: -5 } },
     b: { label: "Zwei Minuten pro Pitch.", fx: { partner: -5, participants: 5 } } },
 
-  { id: "qube_deal", day: 2, from: 10, to: 15, avatar: "🤝", who: "Ciaran", role: "Partner · Startup & VC",
-    text: "Im Qube gibt es fast einen Handschlag-Deal. Der Investor will das sofort auf die Mainstage bringen.",
-    a: { label: "Ja, das ist unser Höhle-der-Löwen-Moment!", fx: { partner: 10, participants: 10, speaker: -10 } },
+  { id: "qube_deal", day: 2, from: 10, to: 15, loc: "qube", who: "Ciaran",
+    text: "Im Qube gibt es fast einen Handschlag-Deal! Der Investor will das sofort auf die Mainstage bringen.",
+    a: { label: "Ja, unser Höhle-der-Löwen-Moment!", fx: { partner: 10, participants: 10, speaker: -10 } },
     b: { label: "Lieber im Closing erwähnen.", fx: { partner: -5, speaker: 5 } } },
 
-  { id: "brunch_bewerbungen", day: 2, from: 8, to: 11, avatar: "🥐", who: "Anna", role: "Operations · Participants",
-    text: "Für den Female Brunch mit dem Mannheimer Café haben sich 60 statt 30 Frauen angemeldet.",
+  { id: "brunch_bewerbungen", day: 2, from: 8, to: 11, chat: "team", who: "Anna",
+    text: "Für den Female Brunch mit dem Mannheimer Café haben sich 60 statt 30 angemeldet 🥐",
     a: { label: "Auf 40 Plätze erweitern.", fx: { budget: -5, participants: 5, partner: -5 } },
     b: { label: "Bei 30 bleiben, exklusiv ist der Punkt.", fx: { participants: -5, partner: 5 } } },
 
-  { id: "brunch_reste", day: 2, from: 11, to: 15, avatar: "😋", who: "Madeleine", role: "Operations · OC",
-    text: "Der Female Brunch ist vorbei und es ist richtig viel übrig.",
+  { id: "brunch_reste", day: 2, from: 11, to: 15, loc: "hays", who: "Madeleine",
+    text: "Der Female Brunch ist vorbei und es ist richtig viel übrig 😋",
     a: { label: "Das Team darf die Reste essen.", fx: { team: 15, participants: -5 } },
-    b: { label: "An die Participants im Innovillage verteilen.", fx: { participants: 10, team: -5 } } },
+    b: { label: "An die Participants verteilen.", fx: { participants: 10, team: -5 } } },
 
-  { id: "poke", day: 2, from: 11, to: 14, avatar: "🥑", who: "Sophie", role: "Operations · OC",
+  { id: "poke", day: 2, from: 11, to: 14, loc: "food", who: "Sophie",
     text: "Maloa hat 100 Poke Bowls zu wenig geliefert.",
     a: { label: "Nachbestellen, dauert 30 Minuten.", fx: { budget: -10, participants: 5 } },
     b: { label: "Das Team isst später.", fx: { team: -10, participants: 5 } } },
 
-  { id: "usb", day: 2, from: 13, to: 17, avatar: "🦄", who: "Nick", role: "Partner · Startup & VC",
-    text: "Ein Finalist im Pitchbattle hat seine Präsentation nur auf USB-C. Der Laptop auf der Mainstage hat nur USB-A.",
+  { id: "usb", day: 2, from: 13, to: 16, loc: "buehne", who: "Nick",
+    text: "Ein Pitchbattle-Finalist hat seine Präsentation nur auf USB-C. Der Bühnen-Laptop hat nur USB-A.",
     a: { label: "Adapter suchen, 5 Minuten Pause.", fx: { participants: -5, team: -5 } },
     b: { label: "Er pitcht ohne Folien.", fx: { participants: 5, speaker: -5, partner: -5 } } },
 
-  { id: "preisgeld", day: 2, from: 13, to: 18, avatar: "💰", who: "Lea", role: "Head of Finance",
+  { id: "preisgeld", day: 2, from: 13, to: 18, chat: "finance", who: "Lea",
     text: "Die 5.000 € Pitchbattle-Preisgeld: Der Sponsor fragt, ob der Scheck auch erst nächsten Monat kommen kann.",
     a: { label: "Okay, kein Problem.", fx: { partner: 5, participants: -10 } },
     b: { label: "Freundlich auf heute bestehen.", fx: { partner: -10, participants: 5 } } },
 
-  { id: "jury", day: 2, from: 12, to: 17, avatar: "🧑‍⚖️", who: "Ben", role: "Chair · Hackathon",
+  { id: "jury", day: 2, from: 12, to: 17, loc: "hackathon", who: "Ben",
     text: "Die Jury für das Hackathon-Finale braucht 30 Minuten länger als geplant.",
     a: { label: "Puffer aus dem Pitchbattle nehmen.", fx: { participants: 5, speaker: -5 } },
     b: { label: "Siegerehrung erst beim Closing.", fx: { participants: -5, team: 5 } } },
 
-  { id: "konferenz_vibe", from: 12, to: 18, avatar: "🏢", who: "Andreas", role: "PR · Growth & Partnerships",
+  { id: "konferenz_vibe", from: 12, to: 18, loc: "innovillage", who: "Andreas",
     text: "Ein Partner meint, die Q sollte so corporate-lastig werden wie andere Konferenzen im DACH-Raum.",
-    a: { label: "Nein, Participants first, das macht die Q aus.", fx: { participants: 10, partner: -10 } },
+    a: { label: "Nein, Participants first. Das macht die Q aus.", fx: { participants: 10, partner: -10 } },
     b: { label: "Mehr Corporate-Slots nächstes Jahr.", fx: { partner: 10, participants: -10 } } },
 
-  { id: "daten", from: 13, to: 19, avatar: "📇", who: "Lenny", role: "Partner · Corporate",
-    text: "Ein Corporate will die Kontaktdaten aller Participants fürs Recruiting.",
+  { id: "daten", from: 13, to: 19, chat: "partner", who: "Lenny",
+    text: "Ein Corporate will die Kontaktdaten aller Participants fürs Recruiting. Sollen wir?",
     a: { label: "Schicken wir.", fx: { partner: 15, participants: -15 } },
     b: { label: "Nur von denen, die zugestimmt haben.", fx: { partner: -5, participants: 5 } } },
 
-  { id: "innovillage_zu", day: 2, from: 16, to: 19, avatar: "⛺", who: "Amelie", role: "Head of Operations",
+  { id: "innovillage_zu", day: 2, from: 16, to: 19, loc: "innovillage", who: "Amelie",
     text: "Das Innovillage muss jetzt schließen, damit die Afterparty aufgebaut werden kann. Die Partner wollen aber noch netzwerken.",
     a: { label: "Pünktlich schließen.", fx: { partner: -10, team: 5 } },
     b: { label: "30 Minuten länger offen lassen.", fx: { partner: 5, team: -10 } } },
 
-  { id: "closing", day: 2, from: 15, to: 19, avatar: "🎤", who: "Jonathan", role: "Head of PR",
-    text: "Closing Speech in 20 Minuten, aber viele Participants sind schon im Hotel und machen sich für die Afterparty fertig.",
+  { id: "closing_leer", day: 2, from: 16, to: 18, chat: "board", who: "Jonathan",
+    text: "Closing Speech bald, aber viele Participants sind schon im Hotel und machen sich für die Afterparty fertig 😩",
     a: { label: "Erstis holen Leute aus dem Innovillage.", fx: { erstis: -5, participants: 5, speaker: 5 } },
     b: { label: "Kürzer und knackiger machen.", fx: { speaker: -5, participants: 5 } } },
 
-  { id: "konfetti", day: 2, from: 15, to: 20, avatar: "🎉", who: "Emi", role: "PR · Marketing",
-    text: "Der DJ der Afterparty bietet eine Konfetti-Kanone an, gegen Aufpreis.",
+  { id: "konfetti", day: 2, from: 14, to: 19, chat: "marketing", who: "Emi",
+    text: "Der DJ der Afterparty bietet eine Konfetti-Kanone an, gegen Aufpreis 🎉",
     a: { label: "Gönnen, letzter Abend!", fx: { budget: -10, participants: 10 } },
     b: { label: "Geht auch ohne.", fx: { participants: -5, budget: 5 } } },
 
-  { id: "abbau", day: 2, from: 16, to: 20, avatar: "📦", who: "Amelie", role: "Head of Operations",
-    text: "Wer baut heute Nacht noch die Mainstage in SO108 ab?",
+  { id: "abbau", day: 2, from: 16, to: 20, chat: "board", who: "Amelie",
+    text: "Wer baut heute Nacht noch die Mainstage in SO108 ab? 📦",
     a: { label: "Alle zusammen, Board auch.", fx: { team: 5, erstis: 10 } },
     b: { label: "Die Erstis, das ist Tradition.", fx: { erstis: -15, team: 5 } } },
 
-  { id: "dinner_speaker", day: 2, from: 16, to: 20, avatar: "🍷", who: "Valentin", role: "Partner · Speaker",
+  { id: "dinner_speaker", day: 2, from: 16, to: 20, loc: "lounge", who: "Valentin",
     text: "Ein Top-Speaker würde nächstes Jahr wiederkommen, wenn wir ihn heute noch zum Essen einladen.",
     a: { label: "Ja, mit dem Board.", fx: { speaker: 15, team: -5, budget: -5 } },
     b: { label: "Nächstes Jahr bestimmt!", fx: { speaker: -5 } } },
 
   // ===================== Beide Tage =====================
-  { id: "beamer", from: 8, to: 15, avatar: "📽️", who: "Luca", role: "Operations · Concept",
+  { id: "beamer", from: 8, to: 15, loc: "so108", who: "Luca",
     text: "Der Beamer in SO108 flackert. Könnte halten, könnte aber auch nicht.",
     a: { label: "Ersatzbeamer holen.", fx: { team: -5, speaker: 5 } },
     b: { label: "Wird schon gehen.", fx: { speaker: -5 }, sets: "beamer_risiko" } },
 
-  { id: "beamer_folge", requires: "beamer_risiko", avatar: "⚫", who: "Luca", role: "Operations · Concept",
+  { id: "beamer_folge", requires: "beamer_risiko", loc: "so108", who: "Luca",
     text: "Tja. Der Beamer ist mitten im Panel ausgegangen.",
     a: { label: "Panel ohne Folien weiter.", fx: { speaker: -10, participants: 5 } },
     b: { label: "10 Minuten Pause.", fx: { participants: -10, team: -5 } } },
 
-  { id: "panel_krank", from: 9, to: 16, avatar: "🤒", who: "Annika", role: "Partner · Speaker",
+  { id: "panel_krank", from: 9, to: 16, loc: "lounge", who: "Annika",
     text: "Eine Panelistin hat sich eine Stunde vorher krankgemeldet.",
     a: { label: "Ein Partner springt als Panelist ein.", fx: { partner: 10, participants: -5 } },
-    b: { label: "Wir machen ein offenes Q&A mit dem Publikum.", fx: { participants: 10, speaker: -5 } } },
+    b: { label: "Offenes Q&A mit dem Publikum.", fx: { participants: 10, speaker: -5 } } },
 
-  { id: "notausgang", from: 8, to: 19, avatar: "🧯", who: "Hausmeister", role: "Universität Mannheim",
+  { id: "notausgang", from: 8, to: 19, loc: "hall", who: "Hausmeister", role: "Universität Mannheim",
     text: "Ihr habt mit euren Kisten den Notausgang zugestellt. Das geht so nicht!",
     a: { label: "Sofort räumen, alle mit anpacken.", fx: { team: -5, erstis: -5 } },
     b: { label: "Nur noch fünf Minuten, versprochen.", fx: { budget: -15, team: 5 } } },
 
-  { id: "praktikum", from: 10, to: 18, avatar: "🤩", who: "Ein Ersti", role: "Booth-Support",
-    text: "Ein Partner hat mir gerade ein Praktikum angeboten! Darf ich kurz zum Gespräch?",
+  { id: "praktikum", from: 10, to: 18, loc: "innovillage", who: "Ersti Paul", role: "Booth-Support",
+    text: "Ein Partner hat mir gerade ein Praktikum angeboten!! Darf ich kurz zum Gespräch?",
     a: { label: "Geh! Viel Erfolg!", fx: { erstis: 10, partner: 5, team: -5 } },
     b: { label: "Nach dem Abbau, okay?", fx: { erstis: -10 } } },
 
-  { id: "streit", from: 10, to: 19, avatar: "⚡", who: "Julius", role: "Chair · HC",
+  { id: "streit", from: 10, to: 19, loc: "so108", who: "Julius",
     text: "Zwei Divisions streiten sich hinter der Mainstage, wer für die Moderationskarten zuständig war.",
     a: { label: "Ich schlichte sofort.", fx: { team: 10, partner: -5 } },
     b: { label: "Das klären wir nach der Q.", fx: { team: -10 } } },
 
-  { id: "lounge", from: 9, to: 18, avatar: "🛋️", who: "Valentin", role: "Partner · Speaker",
+  { id: "lounge", from: 9, to: 18, loc: "lounge", who: "Valentin",
     text: "Ein Speaker will drei Freunde mit in die Speaker-Lounge bringen.",
     a: { label: "Na gut.", fx: { speaker: 10, partner: -5, budget: -5 } },
     b: { label: "Die Lounge ist nur für Speaker.", fx: { speaker: -10, partner: 5 } } },
 
-  { id: "feedback", day: 2, from: 15, to: 20, avatar: "📝", who: "Jordis", role: "PR · Marketing",
-    text: "Sollen wir die Feedback-Umfrage jetzt rausschicken oder erst nach der Afterparty?",
+  { id: "feedback", day: 2, from: 15, to: 20, chat: "marketing", who: "Jordis",
+    text: "Feedback-Umfrage jetzt rausschicken oder erst nach der Afterparty? 📝",
     a: { label: "Jetzt, solange alle euphorisch sind.", fx: { participants: 5, partner: 5, team: -5 } },
     b: { label: "Später, das Team braucht eine Pause.", fx: { team: 5, partner: -5 } } },
 ];
 
-// Namen für die Badge-Ausgabe (fiktiv)
+// Hintergrund-Nachrichten in den Chats (keine Entscheidung nötig).
+// from_/to: Zeitfenster in Stunden, day: nur an diesem Tag
+const AMBIENT = [
+  { chat: "team", from: "Franz", text: "Wer hat das Gaffa? 🙏" },
+  { chat: "team", from: "Jordis", text: "Bitte alle um 9:15 zum Gruppenfoto auf die Treppe!! 📸", day: 1, to: 9.2 },
+  { chat: "team", from: "Ben", text: "Hat jemand ein USB-C-Kabel?" },
+  { chat: "team", from: "Emi", text: "Die Story vom blauen Teppich hat schon 2k Views 🔥", day: 1, from_: 9 },
+  { chat: "team", from: "Otto", text: "Mikro 3 ist wieder da, lag in der Garderobe 🤷" },
+  { chat: "team", from: "Laura", text: "Die Hackathon-Teams haben schon 40 Mate getrunken. Seit 7 Uhr." },
+  { chat: "team", from: "Luca", text: "Schild zum Qube hängt jetzt richtig rum 😅" },
+  { chat: "team", from: "Julius", text: "Denkt ans Wasser trinken Leute 💧" },
+  { chat: "team", from: "Sophie", text: "Mandelmus-Status: kritisch 😭", day: 1, to: 11 },
+  { chat: "team", from: "Madeleine", text: "Wer hat die Kiste mit den Kulis??" },
+  { chat: "team", from: "Andreas", text: "LinkedIn-Post ist raus, bitte alle liken 🙏" },
+  { chat: "team", from: "Anna", text: "Check-in Stand: 412 von 650 eingecheckt ✅", day: 1, from_: 9.5, to: 11 },
+  { chat: "team", from: "Amelie", text: "Toiletten im EG sind wieder frei 🙌" },
+  { chat: "team", from: "Lennart", text: "Booth-Rotation in 10 Minuten!", from_: 11.5, to: 13 },
+  { chat: "team", from: "Emi", text: "Wer will ein Reel an der Fußballwand drehen? ⚽" },
+  { chat: "team", from: "Franz", text: "Die Airhockey-Profis sind zurück 😂" },
+  { chat: "team", from: "Vanessa", text: "Erstis-Pausenplan hängt an der Garderobe 📋" },
+  { chat: "team", from: "Jaan", text: "Hat jemand Kabelbinder?" },
+  { chat: "team", from: "Kevin", text: "Bitte alle Belege bei mir abgeben, auch die von gestern!!", day: 2 },
+  { chat: "team", from: "Jordis", text: "Afterparty-Countdown läuft 🪩🪩🪩", day: 2, from_: 15 },
+  { chat: "team", from: "Otto", text: "Wer hat das Mikro vom Pitchbattle mit aufs Klo genommen 😭", day: 2, from_: 14 },
+  { chat: "erstis", from: "Ersti Lina", text: "Wo genau ist nochmal SO108? 🙈" },
+  { chat: "erstis", from: "Ersti Tom", text: "Darf ich kurz was essen?" },
+  { chat: "erstis", from: "Ersti Mara", text: "Die Garderobe ist voll, was machen wir mit den Jacken??", day: 1 },
+  { chat: "erstis", from: "Ersti Paul", text: "Ich hab gerade mit nem echten VC geredet 😳" },
+  { chat: "erstis", from: "Ersti Lina", text: "Die Goodie Bags sind sooo gut" },
+  { chat: "erstis", from: "Ersti Tom", text: "Wie lange geht unsere Schicht?" },
+  { chat: "erstis", from: "Sophie", text: "Danke an alle Erstis, ihr seid die Besten 💙" },
+  { chat: "erstis", from: "Ersti Mara", text: "Bester Tag ever 💙" },
+  { chat: "erstis", from: "Ersti Paul", text: "Kann mir jemand das WLAN-Passwort schicken?" },
+  { chat: "erstis", from: "Madeleine", text: "Wer Zeit hat: bitte zur Müslibar, Nachschub schleppen 🥣", day: 1, to: 11 },
+  { chat: "board", from: "Jonathan", text: "Opening-Folien sind final ✅", day: 1, to: 9.5 },
+  { chat: "board", from: "Lea", text: "Budget aktuell noch im Rahmen 🙏" },
+  { chat: "board", from: "Amelie", text: "Ops läuft. Alles im Griff (fast)" },
+  { chat: "board", from: "Lennart", text: "Partner sind bisher happy 💼" },
+  { chat: "board", from: "Jonathan", text: "Wer übernimmt das Interview mit dem Mannheimer Morgen?" },
+  { chat: "board", from: "Lea", text: "Bitte keine spontanen Ausgaben ohne mich 😅" },
+  { chat: "board", from: "Amelie", text: "Abbauplan für morgen kommt heute Abend", day: 1, from_: 16 },
+  { chat: "board", from: "Vanessa", text: "Ihr macht das alle so gut 🥹" },
+  { chat: "partner", from: "Nick", text: "Qube läuft, 3 Investoren sind richtig begeistert", day: 2 },
+  { chat: "partner", from: "Valentin", text: "Speaker-Lounge braucht Nachschub an Wasser" },
+  { chat: "partner", from: "Annika", text: "Nächster Speaker ist im Haus ✅" },
+  { chat: "partner", from: "Lenny", text: "Corporate-Booths alle besetzt 👌" },
+  { chat: "partner", from: "Ciaran", text: "Pitch-Reihenfolge fürs Battle steht", day: 2, to: 14 },
+  { chat: "finance", from: "Johannes", text: "Kassensturz heute 21:30 im Backoffice", day: 1, from_: 15 },
+  { chat: "finance", from: "Lea", text: "Bitte bitte alle Belege fotografieren 📸" },
+  { chat: "marketing", from: "Emi", text: "Reel vom Opening ist online 🎬", day: 1, from_: 10.5 },
+  { chat: "marketing", from: "Adrian", text: "Uni-Initiative aus Heidelberg sagt danke für die Einladung 🙏" },
+  { chat: "marketing", from: "Franz", text: "Drohnenshot vom Ehrenhof ist krank 🤯" },
+  { chat: "mama", from: "Mama", text: "Schatz, isst du auch genug? 🍝" },
+  { chat: "mama", from: "Mama", text: "Papa hat dich auf Instagram gesehen!! 👏" },
+  { chat: "mama", from: "Mama", text: "Ruf mal an, wenn du Zeit hast ❤️" },
+  { chat: "mama", from: "Mama", text: "Ist das die Konferenz mit dem blauen Teppich?" },
+];
+
+const START_MSGS = [
+  { chat: "board", from: "Jonathan", text: "Morgen ist es soweit 💙 Schlaft gut!", time: "23:41" },
+  { chat: "board", from: "Lea", text: "Gute Nacht ihr Lieben 🥹", time: "23:45" },
+  { chat: "team", from: "Amelie", text: "Treffpunkt 6:30 am Haupteingang!!", time: "22:10" },
+  { chat: "erstis", from: "Sophie", text: "Morgen geht's los! Denkt an euer blaues Shirt 💙", time: "21:02" },
+  { chat: "mama", from: "Mama", text: "Viel Erfolg morgen mein Schatz!! 🍀", time: "20:15" },
+];
+
+// Minigames als Aufgaben in der Welt
+const MG_QUESTS = [
+  { id: "goodies", day: 0, at: 7 * 60 + 40, who: "Madeleine", loc: "treppe",
+    text: "Chair! Bevor der Einlass aufmacht, müssen noch Goodie Bags gepackt werden. Hilfst du kurz?",
+    bad: { participants: -10, erstis: -5 }, play: () => playGoodies() },
+  { id: "badges", day: 0, at: 8 * 60 + 20, who: "Anna", loc: "checkin",
+    text: "Der Check-in geht los und die Schlange ist riesig! Kannst du mit Badges ausgeben?",
+    bad: { participants: -10, partner: -5 }, play: () => playBadges() },
+  { id: "opening_mic", day: 0, at: 9 * 60 + 10, who: "Otto", loc: "buehne",
+    text: "Gleich ist Opening! Checkst du mit mir die Mikros auf der Mainstage?",
+    bad: { speaker: -10, participants: -5 }, play: () => playMic("Mic-Check: Opening", "Gleich hältst du mit Jonathan die Opening Speech. Tippe auf „Stopp“, wenn der Regler im grünen Bereich ist.", 70) },
+  { id: "pitch_mic", day: 1, at: 14 * 60 + 20, who: "Nick", loc: "buehne",
+    text: "Das Pitchbattle-Finale startet bald. Die Mikros müssen sitzen!",
+    bad: { speaker: -10, participants: -5 }, play: () => playMic("Mic-Check: Pitchbattle", "Das Pitchbattle-Finale startet. Die Mikros müssen sitzen, diesmal etwas schneller.", 95) },
+];
+
+// Story-Szenen
+const SCENES = [
+  { id: "intro", day: 0, at: 7 * 60 + 30, steps: [
+    { place: "Amelie", x: 23, y: 32, dir: "left" },
+    { cam: "eingang" },
+    { say: ["Amelie", "Guten Morgen, Chair! ☀️ Heute ist es soweit: Q26."] },
+    { say: ["Amelie", "Um 8:30 öffnet der Check-in. Wo jemand ein ❗ über dem Kopf hat, braucht er dich. Aber warte nicht zu lang, sonst entscheiden die Leute ohne dich."] },
+    { say: ["Amelie", "Und behalt dein Handy im Blick 📱 In den Chats brennt's auch ständig."] },
+    { say: ["Tipp", "Tippe irgendwo hin, um zu laufen, oder nutze WASD/Pfeiltasten. Tippe Leute mit ❗ an, um mit ihnen zu reden."] },
+  ] },
+  { id: "opening", day: 0, at: 9 * 60 + 50, steps: [
+    { seat: true },
+    { place: "player", x: 9, y: 14, dir: "down" },
+    { place: "Jonathan", x: 11, y: 14, dir: "down" },
+    { cam: "buehne" },
+    { lights: true },
+    { say: ["Jonathan", "Guten Morgen Mannheim!! Seid ihr wach? ☀️"] },
+    { say: ["Du", "Willkommen zur Q-Summit 2026! Zwei Tage Innovation, Inspiration und Entrepreneurship, hier bei uns im Schloss."] },
+    { say: ["Jonathan", "Danke an alle Partner, Speaker und an über hundert Leute im Team, die das möglich machen 💙"] },
+    { say: ["Du", "Und jetzt: Feel the Q Spirit!"] },
+    { confetti: true, fx: { participants: 5, speaker: 5, team: 5 } },
+    { wait: 1200 },
+  ] },
+  { id: "abend", day: 0, at: 19 * 60, steps: [
+    { place: "Emi", x: 23, y: 5, dir: "down" },
+    { place: "player", x: 21, y: 6, dir: "up" },
+    { cam: "abend" },
+    { say: ["Emi", "Die Band ist da, die Lichter gehen an: Themenabend! 🎷🍸"] },
+    { say: ["Emi", "Das Flagship Dinner läuft parallel, die Investoren und Corporates sind schon rüber."] },
+  ] },
+  { id: "morning2", day: 1, at: 8 * 60, steps: [
+    { place: "Vanessa", x: 23, y: 32, dir: "left" },
+    { cam: "eingang" },
+    { say: ["Vanessa", "Morgen Chair! Tag 2. Die Hälfte ist müde, aber wir ziehen das durch 💪"] },
+    { say: ["Vanessa", "Heute: Female Brunch, Qube, Pitchbattle, Closing Speech und dann Afterparty!"] },
+  ] },
+  { id: "pitch", day: 1, at: 15 * 60 + 40, steps: [
+    { seat: true },
+    { place: "Nick", x: 10, y: 14, dir: "down" },
+    { place: "player", x: 8, y: 18, dir: "up" },
+    { cam: "buehne" },
+    { lights: true },
+    { say: ["Nick", "Und die 5.000 € beim Pitchbattle gehen an..."] },
+    { say: ["Nick", "🥁🥁🥁"] },
+    { say: ["Nick", "...das Team mit dem besten Pitch des Tages! 🏆🦄"] },
+    { confetti: true, fx: { participants: 10 } },
+    { wait: 1200 },
+  ] },
+  { id: "closing", day: 1, at: 18 * 60 + 30, steps: [
+    { seat: true },
+    { place: "player", x: 9, y: 14, dir: "down" },
+    { place: "Jonathan", x: 11, y: 14, dir: "down" },
+    { cam: "buehne" },
+    { lights: true },
+    { say: ["Jonathan", "Was für zwei Tage! Danke an alle Participants, Partner und Speaker 💙"] },
+    { say: ["Du", "Und danke an das beste Team, das man sich wünschen kann. Wir sehen uns auf der Afterparty! 🪩"] },
+    { confetti: true, fx: { team: 10 } },
+    { wait: 1200 },
+  ] },
+  { id: "afterparty", day: 1, at: 20 * 60, steps: [
+    { party: true },
+    { place: "player", x: 22, y: 6, dir: "down" },
+    { place: "Lennart", x: 24, y: 6, dir: "left" },
+    { place: "Jonathan", x: 20, y: 6, dir: "right" },
+    { cam: "abend" },
+    { confetti: true },
+    { say: ["Jonathan", "Wir haben's geschafft. Q26 ist durch! 🥂"] },
+    { say: ["Lennart", () => s.stats.partner >= 50 ? "Die Partner wollen nächstes Jahr alle wiederkommen! 💼" : "Ein paar Partner sind... naja. Aber heute wird gefeiert! 🙃"] },
+    { say: ["Du", "Feel the Q Spirit 💙"] },
+    { wait: 1500 },
+    { end: true },
+  ] },
+];
+
+// Badge-Ausgabe (fiktive Namen)
 const BADGE_ROLES = [
   { k: "Participant", c: "#2f6bff" },
   { k: "Partner",     c: "#ff8a3d" },
@@ -530,223 +829,872 @@ const GOODIES_WRONG = [["🔌", "Kabel"], ["🎈", "Luftballon"], ["🍹", "Aper
 //  ENGINE
 // =====================================================================
 
-const MINIGAMES = [
-  { id: "goodies", day: 0, at: 7 * 60 + 50, play: () => playGoodies() },
-  { id: "badges",  day: 0, at: 8 * 60 + 30, play: () => playBadges() },
-  { id: "opening", day: 0, at: 9 * 60 + 30, play: () => playMic("Mic-Check: Opening", "Gleich halten Max und Jonathan die Opening Speech in SO108. Tippe auf „Stopp“, wenn der Regler im grünen Bereich ist.", 70) },
-  { id: "pitch",   day: 1, at: 14 * 60 + 30, play: () => playMic("Mic-Check: Pitchbattle", "Das Pitchbattle-Finale startet. Die Mikros für die Finalisten müssen sitzen, diesmal etwas schneller.", 95) },
-];
+const MS_PER_MIN = 420;   // echte Millisekunden pro Spielminute
+const TASK_TIME = 110;    // Spielminuten, bis jemand ohne dich entscheidet
+const CHAT_TIME = 90;
+const MAX_WORLD_TASKS = 3;
 
-const app = document.getElementById("app");
-const toasts = document.getElementById("toasts");
-let s; // Spielzustand
-let keyHandler = null;
+const $ = id => document.getElementById(id);
+const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = arr => arr.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
+const fmt = m => { m = Math.floor(m); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
+const statByKey = k => STATS.find(st => st.key === k);
+const hint = opt => Object.keys(opt.fx).map(k => statByKey(k).icon).join(" ");
+const fxSum = fx => Object.values(fx).reduce((a, b) => a + b, 0);
+const fxChips = fx => Object.entries(fx).map(([k, d]) =>
+  `<span class="fx ${d > 0 ? "up" : "down"}">${statByKey(k).icon} ${d > 0 ? "+" : ""}${d}</span>`).join("");
+const strHash = str => [...str].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+// ---------------- Karte ----------------
+const TS = 16, W = 44, H = 36;
+const grid = Array.from({ length: H }, () => Array(W).fill(","));
+function rect(x, y, w, h, c) { for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (j >= 0 && j < H && i >= 0 && i < W) grid[j][i] = c; }
+const set = (x, y, c) => rect(x, y, 1, 1, c);
+
+(function buildMap() {
+  // Innovillage im Schlosshof
+  rect(0, 0, W, 1, "p"); rect(0, 0, 1, 12, "p"); rect(W - 1, 0, 1, 12, "p");
+  for (const x of [2, 6, 10, 14]) { rect(x, 2, 3, 2, "T"); rect(x, 7, 3, 2, "T"); }
+  rect(19, 1, 6, 2, "Z");
+  for (const x of [28, 33, 38]) rect(x, 2, 4, 2, "F");
+  for (const [x, y] of [[19, 6], [25, 6], [21, 9], [27, 8], [31, 7], [36, 7], [17, 10]]) set(x, y, "q");
+  rect(30, 9, 2, 1, "a"); rect(41, 5, 1, 3, "x"); rect(35, 9, 5, 2, "o"); set(27, 10, "r");
+  // Schloss
+  rect(0, 12, W, 16, "#"); rect(1, 13, W - 2, 14, ".");
+  // SO108
+  rect(15, 13, 1, 14, "#"); rect(1, 13, 14, 14, "_"); rect(2, 13, 12, 2, "S"); set(7, 13, "l");
+  for (const y of [17, 19, 21, 23]) { rect(2, y, 5, 1, "s"); rect(9, y, 5, 1, "s"); }
+  set(15, 20, "D"); set(15, 21, "D");
+  // Rechter Flügel: Hays Forum, Qube, Speaker-Lounge, Hackathon
+  rect(28, 13, 1, 14, "#"); set(28, 14, "D"); set(28, 15, "D"); set(28, 24, "D");
+  rect(29, 19, 14, 1, "#"); set(32, 19, "D");
+  rect(30, 16, 5, 1, "m");
+  for (const [x, y] of [[38, 14], [40, 14], [38, 17], [40, 17]]) set(x, y, "r");
+  rect(31, 22, 3, 3, "r");
+  rect(36, 20, 1, 7, "#"); set(36, 21, "D"); set(36, 25, "D");
+  rect(37, 23, 6, 1, "#");
+  rect(38, 20, 4, 1, "v");
+  rect(38, 25, 4, 1, "k");
+  // Foyer
+  rect(16, 16, 12, 1, "h");
+  rect(21, 13, 2, 14, "B");
+  rect(17, 14, 3, 1, "g"); rect(24, 14, 3, 1, "c");
+  rect(17, 22, 3, 1, "k");
+  set(16, 26, "u"); set(27, 26, "u"); set(20, 26, "b"); set(23, 26, "b");
+  set(26, 23, "n"); set(19, 18, "n");
+  // Türen
+  rect(21, 12, 2, 1, "B"); set(33, 12, "D"); rect(21, 27, 2, 1, "B");
+  // Ehrenhof
+  rect(21, 28, 2, 3, "B"); set(20, 28, "b"); set(23, 28, "b"); set(19, 29, "u"); set(24, 29, "u");
+  rect(0, 35, W, 1, "p"); rect(0, 28, 1, 8, "p"); rect(W - 1, 28, 1, 8, "p");
+  rect(3, 30, 12, 4, "w"); rect(29, 30, 12, 4, "w");
+  for (const [x, y] of [[5, 31], [9, 32], [33, 31], [37, 32]]) set(x, y, "p");
+  set(25, 31, "n");
+})();
+
+const WALK = new Set([",", ".", "B", "S", "_", "D", "h", "o", "w", "s"]);
+const isWalk = (i, j) => i >= 0 && j >= 0 && i < W && j < H && WALK.has(grid[j][i]);
+const inBuilding = (i, j) => j >= 13 && j <= 26 && i >= 1 && i <= 42;
+const baseOf = (i, j) => (j >= 13 && j <= 26 && i >= 1 && i <= 14) ? "_" : inBuilding(i, j) ? "." : ",";
+
+function nearestWalkable(i, j) {
+  if (isWalk(i, j)) return [i, j];
+  for (let r = 1; r < 6; r++)
+    for (let dj = -r; dj <= r; dj++) for (let di = -r; di <= r; di++)
+      if (Math.max(Math.abs(di), Math.abs(dj)) === r && isWalk(i + di, j + dj)) return [i + di, j + dj];
+  return [22, 33];
+}
+for (const L of Object.values(LOCS)) [L.x, L.y] = nearestWalkable(L.x, L.y);
+
+function findPath(from, to) {
+  from = nearestWalkable(from[0], from[1]);
+  to = nearestWalkable(to[0], to[1]);
+  const key = (i, j) => j * W + i;
+  const prev = new Int32Array(W * H).fill(-1);
+  const start = key(from[0], from[1]), goal = key(to[0], to[1]);
+  if (start === goal) return [];
+  const q = [start]; prev[start] = start;
+  for (let qi = 0; qi < q.length; qi++) {
+    const cur = q[qi];
+    if (cur === goal) break;
+    const ci = cur % W, cj = (cur / W) | 0;
+    for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const ni = ci + di, nj = cj + dj;
+      if (!isWalk(ni, nj)) continue;
+      const k = key(ni, nj);
+      if (prev[k] !== -1) continue;
+      prev[k] = cur; q.push(k);
+    }
+  }
+  if (prev[goal] === -1) return [];
+  const path = [];
+  for (let k = goal; k !== start; k = prev[k]) path.push([k % W, (k / W) | 0]);
+  return path.reverse();
+}
+
+// Zonen, in denen sich die Crowd aufhält
+const ZONE_RECTS = {
+  ehrenhof: [2, 29, 40, 6], hall: [16, 17, 12, 9], hays: [29, 13, 14, 6], qube: [29, 20, 7, 7],
+  innovillage: [1, 1, 42, 11], food: [27, 4, 15, 2], abend: [14, 3, 16, 8],
+};
+const ZONES = {};
+for (const [k, [x, y, w, h]] of Object.entries(ZONE_RECTS)) {
+  ZONES[k] = [];
+  for (let j = y; j < y + h; j++) for (let i = x; i < x + w; i++) if (isWalk(i, j)) ZONES[k].push([i, j]);
+}
+ZONES.so108 = [];
+for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (grid[j][i] === "s") ZONES.so108.push([i, j]);
+
+function crowdWeights() {
+  const d = s.day, m = s.min;
+  if (s.party) return { abend: 1 };
+  if (d === 0) {
+    if (m < 8 * 60 + 30) return { ehrenhof: .75, hall: .25 };
+    if (m < 9 * 60 + 40) return { hall: .4, hays: .4, ehrenhof: .2 };
+    if (m < 10 * 60 + 40) return { so108: .85, hall: .15 };
+    if (m < 12 * 60) return { innovillage: .5, so108: .2, hays: .15, qube: .15 };
+    if (m < 13 * 60 + 30) return { food: .6, innovillage: .4 };
+    if (m < 17 * 60) return { innovillage: .45, so108: .3, qube: .1, hays: .15 };
+    if (m < 19 * 60) return { innovillage: .6, hall: .2, hays: .2 };
+    return { abend: .9, innovillage: .1 };
+  }
+  if (m < 9 * 60) return { ehrenhof: .3, hall: .3, hays: .4 };
+  if (m < 12 * 60) return { innovillage: .4, qube: .2, so108: .25, hays: .15 };
+  if (m < 13 * 60 + 30) return { food: .6, innovillage: .4 };
+  if (m < 15 * 60 + 30) return { innovillage: .4, so108: .4, qube: .2 };
+  if (m < 16 * 60 + 15) return { so108: .85, hall: .15 };
+  if (m < 18 * 60 + 15) return { innovillage: .6, hays: .2, hall: .2 };
+  if (m < 19 * 60 + 15) return { so108: .85, hall: .15 };
+  return { innovillage: .7, ehrenhof: .3 };
+}
+function pickWeighted(w) {
+  let r = Math.random() * Object.values(w).reduce((a, b) => a + b, 0);
+  for (const [k, v] of Object.entries(w)) { r -= v; if (r <= 0) return k; }
+  return Object.keys(w)[0];
+}
+function randomNear(loc, r) {
+  const opts = [];
+  for (let j = loc.y - r; j <= loc.y + r; j++) for (let i = loc.x - r; i <= loc.x + r; i++) if (isWalk(i, j)) opts.push([i, j]);
+  return opts.length ? pick(opts) : [loc.x, loc.y];
+}
+
+// ---------------- Pixel-Grafik ----------------
+const mapCanvas = document.createElement("canvas");
+mapCanvas.width = W * TS; mapCanvas.height = H * TS;
+function hash(i, j) { let h = (i * 374761393 + j * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967295; }
+function px(ctx, x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); }
+function circ(ctx, cx, cy, r, c) { ctx.fillStyle = c; for (let y = -r; y <= r; y++) { const w = Math.round(Math.sqrt(r * r - y * y)); ctx.fillRect(cx - w, cy + y, w * 2, 1); } }
+const TENT_COLORS = ["#e63946", "#2f6bff", "#ff8a3d", "#1fae74", "#9b51e0"];
+
+function drawGround(ctx, c, X, Y, i, j) {
+  if (c === ",") {
+    px(ctx, X, Y, 16, 16, "#8f897d");
+    const o = (j % 2) * 4;
+    for (const [a, b] of [[0, 0], [8, 0], [0, 8], [8, 8]]) {
+      const xx = X + ((a + o) % 16), yy = Y + b;
+      px(ctx, xx + 1, yy + 1, 6, 6, hash(i * 2 + a, j * 2 + b) > .5 ? "#a39d90" : "#9a9487");
+      px(ctx, xx + 1, yy + 6, 6, 1, "#7d776c");
+    }
+  } else if (c === "w") {
+    px(ctx, X, Y, 16, 16, "#4f9a48");
+    for (let k = 0; k < 5; k++) px(ctx, X + Math.floor(hash(i + k * 7, j * 3 + k) * 15), Y + Math.floor(hash(j + k, i * 5 + k) * 13), 1, 3, "#66b85c");
+  } else if (c === "." || c === "D") {
+    px(ctx, X, Y, 16, 16, "#c69563");
+    for (let r = 0; r < 4; r++) {
+      px(ctx, X, Y + r * 4 + 3, 16, 1, "#b3824f");
+      px(ctx, X + (((r + j) % 2) * 8 + Math.floor(hash(i, r + j * 4) * 5)) % 16, Y + r * 4, 1, 3, "#b3824f");
+    }
+  } else if (c === "_") {
+    px(ctx, X, Y, 16, 16, "#2a2356");
+    px(ctx, X, Y + 15, 16, 1, "#231d4a");
+    if (hash(i, j) > .8) px(ctx, X + 7, Y + 7, 1, 1, "#3a3270");
+  } else if (c === "S") {
+    px(ctx, X, Y, 16, 16, "#4a2b8c"); px(ctx, X, Y, 16, 1, "#5d39a8");
+    if (j === 14) px(ctx, X, Y + 13, 16, 3, "#22134a");
+    if (hash(i, j) > .6) px(ctx, X + 4, Y + 6, 1, 1, "#7b5bd0");
+  } else if (c === "B") {
+    px(ctx, X, Y, 16, 16, "#1e4fd6");
+    if (grid[j][i - 1] !== "B") px(ctx, X, Y, 2, 16, "#173fae");
+    if (grid[j][i + 1] !== "B") px(ctx, X + 14, Y, 2, 16, "#173fae");
+    if (hash(i, j) > .7) px(ctx, X + 6, Y + 9, 1, 1, "#2a5fe8");
+  } else if (c === "h") {
+    px(ctx, X, Y, 16, 16, "#d6cfbf");
+    for (let r = 0; r < 4; r++) px(ctx, X, Y + r * 4 + 3, 16, 1, "#b1a892");
+  } else if (c === "o") {
+    px(ctx, X, Y, 16, 16, "#3fa34d"); px(ctx, X, Y + 15, 16, 1, "#2f8a3c");
+    if (i === 37 && j === 10) { px(ctx, X + 6, Y + 10, 4, 2, "#111"); px(ctx, X + 8, Y + 2, 1, 9, "#eee"); px(ctx, X + 9, Y + 2, 4, 3, "#e33"); }
+    if (i === 35 && j === 9) circ(ctx, X + 8, Y + 8, 1, "#fff");
+  }
+}
+
+function drawObject(ctx, c, X, Y, i, j) {
+  switch (c) {
+    case "#": {
+      const outer = j === 12 || j === 27;
+      px(ctx, X, Y, 16, 16, outer ? "#e9cfa9" : "#e2c49e");
+      px(ctx, X, Y, 16, 1, "#f5e2c4");
+      px(ctx, X, Y + 12, 16, 4, outer ? "#a5543d" : "#b98f68");
+      if (outer && i % 3 === 1) { px(ctx, X + 4, Y + 2, 8, 8, "#7fa7d6"); px(ctx, X + 4, Y + 2, 8, 1, "#5a7fb0"); px(ctx, X + 7, Y + 2, 1, 8, "#e9cfa9"); }
+      break;
+    }
+    case "p":
+      circ(ctx, X + 8, Y + 7, 7, "#2e6b30"); circ(ctx, X + 6, Y + 5, 4, "#3f8a3f"); px(ctx, X + 4, Y + 4, 2, 2, "#57a857");
+      px(ctx, X + 7, Y + 13, 2, 3, "#5a3a22");
+      break;
+    case "s":
+      px(ctx, X + 1, Y + 3, 14, 3, "#5e3820"); px(ctx, X + 1, Y + 6, 14, 6, "#7b4b2c"); px(ctx, X + 1, Y + 11, 14, 1, "#4d2d18");
+      break;
+    case "l":
+      px(ctx, X + 4, Y + 3, 8, 10, "#e8e8e8"); px(ctx, X + 4, Y + 3, 8, 2, "#ffffff"); px(ctx, X + 6, Y + 7, 4, 4, "#1f4fd8"); px(ctx, X + 7, Y + 8, 2, 2, "#fff");
+      px(ctx, X + 7, Y, 1, 3, "#333");
+      break;
+    case "T": case "F": {
+      const top = grid[j - 1]?.[i] !== c, bottom = grid[j + 1]?.[i] !== c, left = grid[j][i - 1] !== c, right = grid[j][i + 1] !== c;
+      px(ctx, X, Y, 16, 16, "#f4f4f2");
+      if (right) px(ctx, X + 9, Y, 7, 16, "#e0e0dc");
+      if (top) { px(ctx, X, Y, 16, 2, "#ffffff"); px(ctx, X, Y + 2, 16, 1, "#d8d8d4"); }
+      if (left) px(ctx, X, Y, 1, 16, "#cfcfca");
+      if (right) px(ctx, X + 15, Y, 1, 16, "#bdbdb8");
+      if (bottom) {
+        const col = c === "F" ? "#ff9f1c" : TENT_COLORS[Math.floor(i / 4) % TENT_COLORS.length];
+        for (let k = 0; k < 4; k++) px(ctx, X + k * 4, Y + 10, 4, 5, k % 2 ? col : "#ffffff");
+        px(ctx, X, Y + 15, 16, 1, "#8f8f8a");
+      }
+      break;
+    }
+    case "Z":
+      px(ctx, X, Y + 3, 16, 2, "#3a3a3a"); px(ctx, X, Y + 11, 16, 2, "#3a3a3a");
+      for (let k = 0; k < 4; k++) px(ctx, X + k * 4, Y + 5 + (k % 2) * 3, 1, 3, "#555");
+      px(ctx, X + 6, Y + 6, 4, 3, "#ffb347"); px(ctx, X + 7, Y + 7, 2, 1, "#fff3c4");
+      if (i === 19 || i === 24) px(ctx, X + 6, Y, 4, 16, "#2c2c2c");
+      break;
+    case "q":
+      circ(ctx, X + 8, Y + 9, 5, "#00000033"); circ(ctx, X + 8, Y + 7, 5, "#fafafa"); px(ctx, X + 5, Y + 5, 3, 1, "#ffffff");
+      break;
+    case "a":
+      px(ctx, X, Y + 3, 16, 10, "#1f4fd8"); px(ctx, X + 1, Y + 4, 14, 8, "#e9f1ff");
+      if (i === 30) circ(ctx, X + 6, Y + 8, 2, "#e33"); else px(ctx, X + 7, Y + 7, 2, 2, "#111");
+      break;
+    case "x":
+      px(ctx, X + 2, Y, 12, 16, "#2e8b57"); px(ctx, X + 2, Y, 1, 16, "#1f6b41");
+      circ(ctx, X + 8, Y + 8, 3, "#ffffff"); circ(ctx, X + 8, Y + 8, 2, "#1b1b1b");
+      break;
+    case "k":
+      px(ctx, X, Y + 3, 16, 10, "#f2f2f2"); px(ctx, X, Y + 12, 16, 2, "#c9c9c9");
+      if ((i + j) % 2) { px(ctx, X + 4, Y + 4, 8, 5, "#333"); px(ctx, X + 5, Y + 5, 6, 3, "#6fb1ff"); }
+      else { px(ctx, X + 3, Y + 5, 3, 4, "#1f4fd8"); px(ctx, X + 7, Y + 6, 5, 3, "#fff"); }
+      break;
+    case "g":
+      px(ctx, X, Y + 4, 16, 9, "#f2f2f2"); px(ctx, X, Y + 12, 16, 2, "#c9c9c9");
+      for (const o of [1, 6, 11]) { px(ctx, X + o, Y + 5, 4, 6, "#e9dcc0"); px(ctx, X + o + 1, Y + 3, 2, 2, "#c7b48d"); px(ctx, X + o + 1, Y + 7, 2, 2, "#1f4fd8"); }
+      break;
+    case "c":
+      px(ctx, X, Y + 3, 16, 1, "#555");
+      for (let k = 0; k < 4; k++) px(ctx, X + k * 4 + 1, Y + 4, 3, 9, ["#2b2f3a", "#8a6038", "#e63946", "#3a86ff"][(i + k) % 4]);
+      break;
+    case "m":
+      px(ctx, X, Y + 2, 16, 11, "#8a5a3a"); px(ctx, X, Y + 2, 16, 2, "#a87250");
+      circ(ctx, X + 5, Y + 7, 3, "#fff"); px(ctx, X + 4, Y + 6, 2, 1, "#e63946"); px(ctx, X + 5, Y + 8, 1, 1, "#5a3a22");
+      circ(ctx, X + 12, Y + 7, 2, "#f2e6d0");
+      break;
+    case "r":
+      circ(ctx, X + 8, Y + 10, 6, "#00000030"); circ(ctx, X + 8, Y + 8, 6, "#f5f5f5"); px(ctx, X + 5, Y + 5, 3, 1, "#fff");
+      if (hash(i, j) > .5) px(ctx, X + 9, Y + 7, 2, 3, "#6fb1ff");
+      break;
+    case "v":
+      px(ctx, X, Y + 3, 16, 10, "#6c3ab0"); px(ctx, X, Y + 3, 16, 3, "#8550cc"); px(ctx, X, Y + 12, 16, 1, "#4a2580");
+      break;
+    case "b":
+      circ(ctx, X + 5, Y + 6, 4, "#2f6bff"); circ(ctx, X + 11, Y + 5, 4, "#ffffff"); circ(ctx, X + 8, Y + 10, 4, "#1e4fd6");
+      px(ctx, X + 4, Y + 4, 1, 1, "#9cc0ff"); px(ctx, X + 8, Y + 14, 1, 2, "#ccc");
+      break;
+    case "u":
+      px(ctx, X + 4, Y, 8, 14, "#1d3fb8"); px(ctx, X + 4, Y, 8, 1, "#fff");
+      px(ctx, X + 6, Y + 3, 4, 4, "#fff"); px(ctx, X + 7, Y + 4, 2, 2, "#1d3fb8"); px(ctx, X + 9, Y + 6, 1, 2, "#fff");
+      px(ctx, X + 3, Y + 14, 10, 2, "#666");
+      break;
+    case "n":
+      px(ctx, X + 7, Y + 8, 2, 8, "#8a6038");
+      px(ctx, X + 1, Y + 1, 14, 8, "#2f5bd8"); px(ctx, X + 1, Y + 1, 14, 1, "#5b80ea");
+      px(ctx, X + 3, Y + 4, 5, 1, "#fff"); px(ctx, X + 9, Y + 4, 4, 1, "#fff"); px(ctx, X + 3, Y + 6, 7, 1, "#fff"); px(ctx, X + 11, Y + 5, 2, 2, "#ffd166");
+      break;
+  }
+}
+
+(function prerenderMap() {
+  const mctx = mapCanvas.getContext("2d");
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+    const c = grid[j][i], X = i * TS, Y = j * TS;
+    const ground = c === "p" ? "w" : (WALK.has(c) && c !== "s") ? c : baseOf(i, j);
+    drawGround(mctx, ground, X, Y, i, j);
+    if (!WALK.has(c) || c === "s") drawObject(mctx, c, X, Y, i, j);
+  }
+})();
+
+const SKINS = ["#f1c7a5", "#e8b48f", "#d9a27a", "#c98e66", "#9c6a48", "#6e4a33"];
+const HAIRS = ["#2b1d14", "#5a3a22", "#8a6038", "#d9b35f", "#e8d9a0", "#a33b20", "#1a1a1a", "#6b4226"];
+const SHIRTS = ["#e63946", "#f4a261", "#2a9d8f", "#e9c46a", "#8d99ae", "#ffffff", "#6d597a", "#b5838d", "#3a86ff", "#ffbe0b", "#06d6a0", "#ef476f"];
+
+function drawPerson(ctx, x, y, L, dir, frame, bob = 0) {
+  x = Math.round(x) - 5; y = Math.round(y) - 16 + bob;
+  const skin = L.skin, hair = L.hair, shirt = L.shirt, pants = L.pants || "#2d3142";
+  const side = dir === "left" || dir === "right";
+  px(ctx, x + 1, y + 15 - bob, 8, 2, "rgba(0,0,0,.25)");
+  const s1 = frame ? 1 : 0;
+  if (side) { px(ctx, x + 3, y + 11, 2, 4 - s1, pants); px(ctx, x + 5, y + 11, 2, 3 + s1, pants); }
+  else { px(ctx, x + 2, y + 11, 2, 4 - s1, pants); px(ctx, x + 6, y + 11, 2, 3 + s1, pants); }
+  if (side) px(ctx, x + 2, y + 6, 6, 6, shirt); else px(ctx, x + 1, y + 6, 8, 6, shirt);
+  if (side) px(ctx, x + (dir === "left" ? 4 : 5), y + 7 + s1, 1, 4, skin);
+  else { px(ctx, x, y + 7 + s1, 1, 4, skin); px(ctx, x + 9, y + 8 - s1, 1, 4, skin); }
+  if (dir !== "up") {
+    if (L.team) px(ctx, x + 4, y + 8, 2, 2, "#ffffff");
+    if (L.lanyard) { px(ctx, x + 4, y + 6, 1, 3, L.lanyard); px(ctx, x + 4, y + 9, 2, 2, "#fff"); }
+    if (L.suit) { px(ctx, x + 4, y + 6, 2, 2, "#fff"); px(ctx, x + 4, y + 7, 1, 2, "#c33"); }
+  }
+  px(ctx, x + 2, y + 1, 6, 5, skin);
+  if (dir === "up") {
+    px(ctx, x + 2, y, 6, 5, hair);
+    if (L.long) px(ctx, x + 2, y + 5, 6, 3, hair);
+  } else {
+    px(ctx, x + 2, y, 6, 2, hair);
+    if (dir === "down") {
+      px(ctx, x + 2, y + 2, 1, 1, hair); px(ctx, x + 7, y + 2, 1, 1, hair);
+      if (L.long) { px(ctx, x + 1, y + 1, 1, 7, hair); px(ctx, x + 8, y + 1, 1, 7, hair); }
+      px(ctx, x + 3, y + 3, 1, 1, "#222"); px(ctx, x + 6, y + 3, 1, 1, "#222");
+      if (L.glasses) px(ctx, x + 3, y + 3, 4, 1, "#222");
+    } else {
+      const back = dir === "left" ? x + 6 : x + 2;
+      px(ctx, back, y + 1, 2, 3, hair);
+      if (L.long) px(ctx, back, y + 4, 2, 4, hair);
+      const ex = dir === "left" ? x + 3 : x + 6;
+      px(ctx, ex, y + 3, 1, 1, "#222");
+      if (L.glasses) px(ctx, dir === "left" ? x + 2 : x + 5, y + 3, 3, 1, "#222");
+    }
+  }
+  if (L.chair) { px(ctx, x + 3, y - 3, 4, 1, "#ffd166"); px(ctx, x + 3, y - 4, 1, 1, "#ffd166"); px(ctx, x + 5, y - 4, 1, 1, "#ffd166"); px(ctx, x + 6, y - 4, 1, 1, "#ffd166"); }
+}
+
+function drawBang(ctx, x, y, t, kind, crit) {
+  const b = Math.round(Math.sin(t * 6) * 1.5);
+  x = Math.round(x) - 5; y = Math.round(y) - 31 + b;
+  const fill = kind === "mg" ? "#ffd166" : (crit && Math.floor(t * 4) % 2 ? "#ff5d6c" : "#ffffff");
+  px(ctx, x - 1, y - 1, 12, 12, "#0b1640"); px(ctx, x + 3, y + 11, 4, 2, "#0b1640");
+  px(ctx, x, y, 10, 10, fill); px(ctx, x + 4, y + 10, 2, 2, fill);
+  if (kind === "mg") { px(ctx, x + 2, y + 3, 6, 4, "#0b1640"); px(ctx, x + 3, y + 2, 1, 1, "#0b1640"); px(ctx, x + 6, y + 2, 1, 1, "#0b1640"); px(ctx, x + 3, y + 4, 1, 1, "#ffd166"); px(ctx, x + 6, y + 4, 1, 1, "#ffd166"); }
+  else { px(ctx, x + 4, y + 2, 2, 4, "#e63946"); px(ctx, x + 4, y + 7, 2, 2, "#e63946"); }
+}
+
+// ---------------- Zustand ----------------
+let s;
+const canvas = $("world"), ctx = canvas.getContext("2d");
+let SCALE = 2;
+const cam = { x: 0, y: 0 };
+const keys = new Set();
+let actx = null, muted = false;
 
 function newState() {
   const stats = {};
   STATS.forEach(st => stats[st.key] = 55);
-  return { stats, day: 0, time: DAYS[0].start, used: new Set(), flags: new Set(), mgDone: new Set(), decisions: 0 };
+  const chat = {};
+  CHATS.forEach(c => chat[c.id] = { msgs: [], unread: 0, last: 0 });
+  return {
+    stats, day: 0, min: DAYS[0].start, mode: "title", used: new Set(), flags: new Set(), decisions: 0, missed: 0,
+    tasks: [], npcs: [], player: null, nextSpawn: DAYS[0].start + 15, nextAmbient: 6,
+    scenesDone: new Set(), mgDone: new Set(), ambientUsed: new Set(), chat, seq: 1,
+    phoneOpen: false, phoneChat: null, camTarget: null, confetti: [], party: false, stageLights: 0,
+    phaseKey: "", pendingTalk: null, tapMark: null, curMg: null, t: 0, titleT: 0,
+  };
 }
 
-const fmt = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
-const statByKey = k => STATS.find(st => st.key === k);
-const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
-const pick = arr => arr[Math.floor(Math.random() * arr.length)];
-const shuffle = arr => arr.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
-const fxChips = fx => Object.entries(fx).map(([k, d]) =>
-  `<span class="fx ${d > 0 ? "up" : "down"}">${statByKey(k).icon} ${d > 0 ? "+" : ""}${d}</span>`).join("");
-
-function bestScore() {
-  try { return Number(localStorage.getItem("qs_best") || 0); } catch { return 0; }
+function makeNPC(o) {
+  return Object.assign({ x: 0, y: 0, dir: "down", path: [], wait: Math.random() * 4, speed: 34 + Math.random() * 10, walkT: 0, frame: 0, task: null, kind: "crowd" }, o);
 }
-function saveBest(v) {
-  try { if (v > bestScore()) localStorage.setItem("qs_best", String(v)); } catch {}
-}
+function placeAt(ent, i, j) { ent.x = i * TS + 8; ent.y = j * TS + 13; ent.path = []; }
+const tileOf = ent => [Math.floor(ent.x / TS), Math.floor((ent.y - 4) / TS)];
 
-function setKeys(fn) {
-  if (keyHandler) document.removeEventListener("keydown", keyHandler);
-  keyHandler = fn;
-  if (fn) document.addEventListener("keydown", fn);
-}
-
-// ---------- Startscreen ----------
-function renderStart() {
-  setKeys(e => { if (e.key === "Enter") startGame(); });
-  const best = bestScore();
-  app.innerHTML = `
-    <div class="hero">
-      <div class="qlogo">Q</div>
-      <div class="tagline">Innovation. Inspiration. Entrepreneurship.</div>
-      <h1>Feel the<br>Q Spirit</h1>
-      <p class="muted">Du bist Chair der Q-Summit. Zwei Konferenztage im Schloss, sechs Divisions, und alle wollen etwas von dir. Halte alle bei Laune bis zur Afterparty.</p>
-      <div class="rules">
-        <div class="grid2">${STATS.map(st => `<div><span>${st.icon}</span><b>${st.name}</b></div>`).join("")}</div>
-        <div class="muted" style="font-size:14px">Fällt ein Wert auf 0, ist die Q vorbei. Die Symbole an den Antworten zeigen, welche Werte sich ändern, aber nicht, in welche Richtung.</div>
-      </div>
-      ${best ? `<p class="muted">Bester Score bisher: <b>${best}</b></p>` : ""}
-      <button class="btn" id="start">Q starten</button>
-    </div>`;
-  document.getElementById("start").onclick = startGame;
-}
-
-function startGame() {
-  s = newState();
-  renderDayIntro();
-}
-
-function renderDayIntro() {
-  const d = DAYS[s.day];
-  setKeys(e => { if (e.key === "Enter") next(); });
-  app.innerHTML = `
-    <div class="end">
-      <div class="tagline">Q-Summit · ${d.title}</div>
-      <h1>${s.day === 0 ? "Die Türen öffnen gleich." : "Guten Morgen, Chair."}</h1>
-      <p class="muted">${d.sub}. Von ${fmt(d.start)} bis ${fmt(d.end)} Uhr.</p>
-      ${s.day > 0 ? `<p>${OVERNIGHT.text}</p><div class="fxlist" style="justify-content:flex-start">${fxChips(OVERNIGHT.fx)}</div>${summary()}` : ""}
-      <button class="btn" id="go">${d.title} starten</button>
-    </div>`;
-  document.getElementById("go").onclick = () => next();
-}
-
-// ---------- HUD ----------
-function hud(flash = {}) {
-  const d = DAYS[s.day];
-  const pct = Math.min(100, ((s.time - d.start) / (d.end - d.start)) * 100);
-  return `
-    <div class="stats">
-      ${STATS.map(st => {
-        const v = s.stats[st.key];
-        const cls = [v < 25 ? "low" : "", flash[st.key] > 0 ? "flash-up" : flash[st.key] < 0 ? "flash-down" : ""].join(" ");
-        return `<div class="stat ${cls}" title="${st.name}">
-          <div class="icon">${st.icon}</div>
-          <div class="bar"><div class="fill" style="height:${v}%"></div></div>
-          <div class="val">${v}</div>
-        </div>`;
-      }).join("")}
-    </div>
-    <div class="clock">
-      <span class="time">${d.title} · ${fmt(s.time)}</span>
-      <div class="track"><div class="progress" style="width:${pct}%"></div></div>
-      <span class="muted">${fmt(d.end)}</span>
-    </div>`;
-}
-
-// ---------- Ablauf ----------
-function next(flash = {}) {
-  if (s.time >= DAYS[s.day].end) {
-    if (s.day < DAYS.length - 1) {
-      s.day++;
-      s.time = DAYS[s.day].start;
-      for (const [k, d] of Object.entries(OVERNIGHT.fx)) s.stats[k] = Math.min(100, s.stats[k] + d);
-      return renderDayIntro();
-    }
-    return renderEnd();
+function initWorld() {
+  s.npcs = [];
+  for (const [name, t] of Object.entries(TEAM)) {
+    const n = makeNPC({ kind: "team", name, role: t.role, home: t.home, speed: 46,
+      look: { hair: t.hair, skin: SKINS[strHash(name) % 3], shirt: "#1f4fd8", team: true, long: t.long, glasses: t.glasses } });
+    placeAt(n, ...randomNear(LOCS[t.home], 3));
+    s.npcs.push(n);
   }
-  const mg = MINIGAMES.find(m => m.day === s.day && s.time >= m.at && !s.mgDone.has(m.id));
-  if (mg) {
-    s.mgDone.add(mg.id);
-    return mg.play();
+  const w = crowdWeights();
+  for (let k = 0; k < 44; k++) {
+    const investor = k < 7;
+    const n = makeNPC({
+      look: investor
+        ? { hair: pick(HAIRS), skin: pick(SKINS), shirt: pick(["#2b2f3a", "#3d405b", "#1b263b"]), pants: "#1b1b24", suit: true, lanyard: "#1fae74", long: Math.random() < .3 }
+        : { hair: pick(HAIRS), skin: pick(SKINS), shirt: pick(SHIRTS), pants: pick(["#2d3142", "#3d5a80", "#22223b", "#6b705c", "#a68a64"]), lanyard: "#2f6bff", long: Math.random() < .45, glasses: Math.random() < .15 },
+    });
+    placeAt(n, ...pick(ZONES[pickWeighted(w)]));
+    s.npcs.push(n);
   }
-  const ev = pickEvent();
-  if (!ev) { s.time = DAYS[s.day].end; return next(flash); }
-  renderEvent(ev, flash);
+  // Partner an den Booths und Food-Staff
+  for (const [x, y] of [[3, 4], [7, 4], [11, 4], [15, 4], [3, 9], [7, 9], [11, 9], [15, 9]]) {
+    const n = makeNPC({ kind: "static", look: { hair: pick(HAIRS), skin: pick(SKINS), shirt: pick(TENT_COLORS), pants: "#2d3142", long: Math.random() < .4 } });
+    placeAt(n, x, y); s.npcs.push(n);
+  }
+  for (const x of [30, 35, 40]) {
+    const n = makeNPC({ kind: "static", look: { hair: pick(HAIRS), skin: pick(SKINS), shirt: "#ff9f1c", pants: "#2d3142" } });
+    placeAt(n, x, 4); s.npcs.push(n);
+  }
+  s.player = makeNPC({ kind: "player", name: "Du", speed: 82, look: PLAYER_LOOK });
+  placeAt(s.player, 22, 33);
+  s.player.dir = "up";
+}
+const npcByName = name => s.npcs.find(n => n.name === name);
+
+// ---------------- Audio ----------------
+function beep(f = 660, d = .06, type = "square", v = .035) {
+  if (muted || !actx) return;
+  const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+  o.type = type; o.frequency.value = f; o.connect(g); g.connect(actx.destination);
+  g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.start(t); o.stop(t + d + .02);
+}
+const sfx = {
+  msg: () => { beep(880, .08, "sine", .05); setTimeout(() => beep(1320, .1, "sine", .05), 90); },
+  bang: () => { beep(520, .08); setTimeout(() => beep(780, .1), 80); },
+  pick: () => beep(700, .05),
+  good: () => { beep(660, .08); setTimeout(() => beep(990, .1), 80); },
+  bad: () => beep(220, .18, "sawtooth", .03),
+  type: () => beep(1400, .012, "square", .012),
+  late: () => { beep(400, .12, "square", .03); setTimeout(() => beep(300, .16, "square", .03), 120); },
+};
+
+// ---------------- Stats & Toasts ----------------
+function renderStats(flash = {}) {
+  $("stats").innerHTML = STATS.map(st => {
+    const v = s.stats[st.key];
+    const cls = ["stat", v < 25 ? "low" : "", flash[st.key] > 0 ? "up" : flash[st.key] < 0 ? "down" : ""].join(" ");
+    return `<div class="${cls}" title="${st.name}: ${v}"><span class="ic">${st.icon}</span><div class="bar"><div class="fill" style="width:${v}%"></div></div></div>`;
+  }).join("");
+}
+let statFlashTimer;
+function applyFx(fx, quiet) {
+  for (const [k, d] of Object.entries(fx)) s.stats[k] = Math.max(0, Math.min(100, s.stats[k] + d));
+  renderStats(fx);
+  clearTimeout(statFlashTimer); statFlashTimer = setTimeout(() => s && renderStats(), 1200);
+  if (!quiet) {
+    $("toasts").innerHTML = Object.entries(fx).map(([k, d]) =>
+      `<span class="toast ${d > 0 ? "up" : "down"}">${statByKey(k).icon} ${d > 0 ? "+" : ""}${d}</span>`).join("");
+    fxSum(fx) >= 0 ? sfx.good() : sfx.bad();
+  }
+}
+function infoToast(text) { $("toasts").innerHTML = `<span class="toast info">${text}</span>`; }
+function checkGameOver() {
+  const dead = STATS.find(st => s.stats[st.key] <= 0);
+  if (dead) { renderGameOver(dead); return true; }
+  return false;
 }
 
+// ---------------- Aufgaben ----------------
 function pickEvent() {
-  const h = s.time / 60;
+  const h = s.min / 60;
   const today = e => !e.day || e.day === s.day + 1;
-  const ok = e => !s.used.has(e.id) && today(e) && (!e.requires || s.flags.has(e.requires));
+  const worldFull = s.tasks.filter(t => t.kind !== "chat").length >= MAX_WORLD_TASKS;
+  const busy = e => !e.chat && TEAM[e.who] && npcByName(e.who)?.task;
+  const ok = e => !s.used.has(e.id) && today(e) && (!e.requires || s.flags.has(e.requires)) && !busy(e) && !(worldFull && !e.chat);
   const followUps = EVENTS.filter(e => ok(e) && e.requires);
-  if (followUps.length && Math.random() < 0.5) return followUps[0];
+  if (followUps.length && Math.random() < .5) return followUps[0];
   let pool = EVENTS.filter(e => ok(e) && !e.requires && (e.from ?? 0) <= h && h < (e.to ?? 24));
   if (!pool.length) pool = EVENTS.filter(e => ok(e) && !e.requires && (e.from ?? 0) <= h);
   return pool.length ? pick(pool) : null;
 }
 
-function renderEvent(ev, flash) {
-  const hint = opt => Object.keys(opt.fx).map(k => statByKey(k).icon).join(" ");
-  app.innerHTML = `
-    ${hud(flash)}
-    <div class="card">
-      <div class="who">
-        <div class="avatar">${ev.avatar}</div>
-        <div><div class="name">${ev.who}</div><div class="role">${ev.role}</div></div>
-      </div>
-      <div class="text">${ev.text}</div>
-      <div class="options">
-        <button class="opt" data-o="a"><span class="label">${ev.a.label}</span><span class="hint">${hint(ev.a)}</span></button>
-        <button class="opt" data-o="b"><span class="label">${ev.b.label}</span><span class="hint">${hint(ev.b)}</span></button>
-      </div>
-    </div>`;
-  app.querySelectorAll(".opt").forEach(btn => btn.onclick = () => choose(ev, ev[btn.dataset.o]));
-  setKeys(e => {
-    if (e.key === "1" || e.key === "ArrowLeft") choose(ev, ev.a);
-    if (e.key === "2" || e.key === "ArrowRight") choose(ev, ev.b);
+function spawnEvent() {
+  const ev = pickEvent();
+  if (!ev) return;
+  s.used.add(ev.id);
+  if (ev.chat) {
+    const task = { kind: "chat", ev, chat: ev.chat, deadline: s.min + CHAT_TIME, who: ev.who };
+    s.tasks.push(task);
+    pushMsg(ev.chat, { from: ev.who, text: ev.text, task });
+  } else {
+    let npc = TEAM[ev.who] ? npcByName(ev.who) : null;
+    const loc = LOCS[ev.loc];
+    if (!npc) {
+      npc = makeNPC({ kind: "temp", name: ev.who, role: ev.role, speed: 50,
+        look: ev.who === "Hausmeister" ? { hair: "#8d8d8d", skin: pick(SKINS), shirt: "#5c6b73", pants: "#3b3b3b" }
+          : ev.who === "Speaker" ? { hair: pick(HAIRS), skin: pick(SKINS), shirt: "#9b51e0", pants: "#1b1b24", lanyard: "#9b51e0" }
+          : { hair: pick(HAIRS), skin: pick(SKINS), shirt: "#1f4fd8", team: true, long: Math.random() < .5 } });
+      placeAt(npc, ...randomNear(loc, 4));
+      s.npcs.push(npc);
+    }
+    const task = { kind: "world", ev, npc, loc: ev.loc, deadline: s.min + TASK_TIME, who: ev.who };
+    npc.task = task;
+    npc.path = findPath(tileOf(npc), [loc.x, loc.y]);
+    npc.speed = Math.max(npc.speed, 55);
+    s.tasks.push(task);
+    sfx.bang();
+    infoToast(`❗ ${ev.who} braucht dich · ${loc.label}`);
+  }
+  updateTaskBar();
+}
+
+function spawnMgQuest(q) {
+  const npc = npcByName(q.who);
+  const loc = LOCS[q.loc];
+  const task = { kind: "mg", q, npc, loc: q.loc, deadline: s.min + 70, who: q.who };
+  if (npc.task) { // Minigame hat Vorrang, die alte Aufgabe kommt später wieder
+    s.tasks = s.tasks.filter(t => t !== npc.task);
+    if (npc.task.ev) s.used.delete(npc.task.ev.id);
+    if (dialogTask === npc.task) closeDialog();
+  }
+  npc.task = task;
+  npc.path = findPath(tileOf(npc), [loc.x, loc.y]);
+  s.tasks.push(task);
+  sfx.bang();
+  infoToast(`🎮 ${q.who} braucht Hilfe · ${loc.label}`);
+  updateTaskBar();
+}
+
+function releaseNPC(npc) {
+  if (!npc) return;
+  npc.task = null; npc.path = []; npc.wait = 1 + Math.random() * 2;
+  if (npc.kind === "temp") npc.leaveAt = s.min + 25;
+  if (npc.kind === "team") npc.speed = 46;
+}
+
+function resolveTask(task, opt, late) {
+  s.tasks = s.tasks.filter(t => t !== task);
+  s.decisions++;
+  if (opt.sets) s.flags.add(opt.sets);
+  releaseNPC(task.npc);
+  if (task.kind === "chat") {
+    const m = s.chat[task.chat].msgs.find(m => m.task === task);
+    if (m) m.answered = true;
+    if (late) {
+      pushMsg(task.chat, { from: task.who, text: pick(["Hab's jetzt selbst entschieden 🙄", "Okay, keine Antwort, ich mach einfach 🫠", "Hallo?? Naja, hab entschieden."]) });
+    } else {
+      pushMsg(task.chat, { me: true, text: opt.label });
+      const happy = fxSum(opt.fx) >= 0;
+      setTimeout(() => s && s.chat[task.chat] && pushMsg(task.chat, { from: task.who, text: happy ? pick(["👍", "Top, danke! 🙏", "Perfekt 💙", "Alles klar, mach ich!", "🔥🔥"]) : pick(["Okay… 😬", "Hm, okay 😅", "Wenn du meinst 🙃", "Na gut."]), silent: true }), 1400);
+    }
+  }
+  applyFx(opt.fx);
+  if (late) { s.missed++; sfx.late(); setTimeout(() => s && infoToast(`⏰ Zu spät! ${task.who} hat ohne dich entschieden`), 50); }
+  updateTaskBar();
+  checkGameOver();
+}
+
+function expireTasks() {
+  for (const task of [...s.tasks]) {
+    if (s.min < task.deadline) continue;
+    if (dialogTask === task) closeDialog();
+    if (task.kind === "mg") {
+      s.tasks = s.tasks.filter(t => t !== task);
+      releaseNPC(task.npc);
+      s.missed++; sfx.late();
+      applyFx(task.q.bad, true);
+      infoToast(`⏰ ${task.who} musste es ohne dich machen`);
+      updateTaskBar();
+      if (checkGameOver()) return;
+      continue;
+    }
+    const worst = fxSum(task.ev.a.fx) <= fxSum(task.ev.b.fx) ? task.ev.a : task.ev.b;
+    resolveTask(task, worst, true);
+    if (s.mode === "screen") return;
+  }
+}
+
+function taskLabel(task) {
+  if (task.kind === "chat") return { av: "💬", title: `${task.who} schreibt dir`, place: CHATS.find(c => c.id === task.chat).name };
+  return { av: task.kind === "mg" ? "🎮" : "❗", title: task.who, place: LOCS[task.loc].label };
+}
+function updateTaskBar() {
+  if (!s) return;
+  const n = s.tasks.length;
+  const cnt = $("taskcount");
+  cnt.textContent = n; cnt.classList.toggle("zero", !n);
+  if (!n) { $("tasktext").innerHTML = "Keine offenen Aufgaben<small>Lauf rum und check dein Handy</small>"; return; }
+  const t = [...s.tasks].sort((a, b) => a.deadline - b.deadline)[0];
+  const L = taskLabel(t);
+  $("tasktext").innerHTML = `${L.av} ${L.title} · ${L.place}<small>noch ${Math.max(0, Math.ceil(t.deadline - s.min))} min${n > 1 ? ` · +${n - 1} weitere` : ""}</small>`;
+}
+
+function renderSheet() {
+  const sh = $("sheet");
+  const tasks = [...s.tasks].sort((a, b) => a.deadline - b.deadline);
+  sh.innerHTML = `
+    <div class="sh-head"><span class="pix" style="font-size:11px">AUFGABEN</span><button class="dlg-later" id="shclose">Schließen ✕</button></div>
+    ${tasks.length ? tasks.map((t, i) => {
+      const L = taskLabel(t), left = Math.max(0, Math.ceil(t.deadline - s.min));
+      return `<div class="sh-row"><span class="sh-av">${L.av}</span><div class="sh-main"><b>${L.title}</b><small>${L.place}</small></div>
+        <span class="sh-time ${left < 30 ? "crit" : ""}">${left}m</span><button class="sh-go" data-i="${i}">${t.kind === "chat" ? "Antworten" : "Hinlaufen"}</button></div>`;
+    }).join("") : `<p class="muted">Gerade brennt nichts. Lauf durchs Schloss oder schau in die Chats.</p>`}`;
+  sh.hidden = false;
+  $("shclose").onclick = () => sh.hidden = true;
+  sh.querySelectorAll(".sh-go").forEach(b => b.onclick = () => {
+    const t = tasks[+b.dataset.i];
+    sh.hidden = true;
+    if (!s.tasks.includes(t)) return;
+    if (t.kind === "chat") return openPhone(t.chat);
+    walkToNPC(t.npc);
   });
 }
 
-function applyFx(fx) {
-  for (const [k, d] of Object.entries(fx)) {
-    s.stats[k] = Math.max(0, Math.min(100, s.stats[k] + d));
+// ---------------- Dialog ----------------
+let dialogTask = null, typeTimer = null, dialogKeys = null;
+function openDialog({ name, role, look, avatar, text, options, later, onNext, timer }) {
+  if (s.mode === "play") s.mode = "dialog";
+  const d = $("dialog");
+  d.hidden = false;
+  d.innerHTML = `
+    <div class="dlg-head">
+      <div class="dlg-portrait" id="portrait">${look ? "" : (avatar || "💬")}</div>
+      <div><div class="dlg-name">${name}</div>${role ? `<div class="dlg-role">${role}</div>` : ""}</div>
+      ${timer ? `<div class="dlg-timer">⏰ ${timer} min</div>` : ""}
+    </div>
+    <div class="dlg-text" id="dtext"></div>
+    <div class="dlg-opts" id="dopts" hidden>
+      ${options ? options.map((o, i) => `<button class="dlg-opt" data-i="${i}"><span><span class="k">${i + 1}</span>${o.label}</span><span class="hint">${o.hint || ""}</span></button>`).join("")
+        : `<button class="dlg-opt" data-next="1"><span>Weiter ▸</span></button>`}
+    </div>
+    ${later ? `<button class="dlg-later" id="dlater">Später</button>` : ""}`;
+  if (look) {
+    const c = document.createElement("canvas"); c.width = 12; c.height = 18;
+    drawPerson(c.getContext("2d"), 6, 17, look, "down", 0);
+    $("portrait").appendChild(c);
   }
-  showToasts(fx);
+  const full = typeof text === "function" ? text() : text;
+  let n = 0;
+  const textEl = $("dtext"), optsEl = $("dopts");
+  const finish = () => { clearInterval(typeTimer); textEl.textContent = full; optsEl.hidden = false; };
+  clearInterval(typeTimer);
+  typeTimer = setInterval(() => {
+    n += 2; textEl.textContent = full.slice(0, n);
+    if (n % 6 === 0) sfx.type();
+    if (n >= full.length) finish();
+  }, 22);
+  textEl.onclick = finish;
+  optsEl.querySelectorAll(".dlg-opt").forEach(b => b.onclick = () => {
+    sfx.pick();
+    if (b.dataset.next) { closeDialog(true); onNext && onNext(); }
+    else { const o = options[+b.dataset.i]; closeDialog(); o.onPick(); }
+  });
+  if (later) $("dlater").onclick = () => { closeDialog(); later(); };
+  dialogKeys = e => {
+    if (optsEl.hidden) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); finish(); } return; }
+    if (!options && (e.key === "Enter" || e.key === " " || e.key === "e")) { e.preventDefault(); closeDialog(true); onNext && onNext(); }
+    if (options && (e.key === "1" || e.key === "2")) { const o = options[+e.key - 1]; if (o) { sfx.pick(); closeDialog(); o.onPick(); } }
+    if (later && e.key === "Escape") { closeDialog(); later(); }
+  };
+}
+function closeDialog(keepMode) {
+  clearInterval(typeTimer);
+  $("dialog").hidden = true;
+  dialogTask = null; dialogKeys = null;
+  if (!keepMode && s && s.mode === "dialog") s.mode = "play";
 }
 
-function choose(ev, opt) {
-  setKeys(null);
-  s.used.add(ev.id);
-  s.decisions++;
-  if (opt.sets) s.flags.add(opt.sets);
-  applyFx(opt.fx);
-  s.time += rand(30, 45);
-  const dead = STATS.find(st => s.stats[st.key] <= 0);
-  if (dead) return renderGameOver(dead);
-  next(opt.fx);
+function openTaskDialog(task) {
+  if (!task || !s.tasks.includes(task)) return;
+  keys.clear();
+  const npc = task.npc;
+  npc.dir = facing(npc, s.player);
+  const left = Math.max(0, Math.ceil(task.deadline - s.min));
+  const role = TEAM[task.who]?.role || task.ev?.role || npc.role;
+  if (task.kind === "mg") {
+    openDialog({ name: task.who, role, look: npc.look, text: task.q.text, timer: left, later: () => {},
+      options: [
+        { label: "Los geht's! 🎮", onPick: () => startMg(task) },
+        { label: "Keine Zeit, sorry.", hint: hint({ fx: task.q.bad }), onPick: () => {
+          s.tasks = s.tasks.filter(t => t !== task); releaseNPC(npc); applyFx(task.q.bad); updateTaskBar(); checkGameOver(); } },
+      ] });
+  } else {
+    const ev = task.ev;
+    openDialog({ name: task.who, role, look: npc.look, text: ev.text, timer: left, later: () => {},
+      options: [ev.a, ev.b].map(o => ({ label: o.label, hint: hint(o), onPick: () => resolveTask(task, o) })) });
+  }
+  dialogTask = task;
+}
+function facing(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y;
+  return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
 }
 
-function showToasts(fx) {
-  toasts.innerHTML = Object.entries(fx).map(([k, d]) =>
-    `<span class="toast ${d > 0 ? "up" : "down"}">${statByKey(k).icon} ${d > 0 ? "+" : ""}${d}</span>`).join("");
+// ---------------- Handy ----------------
+const nameColor = name => ["#53bdeb", "#ff8a65", "#25d366", "#ffd279", "#c792ea", "#ff6b9a", "#7fdbca", "#f78c6c"][strHash(name) % 8];
+let notifTimer;
+function pushMsg(chatId, msg) {
+  const c = s.chat[chatId];
+  msg.time = msg.time || fmt(s.min);
+  c.msgs.push(msg);
+  c.last = s.seq++;
+  const viewing = s.phoneOpen && s.phoneChat === chatId;
+  if (!msg.me && !viewing) {
+    c.unread++;
+    if (!msg.silent) showNotif(chatId, msg);
+  }
+  updatePhoneBadge();
+  if (s.phoneOpen) renderPhone();
+}
+function showNotif(chatId, msg) {
+  const chat = CHATS.find(c => c.id === chatId);
+  const n = $("notif");
+  n.innerHTML = `<div class="n-av">${chat.av}</div><div class="n-body"><div class="n-title">${chat.name}</div><div class="n-text">${chatId !== "mama" ? `${msg.from}: ` : ""}${msg.text}</div></div>`;
+  n.classList.add("show");
+  n.onclick = () => { n.classList.remove("show"); openPhone(chatId); };
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => n.classList.remove("show"), msg.task ? 3800 : 2600);
+  sfx.msg();
+  const pb = $("phonebtn"); pb.classList.remove("ring"); void pb.offsetWidth; pb.classList.add("ring");
+}
+function updatePhoneBadge() {
+  const total = Object.values(s.chat).reduce((a, c) => a + c.unread, 0);
+  $("phonebadge").textContent = total ? total : "";
+}
+function openPhone(chatId = null) {
+  if (!s || !["play", "dialog"].includes(s.mode)) return;
+  if (s.mode === "dialog") closeDialog();
+  $("sheet").hidden = true;
+  keys.clear();
+  s.phoneOpen = true; s.phoneChat = chatId;
+  if (chatId) s.chat[chatId].unread = 0;
+  updatePhoneBadge();
+  $("phone").hidden = false;
+  renderPhone();
+}
+function closePhone() { if (!s) return; s.phoneOpen = false; s.phoneChat = null; $("phone").hidden = true; }
+function battery() { const d = DAYS[s.day]; return Math.max(4, Math.round(100 - ((s.min - d.start) / (d.end - d.start)) * 85)); }
+
+function renderPhone() {
+  const ph = $("phone");
+  const status = `<div class="ph-status"><span>${fmt(s.min)}</span><span>📶 ${battery()}% 🔋</span></div>`;
+  if (!s.phoneChat) {
+    const rows = [...CHATS].sort((a, b) => s.chat[b.id].last - s.chat[a.id].last).map(c => {
+      const st = s.chat[c.id], lastMsg = st.msgs[st.msgs.length - 1];
+      const open = s.tasks.some(t => t.kind === "chat" && t.chat === c.id);
+      const prev = lastMsg ? (lastMsg.me ? "Du: " : c.id !== "mama" ? `${lastMsg.from}: ` : "") + lastMsg.text : c.sub;
+      return `<div class="ph-row" data-c="${c.id}"><div class="ph-av">${c.av}</div><div class="ph-main">
+        <div class="ph-name"><span>${c.name}</span><span class="ph-time ${st.unread ? "new" : ""}">${lastMsg ? lastMsg.time : ""}</span></div>
+        <div class="ph-prev"><span>${open ? "❗ " : ""}${prev}</span>${st.unread ? `<span class="ph-unread">${st.unread}</span>` : ""}</div></div></div>`;
+    }).join("");
+    ph.innerHTML = `${status}<div class="ph-head"><div class="ph-title">Chats</div><button class="ph-close" id="phclose">✕</button></div><div class="ph-list">${rows}</div>`;
+    ph.querySelectorAll(".ph-row").forEach(r => r.onclick = () => { s.phoneChat = r.dataset.c; s.chat[r.dataset.c].unread = 0; updatePhoneBadge(); renderPhone(); });
+    $("phclose").onclick = closePhone;
+    return;
+  }
+  const chat = CHATS.find(c => c.id === s.phoneChat), st = s.chat[chat.id];
+  const group = chat.id !== "mama";
+  const msgs = st.msgs.map(m => {
+    const big = /^\p{Extended_Pictographic}+$/u.test(m.text.replace(/[\s️‍]/g, ""));
+    return `<div class="bub ${m.me ? "out" : "in"} ${m.task && !m.answered ? "urgent" : ""} ${big ? "big" : ""}">
+      ${!m.me && group && !big ? `<div class="from" style="color:${nameColor(m.from)}">${m.from}</div>` : ""}
+      ${m.text}${big ? "" : `<div class="t">${m.time}${m.me ? " ✓✓" : ""}</div>`}</div>`;
+  }).join("");
+  const task = s.tasks.find(t => t.kind === "chat" && t.chat === chat.id);
+  const replies = task ? `<div class="ph-replies"><div class="lbl"><span>Antwort an ${task.who}</span><span id="phtimer">⏰ ${Math.max(0, Math.ceil(task.deadline - s.min))} min</span></div>
+    ${[task.ev.a, task.ev.b].map((o, i) => `<button class="ph-reply" data-i="${i}"><span>${o.label}</span><span class="hint">${hint(o)}</span></button>`).join("")}</div>`
+    : `<div class="ph-input"><div>Nachricht</div><span>🎤</span></div>`;
+  ph.innerHTML = `${status}<div class="ph-head"><button class="ph-back" id="phback">‹</button><div class="ph-av" style="width:38px;height:38px;font-size:18px">${chat.av}</div>
+    <div class="ph-title">${chat.name}<div class="ph-sub">${chat.sub}</div></div><button class="ph-close" id="phclose">✕</button></div>
+    <div class="ph-msgs" id="phmsgs"><div class="ph-day">${DAYS[s.day].title.toUpperCase()}</div>${msgs}</div>${replies}`;
+  const box = $("phmsgs"); box.scrollTop = box.scrollHeight;
+  $("phback").onclick = () => { s.phoneChat = null; renderPhone(); };
+  $("phclose").onclick = closePhone;
+  ph.querySelectorAll(".ph-reply").forEach(b => b.onclick = () => { sfx.pick(); resolveTask(task, [task.ev.a, task.ev.b][+b.dataset.i]); });
 }
 
-// ---------- Minigame-Rahmen ----------
+function ambientTick() {
+  const h = s.min / 60;
+  const pool = AMBIENT.filter((m, i) => !s.ambientUsed.has(i) && (!m.day || m.day === s.day + 1) && (m.from_ ?? 0) <= h && h < (m.to ?? 24));
+  if (!pool.length) return;
+  const m = pick(pool);
+  s.ambientUsed.add(AMBIENT.indexOf(m));
+  pushMsg(m.chat, { from: m.from, text: m.text });
+}
+
+// ---------------- Szenen ----------------
+let sceneQueue = [];
+function runScene(scene) {
+  s.scenesDone.add(scene.id);
+  s.mode = "scene";
+  closePhone(); $("sheet").hidden = true; closeDialog(true);
+  keys.clear(); s.player.path = []; s.pendingTalk = null;
+  sceneQueue = [...scene.steps];
+  nextSceneStep();
+}
+function nextSceneStep() {
+  if (!s || s.mode !== "scene") return;
+  const st = sceneQueue.shift();
+  if (!st) {
+    s.mode = "play"; s.camTarget = null;
+    for (const n of s.npcs) if (n.task) n.path = findPath(tileOf(n), [LOCS[n.task.loc].x, LOCS[n.task.loc].y]);
+    return;
+  }
+  if (st.place) {
+    const ent = st.place === "player" ? s.player : npcByName(st.place);
+    if (ent) { placeAt(ent, st.x, st.y); ent.dir = st.dir || "down"; ent.wait = 6; }
+    return nextSceneStep();
+  }
+  if (st.cam) { const L = LOCS[st.cam]; s.camTarget = { x: L.x * TS + 8, y: L.y * TS }; return setTimeout(nextSceneStep, 500); }
+  if (st.seat) {
+    const seats = shuffle(ZONES.so108);
+    s.npcs.filter(n => n.kind === "crowd").forEach((n, k) => { placeAt(n, ...seats[k % seats.length]); n.dir = "up"; n.wait = 8 + Math.random() * 6; });
+    return nextSceneStep();
+  }
+  if (st.party) {
+    s.party = true;
+    s.npcs.filter(n => n.kind !== "static").forEach(n => { n.task = null; placeAt(n, ...pick(ZONES.abend)); n.wait = 99; });
+    s.tasks = []; updateTaskBar();
+    return nextSceneStep();
+  }
+  if (st.lights) { s.stageLights = 4; return nextSceneStep(); }
+  if (st.confetti) { spawnConfetti(); sfx.good(); if (st.fx) applyFx(st.fx, true); return nextSceneStep(); }
+  if (st.wait) return setTimeout(nextSceneStep, st.wait);
+  if (st.say) {
+    const [who, text] = st.say;
+    const npc = who === "Du" ? s.player : npcByName(who);
+    return openDialog({ name: who, role: who === "Du" ? "Chair" : TEAM[who]?.role, look: npc?.look, avatar: who === "Tipp" ? "💡" : null, text, onNext: nextSceneStep });
+  }
+  if (st.end) return renderEnd();
+  nextSceneStep();
+}
+function spawnConfetti() {
+  const cols = ["#ffd166", "#ff5d6c", "#6fb1ff", "#3ecf8e", "#ffffff", "#c792ea"];
+  for (let k = 0; k < 140; k++) s.confetti.push({ x: Math.random() * canvas.width, y: -Math.random() * canvas.height * .6, vx: (Math.random() - .5) * 30, vy: 30 + Math.random() * 50, c: pick(cols), r: Math.random() * 6 });
+}
+
+// ---------------- Minigames ----------------
+const ov = () => $("overlay");
+function showOverlay(html, cls = "") { const o = ov(); o.className = cls; o.innerHTML = html; o.hidden = false; o.scrollTop = 0; }
+function hideOverlay() { ov().hidden = true; ov().innerHTML = ""; }
+let mgKeys = null;
+
+function startMg(task) {
+  s.mode = "mg"; s.curMg = task;
+  task.q.play();
+}
+function endMg() {
+  const task = s.curMg;
+  s.tasks = s.tasks.filter(t => t !== task);
+  releaseNPC(task.npc);
+  s.curMg = null; mgKeys = null;
+  hideOverlay();
+  s.mode = "play";
+  updateTaskBar();
+  checkGameOver();
+}
 function mgIntro(title, text, start) {
-  toasts.innerHTML = "";
-  setKeys(e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); start(); } });
-  app.innerHTML = `
-    ${hud()}
-    <div class="mg">
-      <div class="result">
-        <div class="big">🎮</div>
-        <h2>${title}</h2>
-        <p class="muted">${text}</p>
-        <button class="btn" id="go">Los!</button>
-      </div>
-    </div>`;
-  document.getElementById("go").onclick = start;
+  mgKeys = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); start(); } };
+  showOverlay(`<div class="ov center"><div class="result">
+    <div class="big">🎮</div><h2 class="pix" style="font-size:14px;line-height:1.5">${title}</h2>
+    <p class="muted">${text}</p><button class="btn" id="go">Los!</button></div></div>`);
+  $("go").onclick = start;
 }
-
 function mgResult(emoji, title, text, fx) {
-  applyFx(fx);
-  toasts.innerHTML = ""; // Effekte stehen hier schon als Chips auf der Karte
-  s.time += 20;
-  const dead = STATS.find(st => s.stats[st.key] <= 0);
-  const cont = () => dead ? renderGameOver(dead) : next(fx);
-  setKeys(e => { if (e.key === "Enter") cont(); });
-  app.innerHTML = `
-    ${hud(fx)}
-    <div class="mg">
-      <div class="result">
-        <div class="big">${emoji}</div>
-        <h2>${title}</h2>
-        <p class="muted">${text}</p>
-        <div class="fxlist">${fxChips(fx)}</div>
-        <button class="btn" id="cont">Weiter</button>
-      </div>
-    </div>`;
-  document.getElementById("cont").onclick = cont;
+  applyFx(fx, true);
+  mgKeys = e => { if (e.key === "Enter") endMg(); };
+  showOverlay(`<div class="ov center"><div class="result">
+    <div class="big">${emoji}</div><h2>${title}</h2><p class="muted">${text}</p>
+    <div class="fxlist">${fxChips(fx)}</div><button class="btn" id="cont">Weiter</button></div></div>`);
+  $("cont").onclick = endMg;
 }
-
 function countdown(ms, el, onEnd) {
   const t0 = performance.now();
   const iv = setInterval(() => {
@@ -757,46 +1705,36 @@ function countdown(ms, el, onEnd) {
   return { penalty: sec => { ms -= sec * 1000; } };
 }
 
-// ---------- Minigame: Goodie Bags packen ----------
 function playGoodies() {
-  mgIntro("Goodie Bags packen", "Bevor der Einlass öffnet, müssen oben am Treppenabsatz noch Goodie Bags gepackt werden. Tippe die Sachen von der Liste an. Falsche Sachen kosten 2 Sekunden.", runGoodies);
+  mgIntro("Goodie Bags packen", "Oben am Treppenabsatz müssen noch Goodie Bags gepackt werden. Tippe die Sachen von der Liste an. Falsche Sachen kosten 2 Sekunden.", runGoodies);
 }
-
 function runGoodies() {
-  setKeys(null);
+  mgKeys = null;
   let bags = 0, ended = false, need;
-  app.innerHTML = `
-    ${hud()}
-    <div class="mg">
-      <div class="mg-hud"><span id="t">25.0 s</span><span id="sc">0 Bags</span></div>
-      <div class="checklist" id="list"></div>
-      <div class="grid" id="grid"></div>
-    </div>`;
-  const grid = document.getElementById("grid"), list = document.getElementById("list");
-  const timer = countdown(25000, document.getElementById("t"), finish);
-
+  showOverlay(`<div class="ov"><div class="mg"><div class="mg-title">GOODIE BAGS</div>
+    <div class="mg-hud"><span id="t">25.0 s</span><span id="sc">0 Bags</span></div>
+    <div class="checklist" id="list"></div><div class="grid" id="grid"></div></div></div>`);
+  const grid = $("grid"), list = $("list");
+  const timer = countdown(25000, $("t"), finish);
   function newBag() {
     need = shuffle(GOODIES_OK).slice(0, 4);
     const items = shuffle([...need.map(x => [...x, true]), ...shuffle(GOODIES_WRONG).slice(0, 5).map(x => [...x, false])]);
     list.innerHTML = need.map(([e, l]) => `<span data-l="${l}">${e} ${l}</span>`).join("");
-    grid.innerHTML = items.map(([e, l, good]) =>
-      `<button class="cell" data-l="${l}" data-good="${good}"><span class="e">${e}</span><span class="l">${l}</span></button>`).join("");
+    grid.innerHTML = items.map(([e, l, good]) => `<button class="cell" data-l="${l}" data-good="${good}"><span class="e">${e}</span><span class="l">${l}</span></button>`).join("");
     grid.querySelectorAll(".cell").forEach(c => c.onclick = () => tap(c));
   }
   function tap(c) {
     if (ended) return;
     if (c.dataset.good === "true") {
-      c.classList.add("hit", "done");
+      c.classList.add("hit", "done"); sfx.pick();
       list.querySelector(`[data-l="${c.dataset.l}"]`).classList.add("ok");
       if (!list.querySelector("span:not(.ok)")) {
-        bags++;
-        document.getElementById("sc").textContent = `${bags} Bags`;
+        bags++; $("sc").textContent = `${bags} Bags`; sfx.good();
         setTimeout(() => !ended && newBag(), 150);
       }
     } else {
-      timer.penalty(2);
-      c.classList.add("miss");
-      setTimeout(() => c.classList.remove("miss"), 250);
+      timer.penalty(2); sfx.bad();
+      c.classList.add("miss"); setTimeout(() => c.classList.remove("miss"), 250);
     }
   }
   function finish() {
@@ -808,101 +1746,63 @@ function runGoodies() {
   newBag();
 }
 
-// ---------- Minigame: Badge-Ausgabe ----------
 function playBadges() {
-  mgIntro("Badge-Ausgabe", "Der Check-in links am Haupteingang ist offen! Gib jeder Person das richtige Badge. Achte auf den Namen und die Rolle.", runBadges);
+  mgIntro("Badge-Ausgabe", "Der Check-in links am Haupteingang ist offen! Gib jeder Person das richtige Badge. Achte auf Namen und Rolle.", runBadges);
 }
-
 function runBadges() {
-  setKeys(null);
+  mgKeys = null;
   let score = 0, wrong = 0, ended = false;
-  app.innerHTML = `
-    ${hud()}
-    <div class="mg">
-      <div class="mg-hud"><span id="t">20.0 s</span><span id="sc">0 Badges</span></div>
-      <div class="guest" id="guest"></div>
-      <div class="badges" id="badges"></div>
-    </div>`;
-  const guestEl = document.getElementById("guest"), badgesEl = document.getElementById("badges");
-  countdown(20000, document.getElementById("t"), finish);
-
-  function person() {
-    const pair = pick(LAST_PAIRS);
-    return { first: pick(FIRST_NAMES), last: pick(pair), pair, role: pick(BADGE_ROLES) };
-  }
+  showOverlay(`<div class="ov"><div class="mg"><div class="mg-title">BADGE-AUSGABE</div>
+    <div class="mg-hud"><span id="t">20.0 s</span><span id="sc">0 Badges</span></div>
+    <div class="guest" id="guest"></div><div class="badges" id="badges"></div></div></div>`);
+  const guestEl = $("guest"), badgesEl = $("badges");
+  countdown(20000, $("t"), finish);
+  const person = () => { const pair = pick(LAST_PAIRS); return { first: pick(FIRST_NAMES), last: pick(pair), pair, role: pick(BADGE_ROLES) }; };
   const key = p => `${p.first}|${p.last}|${p.role.k}`;
-
   function round() {
     const t = person();
     const other = t.pair.find(n => n !== t.last);
     const cands = [
-      { ...t, last: other },                                                // ähnlicher Nachname
-      { ...t, role: pick(BADGE_ROLES.filter(r => r !== t.role)) },          // gleiche Person, falsche Rolle
+      { ...t, last: other },
+      { ...t, role: pick(BADGE_ROLES.filter(r => r !== t.role)) },
       { ...t, last: other, role: pick(BADGE_ROLES.filter(r => r !== t.role)) },
       person(), person(),
     ];
     const opts = [t];
     for (const c of cands) if (opts.length < 4 && !opts.some(o => key(o) === key(c))) opts.push(c);
-    guestEl.innerHTML = `<div class="face">${pick(["🧑", "👩", "👨", "🧑‍💼", "👩‍💼", "👨‍💼"])}</div>
-      <div class="gname">${t.first} ${t.last}</div><div class="grole">${t.role.k}</div>`;
-    badgesEl.innerHTML = shuffle(opts).map(o => `
-      <button class="badge" data-ok="${key(o) === key(t)}">
-        <div class="stripe" style="background:${o.role.c}">${o.role.k}</div>
-        <div class="bq">Q-SUMMIT</div>
-        <div class="bname">${o.first} ${o.last}</div>
-      </button>`).join("");
+    guestEl.innerHTML = `<div class="face">${pick(["🧑", "👩", "👨", "🧑‍💼", "👩‍💼", "👨‍💼"])}</div><div class="gname">${t.first} ${t.last}</div><div class="grole">${t.role.k}</div>`;
+    badgesEl.innerHTML = shuffle(opts).map(o => `<button class="badge" data-ok="${key(o) === key(t)}">
+      <div class="stripe" style="background:${o.role.c}">${o.role.k}</div><div class="bq">Q-SUMMIT</div><div class="bname">${o.first} ${o.last}</div></button>`).join("");
     badgesEl.querySelectorAll(".badge").forEach(b => b.onclick = () => {
       if (ended) return;
-      if (b.dataset.ok === "true") {
-        score++;
-        document.getElementById("sc").textContent = `${score} Badges`;
-        round();
-      } else {
-        wrong++;
-        b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
-      }
+      if (b.dataset.ok === "true") { score++; sfx.pick(); $("sc").textContent = `${score} Badges`; round(); }
+      else { wrong++; sfx.bad(); b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong"); }
     });
   }
   function finish() {
     ended = true;
     const net = score - wrong;
-    if (net >= 11) mgResult("🏆", `${score} Badges ausgegeben!`, `Nur ${wrong} Verwechslungen. Der Check-in läuft wie geschmiert, keine Schlange vor dem Schloss.`, { participants: 15, erstis: 5 });
+    if (net >= 11) mgResult("🏆", `${score} Badges ausgegeben!`, `Nur ${wrong} Verwechslungen. Der Check-in läuft wie geschmiert.`, { participants: 15, erstis: 5 });
     else if (net >= 6) mgResult("👍", `${score} Badges ausgegeben`, `${wrong} Verwechslungen. Ein bisschen Schlange, aber alle sind drin.`, { participants: 5 });
     else mgResult("🐌", `Nur ${score} Badges`, `${wrong} Verwechslungen. Ein Investor läuft jetzt als „Participant: Jonas Werner“ herum.`, { participants: -10, partner: -5 });
   }
   round();
 }
 
-// ---------- Minigame: Mic-Check ----------
-function playMic(title, text, baseSpeed) {
-  mgIntro(title, text, () => runMic(baseSpeed));
-}
-
+function playMic(title, text, baseSpeed) { mgIntro(title, text, () => runMic(baseSpeed)); }
 function runMic(baseSpeed) {
   const ROUNDS = 3;
   let round = 0, hits = 0, pos = 0, dir = 1, speed = baseSpeed, zone, timer, last, locked = false;
   const results = [];
-
-  app.innerHTML = `
-    ${hud()}
-    <div class="mg">
-      <div class="mg-hud"><span id="r">Mikro 1/3</span><span id="h">0 Treffer</span></div>
-      <div class="rounds" id="rounds">🎤 🎤 🎤</div>
-      <div class="meter"><div class="zone" id="zone"></div><div class="marker" id="marker"></div></div>
-      <button class="btn" id="stop">Stopp!</button>
-    </div>`;
-  const zEl = document.getElementById("zone"), mEl = document.getElementById("marker");
-
-  function newZone() {
-    const w = 16 - round * 2;
-    zone = { start: rand(10, 90 - w), w };
-    zEl.style.left = zone.start + "%";
-    zEl.style.width = zone.w + "%";
-  }
+  showOverlay(`<div class="ov center"><div class="mg" style="flex:0"><div class="mg-title">MIC-CHECK</div>
+    <div class="mg-hud"><span id="r">Mikro 1/3</span><span id="h">0 Treffer</span></div>
+    <div class="rounds" id="rounds">🎤 🎤 🎤</div>
+    <div class="meter"><div class="zone" id="zone"></div><div class="marker" id="marker"></div></div>
+    <button class="btn" id="stop">Stopp!</button></div></div>`);
+  const zEl = $("zone"), mEl = $("marker");
+  function newZone() { const w = 16 - round * 2; zone = { start: rand(10, 90 - w), w }; zEl.style.left = zone.start + "%"; zEl.style.width = zone.w + "%"; }
   function loop() {
-    const t = performance.now();
-    const dt = last ? (t - last) / 1000 : 0;
-    last = t;
+    const t = performance.now(), dt = last ? (t - last) / 1000 : 0; last = t;
     pos += dir * speed * dt;
     if (pos >= 100) { pos = 100; dir = -1; }
     if (pos <= 0) { pos = 0; dir = 1; }
@@ -910,84 +1810,443 @@ function runMic(baseSpeed) {
   }
   function stop() {
     if (locked) return;
-    locked = true;
-    clearInterval(timer);
+    locked = true; clearInterval(timer);
     const hit = pos >= zone.start && pos <= zone.start + zone.w;
-    if (hit) hits++;
+    if (hit) { hits++; sfx.good(); } else sfx.bad();
     results.push(hit ? "✅" : "❌");
-    document.getElementById("rounds").textContent = results.concat(Array(ROUNDS - results.length).fill("🎤")).join(" ");
-    document.getElementById("h").textContent = `${hits} Treffer`;
+    $("rounds").textContent = results.concat(Array(ROUNDS - results.length).fill("🎤")).join(" ");
+    $("h").textContent = `${hits} Treffer`;
     round++;
     setTimeout(() => {
       if (round >= ROUNDS) return finish();
-      document.getElementById("r").textContent = `Mikro ${round + 1}/3`;
+      $("r").textContent = `Mikro ${round + 1}/3`;
       speed *= 1.45; last = null; locked = false;
       newZone(); timer = setInterval(loop, 16);
     }, 600);
   }
   function finish() {
-    setKeys(null);
+    mgKeys = null;
     if (hits === 3) mgResult("🎙️", "Perfekter Sound!", "Alle Mikros laufen, SO108 bebt.", { speaker: 15 });
     else if (hits === 2) mgResult("🔊", "Läuft größtenteils", "Ein Mikro rauscht ein bisschen, aber passt schon.", { speaker: 5 });
     else if (hits === 1) mgResult("📢", "Fiepen im Saal", "Rückkopplung. Ganz SO108 hält sich die Ohren zu.", { speaker: -5, participants: -5 });
     else mgResult("🔇", "Totalausfall", "Auf der Mainstage wird ein einziges Handmikro herumgereicht.", { speaker: -15, participants: -5 });
   }
-
-  document.getElementById("stop").onclick = stop;
-  setKeys(e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); } });
-  newZone();
-  timer = setInterval(loop, 16);
+  $("stop").onclick = stop;
+  mgKeys = e => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); stop(); } };
+  newZone(); timer = setInterval(loop, 16);
 }
 
-// ---------- Enden ----------
+// ---------------- Screens ----------------
 function summary() {
-  return `<div class="summary">${STATS.map(st => `
-    <div class="row"><span>${st.icon}</span>
-      <div class="track"><div style="width:${s.stats[st.key]}%"></div></div>
-      <span class="num">${s.stats[st.key]}</span></div>`).join("")}</div>`;
+  return `<div class="summary">${STATS.map(st => `<div class="row"><span>${st.icon}</span>
+    <div class="track"><div style="width:${s.stats[st.key]}%"></div></div><span class="num">${s.stats[st.key]}</span></div>`).join("")}</div>`;
+}
+function bestScore() { try { return Number(localStorage.getItem("qs_best") || 0); } catch { return 0; } }
+function saveBest(v) { try { if (v > bestScore()) localStorage.setItem("qs_best", String(v)); } catch {} }
+let screenKeys = null;
+
+function resetUi() {
+  closePhone(); closeDialog(true); $("sheet").hidden = true;
+  $("talkbtn").hidden = true; talkTarget = null; mgKeys = null;
+  $("notif").classList.remove("show"); $("toasts").innerHTML = "";
+}
+
+function renderTitle() {
+  s = newState(); initWorld(); s.mode = "title";
+  resetUi(); renderStats(); updateTaskBar(); updatePhoneBadge();
+  $("clock").textContent = "Q-SUMMIT 2026"; lastClock = "";
+  const best = bestScore();
+  showOverlay(`<div class="ov bottom">
+    <div class="title-logo">Q-SUMMIT</div>
+    <div class="tagline">Innovation. Inspiration. Entrepreneurship.</div>
+    <p class="muted">Du bist Chair der Q-Summit. Zwei Konferenztage im Schloss, sechs Divisions, ein Handy, das nie still ist. Halte alle bei Laune bis zur Afterparty.</p>
+    <div class="panel">
+      <div class="grid2">${STATS.map(st => `<div><span>${st.icon}</span><b>${st.name}</b></div>`).join("")}</div>
+      <div class="controls">❗ Leute brauchen dich: hinlaufen und entscheiden<br>📱 Chats beantworten, bevor die Zeit abläuft<br>🎮 Minigames bei Goodie Bags, Check-in und Mic-Check<br>Tippen zum Laufen · WASD/Pfeile · E zum Reden · P fürs Handy</div>
+    </div>
+    ${best ? `<p class="muted">Bester Score bisher: <b>${best}</b></p>` : ""}
+    <button class="btn" id="start">Q starten</button>
+  </div>`, "title");
+  $("start").onclick = startGame;
+  screenKeys = e => { if (e.key === "Enter") startGame(); };
+}
+
+function startGame() {
+  if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }
+  s = newState(); initWorld();
+  resetUi();
+  for (const m of START_MSGS) { const c = s.chat[m.chat]; c.msgs.push({ from: m.from, text: m.text, time: m.time }); c.last = s.seq++; }
+  renderStats(); updateTaskBar(); updatePhoneBadge();
+  renderDayIntro();
+}
+
+function renderDayIntro() {
+  const d = DAYS[s.day];
+  s.mode = "screen";
+  screenKeys = e => { if (e.key === "Enter") beginDay(); };
+  showOverlay(`<div class="ov center">
+    <div class="tagline">Q-Summit · ${d.title}</div>
+    <h1 class="pix" style="font-size:20px;line-height:1.5">${s.day === 0 ? "Die Türen öffnen gleich." : "Guten Morgen, Chair."}</h1>
+    <p class="muted">${d.sub}. Von ${fmt(d.start)} bis ${fmt(d.end)} Uhr.</p>
+    ${s.day > 0 ? `<p>${OVERNIGHT.text}</p><div class="fxlist" style="justify-content:flex-start">${fxChips(OVERNIGHT.fx)}</div>${summary()}` : ""}
+    <button class="btn" id="go">${d.title} starten</button></div>`);
+  $("go").onclick = beginDay;
+}
+function beginDay() {
+  screenKeys = null;
+  hideOverlay();
+  s.mode = "play";
+}
+
+function endDay() {
+  s.day = 1; s.min = DAYS[1].start; s.nextSpawn = s.min + 20;
+  for (const [k, d] of Object.entries(OVERNIGHT.fx)) s.stats[k] = Math.min(100, s.stats[k] + d);
+  s.tasks = []; s.stageLights = 0;
+  for (const c of Object.values(s.chat)) for (const m of c.msgs) if (m.task) m.answered = true;
+  resetUi();
+  initWorld();
+  renderStats(); updateTaskBar();
+  renderDayIntro();
 }
 
 function renderGameOver(stat) {
-  setKeys(e => { if (e.key === "Enter") startGame(); });
-  app.innerHTML = `
-    <div class="end">
-      <div style="font-size:56px">${stat.icon}</div>
-      <h1>Game over · ${DAYS[s.day].title}, ${fmt(s.time)}</h1>
-      <p>${GAME_OVER[stat.key]}</p>
-      ${summary()}
-      <p class="muted">${s.decisions} Entscheidungen getroffen</p>
-      <button class="btn" id="again">Nochmal versuchen</button>
-      <button class="btn secondary" id="menu">Zum Start</button>
-    </div>`;
-  document.getElementById("again").onclick = startGame;
-  document.getElementById("menu").onclick = renderStart;
+  s.mode = "screen";
+  resetUi();
+  screenKeys = e => { if (e.key === "Enter") startGame(); };
+  showOverlay(`<div class="ov center">
+    <div style="font-size:56px">${stat.icon}</div>
+    <h1 class="pix" style="font-size:18px;line-height:1.5">GAME OVER</h1>
+    <p class="muted">${DAYS[s.day].title}, ${fmt(s.min)} Uhr</p>
+    <p>${GAME_OVER[stat.key]}</p>${summary()}
+    <p class="muted">${s.decisions} Entscheidungen · ${s.missed} verpasst</p>
+    <button class="btn" id="again">Nochmal versuchen</button>
+    <button class="btn secondary" id="menu">Zum Start</button></div>`);
+  $("again").onclick = startGame;
+  $("menu").onclick = renderTitle;
 }
 
 function renderEnd() {
+  s.mode = "screen";
+  resetUi();
   const vals = Object.values(s.stats);
   const score = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length + Math.min(...vals) / 2);
   const prevBest = bestScore();
   saveBest(score);
   const [emoji, title, text] =
-    score >= 85 ? ["🪩", "Legendäre Q", "Konfetti, DJ und ein komplett erschöpftes, glückliches Team auf der Afterparty. Über diese Q wird noch in fünf Jahren geredet."] :
-    score >= 75 ? ["🥂", "Starke Q", "Ein paar Pannen, aber Partner, Speaker und Team feiern zusammen auf der Afterparty. Der Stress fällt endlich ab."] :
+    score >= 85 ? ["🪩", "Legendäre Q", "Konfetti, DJ und ein komplett erschöpftes, glückliches Team. Über diese Q wird noch in fünf Jahren geredet."] :
+    score >= 75 ? ["🥂", "Starke Q", "Ein paar Pannen, aber Partner, Speaker und Team feiern zusammen. Der Stress fällt endlich ab."] :
     score >= 62 ? ["😮‍💨", "Überlebt", "Es war chaotisch, aber die Q hat stattgefunden. Auf der Afterparty schläft das halbe Board im Stehen."] :
                   ["🫠", "Knapp vorbei am Desaster", "Formal hat die Q stattgefunden. Die Feedback-Umfrage öffnest du lieber nicht."];
-  setKeys(e => { if (e.key === "Enter") startGame(); });
-  app.innerHTML = `
-    <div class="end">
-      <div style="font-size:56px">${emoji}</div>
-      <h1>${title}</h1>
-      <p>${text}</p>
-      ${summary()}
-      <p><b>Score: ${score}</b> ${score > prevBest ? "· Neuer Rekord! 🎉" : `<span class="muted">· Rekord: ${Math.max(prevBest, score)}</span>`}</p>
-      <p class="tagline" style="text-align:center">Feel the Q Spirit 💙</p>
-      <button class="btn" id="again">Nochmal spielen</button>
-    </div>`;
-  document.getElementById("again").onclick = startGame;
+  screenKeys = e => { if (e.key === "Enter") startGame(); };
+  showOverlay(`<div class="ov center">
+    <div style="font-size:56px">${emoji}</div>
+    <h1 class="pix" style="font-size:18px;line-height:1.5">${title}</h1>
+    <p>${text}</p>${summary()}
+    <p><b>Score: ${score}</b> ${score > prevBest ? "· Neuer Rekord! 🎉" : `<span class="muted">· Rekord: ${Math.max(prevBest, score)}</span>`}</p>
+    <p class="muted">${s.decisions} Entscheidungen · ${s.missed} verpasst</p>
+    <p class="tagline" style="text-align:center">Feel the Q Spirit 💙</p>
+    <button class="btn" id="again">Nochmal spielen</button></div>`);
+  $("again").onclick = startGame;
 }
 
-renderStart();
+// ---------------- Bewegung ----------------
+function moveAlong(ent, dt) {
+  const [ti, tj] = ent.path[0];
+  const tx = ti * TS + 8, ty = tj * TS + 13;
+  const dx = tx - ent.x, dy = ty - ent.y, d = Math.hypot(dx, dy), step = ent.speed * dt;
+  if (d <= step) { ent.x = tx; ent.y = ty; ent.path.shift(); }
+  else { ent.x += dx / d * step; ent.y += dy / d * step; }
+  if (d > .01) ent.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+  ent.walkT += step; ent.frame = Math.floor(ent.walkT / 5) % 2;
+}
+function canStand(x, y) {
+  for (const ox of [-3, 3]) if (!isWalk(Math.floor((x + ox) / TS), Math.floor((y - 1) / TS))) return false;
+  return true;
+}
+function walkToNPC(npc) {
+  s.pendingTalk = npc;
+  s.player.path = findPath(tileOf(s.player), tileOf(npc));
+}
+
+function updatePlayer(dt) {
+  const p = s.player;
+  let vx = 0, vy = 0;
+  if (keys.has("arrowleft") || keys.has("a")) vx -= 1;
+  if (keys.has("arrowright") || keys.has("d")) vx += 1;
+  if (keys.has("arrowup") || keys.has("w")) vy -= 1;
+  if (keys.has("arrowdown") || keys.has("s")) vy += 1;
+  if (vx || vy) {
+    p.path = []; s.pendingTalk = null;
+    const l = Math.hypot(vx, vy), step = p.speed * dt;
+    const nx = p.x + vx / l * step, ny = p.y + vy / l * step;
+    if (canStand(nx, p.y)) p.x = nx;
+    if (canStand(p.x, ny)) p.y = ny;
+    p.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? "right" : "left") : (vy > 0 ? "down" : "up");
+    p.walkT += step; p.frame = Math.floor(p.walkT / 5) % 2;
+  } else if (p.path.length) {
+    moveAlong(p, dt);
+  } else p.frame = 0;
+  if (s.pendingTalk) {
+    const n = s.pendingTalk;
+    if (!n.task) s.pendingTalk = null;
+    else if (Math.hypot(n.x - p.x, n.y - p.y) < 20) { p.path = []; s.pendingTalk = null; openTaskDialog(n.task); }
+    else if (!p.path.length) p.path = findPath(tileOf(p), tileOf(n));
+  }
+}
+
+function updateNPC(n, dt) {
+  if (n.kind === "static") return;
+  if (n.path.length) { moveAlong(n, dt); return; }
+  n.frame = 0;
+  if (n.task) { if (s.mode === "play") n.dir = facing(n, s.player); return; }
+  const [ti, tj] = tileOf(n);
+  if (grid[tj]?.[ti] === "s") n.dir = "up";
+  n.wait -= dt;
+  if (n.wait > 0) return;
+  if (n.leaveAt && s.min > n.leaveAt) { n.remove = true; return; }
+  const target = n.kind === "team" ? randomNear(LOCS[n.home], 3) : pick(ZONES[pickWeighted(crowdWeights())]);
+  n.path = findPath([ti, tj], target);
+  n.wait = 2 + Math.random() * 6;
+}
+
+// ---------------- Update-Schleife ----------------
+function update(dt) {
+  if (!s) return;
+  s.t += dt;
+  if (s.stageLights > 0) s.stageLights -= dt * .25;
+  for (const c of s.confetti) { c.x += c.vx * dt; c.y += c.vy * dt; c.r += dt * 6; }
+  s.confetti = s.confetti.filter(c => c.y < canvas.height + 10);
+
+  if (s.mode === "title") {
+    s.titleT += dt;
+    s.camTarget = { x: 352 + Math.sin(s.titleT * .12) * 230, y: 230 + Math.cos(s.titleT * .09) * 200 };
+    for (const n of s.npcs) updateNPC(n, dt);
+    return;
+  }
+  if (s.mode === "play") {
+    s.min += dt * 1000 / MS_PER_MIN;
+    updatePlayer(dt);
+
+    const phase = JSON.stringify(crowdWeights());
+    if (phase !== s.phaseKey) { s.phaseKey = phase; for (const n of s.npcs) if (n.kind === "crowd") n.wait = Math.min(n.wait, Math.random() * 3); }
+
+    const scene = SCENES.find(sc => sc.day === s.day && s.min >= sc.at && !s.scenesDone.has(sc.id));
+    if (scene) { runScene(scene); return; }
+    const q = MG_QUESTS.find(q => q.day === s.day && s.min >= q.at && !s.mgDone.has(q.id));
+    if (q) { s.mgDone.add(q.id); spawnMgQuest(q); }
+    if (s.min >= s.nextSpawn) { s.nextSpawn = s.min + rand(28, 42); spawnEvent(); }
+    s.nextAmbient -= dt;
+    if (s.nextAmbient <= 0) { s.nextAmbient = 9 + Math.random() * 12; ambientTick(); }
+    expireTasks();
+    if (s.mode === "play" && s.day === 0 && s.min >= DAYS[0].end) { endDay(); return; }
+  }
+  if (["play", "dialog", "scene"].includes(s.mode)) {
+    for (const n of s.npcs) updateNPC(n, dt);
+    s.npcs = s.npcs.filter(n => !n.remove);
+  }
+}
+
+// ---------------- Rendern ----------------
+function nightAlpha() {
+  if (!s || s.mode === "title") return 0;
+  const m = s.min;
+  if (s.party) return .62;
+  if (s.day === 0) {
+    if (m < 8 * 60) return .22 * (8 * 60 - m) / 30;
+    if (m > 18 * 60) return Math.min(.58, (m - 18 * 60) / 150 * .58);
+  } else if (m > 18 * 60 + 30) return Math.min(.5, (m - (18 * 60 + 30)) / 90 * .5);
+  return 0;
+}
+
+const LIGHTS = [
+  { x: 22 * TS, y: 2 * TS, r: 70, c: "255,170,80", i: 1 },
+  { x: 19.5 * TS, y: 2 * TS, r: 40, c: "255,120,200", i: .8 }, { x: 24.5 * TS, y: 2 * TS, r: 40, c: "120,160,255", i: .8 },
+  { x: 22 * TS, y: 15 * TS, r: 60, c: "255,230,180", i: .7 }, { x: 22 * TS, y: 22 * TS, r: 60, c: "255,230,180", i: .7 },
+  { x: 8 * TS, y: 14 * TS, r: 80, c: "170,110,255", i: .9 }, { x: 34 * TS, y: 16 * TS, r: 70, c: "255,230,180", i: .6 },
+  { x: 32 * TS, y: 23 * TS, r: 50, c: "255,230,180", i: .6 }, { x: 40 * TS, y: 22 * TS, r: 40, c: "255,230,180", i: .6 },
+  { x: 22 * TS, y: 30 * TS, r: 60, c: "140,180,255", i: .7 },
+];
+for (let x = 2; x <= 41; x += 3) { LIGHTS.push({ x: x * TS + 8, y: 4.6 * TS, r: 18, c: "255,210,120", i: .9 }); LIGHTS.push({ x: x * TS + 8, y: 9.6 * TS, r: 18, c: "255,210,120", i: .9 }); }
+
+function hslToRgb(h) {
+  const f = n => { const k = (n + h / 30) % 12; return Math.round(255 * (.5 - .5 * Math.max(-1, Math.min(k - 3, 9 - k, 1)))); };
+  return `${f(0)},${f(8)},${f(4)}`;
+}
+
+function render() {
+  const cw = canvas.width, ch = canvas.height;
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = "#040c30"; ctx.fillRect(0, 0, cw, ch);
+  if (!s) return;
+  const p = s.player;
+  const target = s.camTarget || { x: p.x, y: p.y - 8 };
+  const mw = W * TS, mh = H * TS;
+  const k = s.mode === "title" ? 1 : .15;
+  cam.x += (target.x - cw / 2 - cam.x) * k;
+  cam.y += (target.y - ch / 2 - cam.y) * k;
+  cam.x = mw < cw ? (mw - cw) / 2 : Math.max(0, Math.min(mw - cw, cam.x));
+  cam.y = mh < ch ? (mh - ch) / 2 : Math.max(0, Math.min(mh - ch, cam.y));
+  const cx = Math.round(cam.x), cy = Math.round(cam.y);
+
+  ctx.save();
+  ctx.translate(-cx, -cy);
+  ctx.drawImage(mapCanvas, 0, 0);
+
+  if (s.tapMark && s.t - s.tapMark.t < .5) {
+    const r = 3 + (s.t - s.tapMark.t) * 10;
+    ctx.strokeStyle = "rgba(255,255,255,.8)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(s.tapMark.x, s.tapMark.y, r, r * .5, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  const ents = s.mode === "title" ? [...s.npcs] : [...s.npcs, p];
+  ents.sort((a, b) => a.y - b.y);
+  for (const e of ents) {
+    if (e.x < cx - 16 || e.x > cx + cw + 16 || e.y < cy - 8 || e.y > cy + ch + 24) continue;
+    const bob = s.party && e.kind !== "player" ? -Math.abs(Math.round(Math.sin(s.t * 8 + e.x) * 2)) : 0;
+    drawPerson(ctx, e.x, e.y, e.look, e.dir, e.frame, bob);
+  }
+  // Namensschilder
+  ctx.font = "bold 6px sans-serif"; ctx.textAlign = "center";
+  if (s.mode !== "title") for (const n of s.npcs) {
+    if (!n.name || n.kind === "static") continue;
+    const near = Math.hypot(n.x - p.x, n.y - p.y) < 44;
+    if (!near && !n.task) continue;
+    const w = Math.ceil(ctx.measureText(n.name).width) + 4;
+    const yy = Math.round(n.y - (n.task ? 40 : 24));
+    ctx.fillStyle = "rgba(7,22,80,.85)"; ctx.fillRect(Math.round(n.x - w / 2), yy - 6, w, 8);
+    ctx.fillStyle = "#fff"; ctx.fillText(n.name, Math.round(n.x), yy);
+  }
+  for (const t of s.tasks) if (t.npc) drawBang(ctx, t.npc.x, t.npc.y, s.t, t.kind, t.deadline - s.min < 30);
+
+  // Nacht und Lichter
+  const a = nightAlpha();
+  if (a > 0.01) {
+    ctx.fillStyle = `rgba(6,10,45,${a})`; ctx.fillRect(cx, cy, cw, ch);
+    ctx.globalCompositeOperation = "lighter";
+    for (const L of LIGHTS) {
+      if (L.x < cx - L.r || L.x > cx + cw + L.r || L.y < cy - L.r || L.y > cy + ch + L.r) continue;
+      let col = L.c;
+      if (s.party && L.y < 12 * TS) col = hslToRgb((s.t * 90 + L.x) % 360);
+      const flick = s.party ? .6 + .4 * Math.sin(s.t * 10 + L.x) : 1;
+      const g = ctx.createRadialGradient(L.x, L.y, 0, L.x, L.y, L.r);
+      g.addColorStop(0, `rgba(${col},${a * L.i * .9 * flick})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(L.x - L.r, L.y - L.r, L.r * 2, L.r * 2);
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+  if (s.stageLights > 0) {
+    ctx.globalCompositeOperation = "lighter";
+    for (let k2 = 0; k2 < 3; k2++) {
+      const lx = (3 + k2 * 4.5) * TS + Math.sin(s.t * 2 + k2) * 20, ly = 13.5 * TS;
+      const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 46);
+      g.addColorStop(0, `rgba(${["255,120,220", "120,170,255", "255,210,120"][k2]},${.35 * Math.min(1, s.stageLights)})`); g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g; ctx.fillRect(lx - 46, ly - 46, 92, 92);
+    }
+    ctx.globalCompositeOperation = "source-over";
+  }
+  ctx.restore();
+
+  for (const c of s.confetti) { ctx.fillStyle = c.c; ctx.fillRect(Math.round(c.x + Math.sin(c.r) * 4), Math.round(c.y), 2, Math.sin(c.r) > 0 ? 3 : 1); }
+
+  // Pfeil zur dringendsten Aufgabe, wenn sie außerhalb des Bildes ist
+  if (s.mode === "play") {
+    const t = s.tasks.filter(t => t.npc).sort((x, y) => x.deadline - y.deadline)[0];
+    if (t) {
+      const sx = t.npc.x - cx, sy = t.npc.y - 20 - cy;
+      if (sx < 0 || sx > cw || sy < 0 || sy > ch) {
+        const ang = Math.atan2(sy - ch / 2, sx - cw / 2);
+        const sc = Math.min((cw / 2 - 12) / Math.abs(Math.cos(ang) || 1e-6), (ch / 2 - 12) / Math.abs(Math.sin(ang) || 1e-6));
+        const ex = cw / 2 + Math.cos(ang) * sc, ey = ch / 2 + Math.sin(ang) * sc;
+        const pulse = 1 + Math.sin(s.t * 6) * .15;
+        ctx.save(); ctx.translate(Math.round(ex), Math.round(ey)); ctx.rotate(ang); ctx.scale(pulse, pulse);
+        ctx.fillStyle = "#0b1640"; ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-6, -7); ctx.lineTo(-6, 7); ctx.fill();
+        ctx.fillStyle = t.kind === "mg" ? "#ffd166" : "#ffffff"; ctx.beginPath(); ctx.moveTo(7, 0); ctx.lineTo(-4, -5); ctx.lineTo(-4, 5); ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+}
+
+// HUD-Elemente, die sich laufend ändern
+let lastClock = "", lastTaskUpdate = 0, talkTarget = null;
+function updateHud() {
+  if (!s || s.mode === "title") return;
+  const night = nightAlpha() > .2;
+  const c = `${DAYS[s.day].title.toUpperCase()} · ${fmt(s.min)} ${night ? "🌙" : "☀️"}`;
+  if (c !== lastClock) { $("clock").textContent = c; lastClock = c; }
+  if (s.t - lastTaskUpdate > .5) {
+    lastTaskUpdate = s.t; updateTaskBar();
+    const pt = $("phtimer");
+    if (pt && s.phoneChat) { const t = s.tasks.find(t => t.kind === "chat" && t.chat === s.phoneChat); if (t) pt.textContent = `⏰ ${Math.max(0, Math.ceil(t.deadline - s.min))} min`; }
+  }
+  let near = null;
+  if (s.mode === "play" && !s.phoneOpen) {
+    let best = 26;
+    for (const t of s.tasks) if (t.npc) { const d = Math.hypot(t.npc.x - s.player.x, t.npc.y - s.player.y); if (d < best) { best = d; near = t.npc; } }
+  }
+  if (near !== talkTarget) {
+    talkTarget = near;
+    const b = $("talkbtn");
+    b.hidden = !near;
+    if (near) b.textContent = `💬 ${near.name}`;
+  }
+}
+
+// ---------------- Eingabe ----------------
+function resize() {
+  const r = canvas.getBoundingClientRect();
+  SCALE = Math.max(2, Math.round(r.width / 250));
+  canvas.width = Math.max(1, Math.ceil(r.width / SCALE));
+  canvas.height = Math.max(1, Math.ceil(r.height / SCALE));
+}
+window.addEventListener("resize", resize);
+
+canvas.addEventListener("pointerdown", e => {
+  if (!s || s.mode !== "play") return;
+  const r = canvas.getBoundingClientRect();
+  const wx = cam.x + (e.clientX - r.left) * canvas.width / r.width;
+  const wy = cam.y + (e.clientY - r.top) * canvas.height / r.height;
+  $("sheet").hidden = true;
+  const hit = s.npcs.filter(n => n.task).find(n => Math.abs(wx - n.x) < 10 && wy > n.y - 36 && wy < n.y + 3);
+  if (hit) { walkToNPC(hit); return; }
+  s.pendingTalk = null;
+  s.player.path = findPath(tileOf(s.player), [Math.floor(wx / TS), Math.floor((wy + 3) / TS)]);
+  s.tapMark = { x: wx, y: wy, t: s.t };
+});
+
+document.addEventListener("keydown", e => {
+  const k = e.key.toLowerCase();
+  if (dialogKeys) return dialogKeys(e);
+  if (mgKeys) return mgKeys(e);
+  if (screenKeys && !ov().hidden) return screenKeys(e);
+  if (!s || s.mode !== "play") return;
+  if (["arrowup", "arrowdown", "arrowleft", "arrowright", " ", "tab"].includes(k)) e.preventDefault();
+  if (k === "e" || k === " " || k === "enter") { if (talkTarget) openTaskDialog(talkTarget.task); return; }
+  if (k === "p" || k === "tab") { s.phoneOpen ? closePhone() : openPhone(); return; }
+  if (k === "escape") { if (s.phoneOpen) closePhone(); $("sheet").hidden = true; return; }
+  if (!s.phoneOpen) keys.add(k);
+});
+document.addEventListener("keyup", e => keys.delete(e.key.toLowerCase()));
+window.addEventListener("blur", () => keys.clear());
+
+$("talkbtn").onclick = () => talkTarget && openTaskDialog(talkTarget.task);
+$("phonebtn").onclick = () => { if (!s || !["play", "dialog"].includes(s.mode)) return; s.phoneOpen ? closePhone() : openPhone(); };
+$("taskbtn").onclick = () => { if (!s || !["play", "dialog"].includes(s.mode)) return; $("sheet").hidden ? renderSheet() : ($("sheet").hidden = true); };
+$("mute").onclick = () => { muted = !muted; $("mute").textContent = muted ? "🔇" : "🔊"; };
+
+// ---------------- Start ----------------
+let lastT = performance.now(), rafRunning = false;
+function step() {
+  const now = performance.now();
+  const dt = Math.min(.05, (now - lastT) / 1000);
+  lastT = now;
+  update(dt); render(); updateHud();
+}
+requestAnimationFrame(function loop() { rafRunning = true; step(); requestAnimationFrame(loop); });
+setInterval(() => { if (!rafRunning) step(); }, 16);
+
+resize();
+renderTitle();
 </script>
 </body>
 </html>
