@@ -293,6 +293,24 @@
   .logo .q { font-family: var(--pix); font-size: clamp(34px, 9vw, 54px); line-height: 1; color: #fff; text-shadow: 0 4px 0 var(--q), 0 8px 0 #0b1a5c, 0 0 30px rgba(47,107,255,.7); letter-spacing: 2px; }
   .logo .sub { font-family: var(--pix); font-size: 10px; letter-spacing: 3px; color: var(--warn); text-shadow: 0 2px 0 #000; }
   .menu { display: grid; gap: 10px; }
+  .daymod { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; margin: 8px 0; text-align: left; }
+  .daymod .dm-ic { font-size: 24px; line-height: 1; }
+  .daymod b { display: block; font-size: 15px; margin-bottom: 2px; }
+  .daymod small { color: var(--muted); font-size: 13px; line-height: 1.35; display: block; }
+  #briefing { position: absolute; left: 50%; top: 120px; transform: translateX(-50%); width: min(440px, calc(100% - 32px)); padding: 12px 14px; z-index: 7; cursor: pointer; animation: brIn .35s ease-out; transition: opacity .3s, transform .3s; }
+  #briefing.out { opacity: 0; transform: translate(-50%, -12px); }
+  #briefing .daymod { background: rgba(255,255,255,.06); }
+  @keyframes brIn { from { opacity: 0; transform: translate(-50%, -16px); } }
+  .mode-panel { width: min(520px, calc(100vw - 32px)); }
+  .modes { display: grid; gap: 10px; margin: 12px 0; }
+  .mode { appearance: none; border: 0; cursor: pointer; color: #fff; display: grid; grid-template-columns: auto 1fr auto; grid-template-rows: auto auto; gap: 2px 12px; align-items: center; padding: 12px 14px; text-align: left; position: relative; transition: transform .1s, box-shadow .15s; }
+  .mode:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 2px #6fb1ff88; }
+  .mode.sel { box-shadow: inset 0 0 0 2px #ffd166; }
+  .mode .m-ic { font-size: 30px; grid-row: span 2; }
+  .mode .m-txt b { display: block; font-size: 17px; }
+  .mode .m-txt small { display: block; color: var(--muted); font-size: 13px; line-height: 1.35; margin-top: 2px; }
+  .mode .m-best { grid-column: 2; font-size: 12px; color: #ffd166; font-weight: 700; }
+  .mode .k { position: absolute; right: 10px; top: 10px; font-size: 11px; opacity: .5; }
   .menu-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
   .menu-row .btn { font-size: 14px; padding: 12px 6px; }
   .title-foot { text-align: center; font-size: 13px; color: var(--muted); text-shadow: 0 1px 0 #000; }
@@ -498,6 +516,7 @@
   </div>
   <canvas id="minimap" hidden></canvas>
   <div class="toasts" id="toasts"></div>
+  <div id="briefing" class="glass" hidden></div>
   <button id="talkbtn" hidden></button>
   <div id="bottom" class="off">
     <button id="taskbtn" class="glass"><span class="tb-count zero" id="taskcount">0</span><span class="tb-text" id="tasktext">Keine offenen Aufgaben</span></button>
@@ -1567,9 +1586,11 @@ const ACHIEVEMENTS = [
   { id: "entdecker",  icon: "🧭", name: "Schloss-Kenner",     desc: "Alle Orte der Q besucht." },
   { id: "mama",       icon: "❤️", name: "Lieb zu Mama",       desc: "Mama geantwortet." },
   { id: "ueberlebt",  icon: "🏁", name: "Q überlebt",         desc: "Beide Tage geschafft." },
-  { id: "legendaer",  icon: "🪩", name: "Legendäre Q",        desc: "Mit mindestens 85 Punkten abgeschlossen." },
+  { id: "legendaer",  icon: "🪩", name: "Legendäre Q",        desc: "Auf Normal oder Chaos mit mindestens 85 Punkten abgeschlossen." },
   { id: "pleite",     icon: "💸", name: "Konto leer",         desc: "Game Over durchs Budget. Passiert den Besten." },
   { id: "ersti_herz", icon: "🐣", name: "Ersti-Liebling",     desc: "Erstis-Wert nie unter 40." },
+  { id: "chaos",      icon: "🔥", name: "Chaos-Chair",        desc: "Beide Tage auf Chaos geschafft." },
+  { id: "wetterfest", icon: "☔", name: "Wetterfest",         desc: "Einen Regentag auf der Q überstanden." },
 ];
 
 // Zeitung am Ende: Geschichten zu Entscheidungen
@@ -1595,6 +1616,85 @@ const MAX_WORLD_TASKS = 3;
 const LATE_TEAM_PENALTY = 3; // Extra-Abzug beim Team, wenn jemand ohne dich entscheiden musste
 const ENERGY_DRAIN = 1 / 7;  // Energie pro Spielminute
 const COFFEE_GAIN = 45;
+
+// Schwierigkeitsstufen und Freispiel. neg/pos skalieren die Folgen von Entscheidungen, time die Zeit bis zur Deadline.
+const MODES = {
+  leicht: { name: "Leicht",    icon: "🌱", desc: "Mehr Zeit, weniger Anfragen, mildere Folgen. Gut für die erste Q.",
+            start: 58, neg: .85, pos: 1.05, time: 1.25, spawn: [32, 48], shift: .8, late: 2, maxWorld: 3, mods: [1, 1] },
+  normal: { name: "Normal",    icon: "⚖️", desc: "So fühlt sich die Q wirklich an: viel los, aber machbar.",
+            start: 55, neg: 1, pos: 1, time: 1, spawn: [28, 42], shift: 1, late: 3, maxWorld: 3, mods: [1, 2] },
+  chaos:  { name: "Chaos",     icon: "🔥", desc: "Weniger Zeit, mehr Anfragen, härtere Folgen und immer zwei Tageslagen.",
+            start: 52, neg: 1.15, pos: 1, time: .85, spawn: [24, 36], shift: 1.2, late: 4, maxWorld: 4, mods: [2, 2] },
+  frei:   { name: "Freispiel", icon: "🎈", desc: "Kein Game Over und doppelt so viel Zeit. Schloss erkunden, Selfies sammeln, alles ausprobieren.",
+            start: 60, neg: .6, pos: 1, time: 2, spawn: [30, 46], shift: .5, late: 1, maxWorld: 3, mods: [1, 2], free: true },
+};
+const MODE_ORDER = ["leicht", "normal", "chaos", "frei"];
+const MODE = () => MODES[(s && s.diff) || "normal"];
+
+// Tageslagen: Jeder Tag würfelt eine oder zwei davon aus, damit kein Durchlauf wie der andere ist.
+// start: einmalig zu Tagesbeginn, task/taskNeg/taskPos: Faktoren auf Entscheidungen, shift: Extra pro Schichtprüfung
+const DAY_MODS = [
+  { id: "regen", icon: "☔", name: "Regentag", desc: "Alle drängen sich ins Foyer und in die Galerie. Die Partner im Schneckenhof kämpfen mit nassen Zelten.",
+    start: { partner: -4 }, task: { partner: 1.25 }, indoor: true, rain: true, not: ["hitze"],
+    chat: ["team", "Franz", "Es SCHÜTTET 🌧️ Wer hat die Planen für die Innovillage-Zelte??"] },
+  { id: "hitze", icon: "🌡️", name: "Hitzewelle", desc: "28 Grad im April. Du brauchst mehr Kaffee, und die Erstis brauchen mehr Pausen.",
+    drain: 1.45, shift: { erstis: -1 }, heat: true, not: ["regen"],
+    chat: ["erstis", "Sophie", "Es ist so heiß im Schneckenhof 🥵 Bitte denkt an Wasser für die Erstis!"] },
+  { id: "streik", icon: "🚫", name: "Bahnstreik", day: 2, desc: "Die Linie 5 fällt aus. Speaker kommen später, die Gäste sind genervt.",
+    start: { speaker: -4, participants: -3 }, noTram: true, speakerDelay: 45,
+    chat: ["partner", "Annika", "RNV streikt heute 😩 Die Speaker kommen alle mit dem Taxi und später."] },
+  { id: "andrang", icon: "🎟️", name: "Großer Andrang", desc: "Mehr Gäste als erwartet. Mehr Anfragen, aber auch mehr Stimmung.",
+    start: { participants: 5 }, spawn: .8,
+    chat: ["board", "Anna", "Die Schlange geht bis zur Bismarckstraße 🤯 Wir sind ÜBERBUCHT im besten Sinne."] },
+  { id: "presse", icon: "📸", name: "Presse vor Ort", desc: "SWR und Mannheimer Morgen sind da. Bei Participants und Partnern zählt jede Entscheidung stärker, im Guten wie im Schlechten.",
+    task: { participants: 1.35, partner: 1.35 },
+    chat: ["marketing", "Jordis", "Kamerateam vom SWR ist im Ehrenhof! Alle lächeln 📸"] },
+  { id: "sparkurs", icon: "💸", name: "Sparkurs", desc: "Finance hat den Gürtel enger geschnallt. Ausgaben tun doppelt weh.",
+    start: { budget: -4 }, taskNeg: { budget: 1.5 },
+    chat: ["finance", "Lea", "Kurzer Reminder: Wir sind 3 % über Budget. Jeder Euro zählt heute 🙏"] },
+  { id: "partnertag", icon: "🤝", name: "Partner-Laune", desc: "Die Partner sind bestens gelaunt. Gute Entscheidungen bringen ihnen deutlich mehr.",
+    taskPos: { partner: 1.4 },
+    chat: ["partner", "Lennart", "PERI und KPMG schwärmen jetzt schon 😍 Heute geht was!"] },
+  { id: "kater", icon: "🥴", name: "Ersti-Kater", day: 2, desc: "Der Themenabend war lang. Die Erstis starten müde in den Tag.",
+    start: { erstis: -6 }, shift: { erstis: -1 },
+    chat: ["erstis", "Madeleine", "Guten Morgen 🥴 Ein paar Erstis sehen sehr… gestern aus."] },
+  { id: "wlan", icon: "📶", name: "WLAN-Ausfall", desc: "Das Schloss-WLAN wackelt. Für Chats bleibt dir weniger Zeit.",
+    chatTime: .7,
+    chat: ["hackathon", "Ben", "WLAN ist weg und 64 Leute hacken 😱 Wir hängen am Hotspot."] },
+];
+const activeMods = () => (s && s.mods || []).map(id => DAY_MODS.find(m => m.id === id)).filter(Boolean);
+const hasMod = key => activeMods().some(m => m[key]);
+const modFactor = key => activeMods().reduce((a, m) => a * (m[key] || 1), 1);
+function rollMods() {
+  const [lo, hi] = MODE().mods, n = rand(lo, hi), out = [];
+  for (const m of shuffle(DAY_MODS)) {
+    if (out.length >= n) break;
+    if (m.day && m.day !== s.day + 1) continue;
+    if (s.mods.includes(m.id)) continue; // nicht zweimal hintereinander
+    if (out.some(o => (o.not || []).includes(m.id) || (m.not || []).includes(o.id))) continue;
+    out.push(m);
+  }
+  s.mods = out.map(m => m.id);
+  s.modHistory.push(...s.mods);
+  for (const m of out) if (m.start) applyFx(scaleFx(m.start, "start"), true);
+}
+// Folgen je nach Schwierigkeit und Tageslage
+function scaleFx(fx, kind) {
+  const M = MODE(), out = {};
+  for (const [k, d] of Object.entries(fx)) {
+    let v = d * (d < 0 ? (kind === "shift" ? M.shift : M.neg) : kind === "start" ? 1 : M.pos);
+    if (kind === "task") for (const m of activeMods()) {
+      if (m.task?.[k]) v *= m.task[k];
+      if (d < 0 && m.taskNeg?.[k]) v *= m.taskNeg[k];
+      if (d > 0 && m.taskPos?.[k]) v *= m.taskPos[k];
+    }
+    v = Math.round(v);
+    if (!v && d) v = Math.sign(d);
+    out[k] = v;
+  }
+  return out;
+}
+const modsHtml = () => activeMods().map(m => `<div class="daymod card"><span class="dm-ic">${m.icon}</span><div><b>${m.name}</b><small>${m.desc}</small></div></div>`).join("");
 
 const $ = id => document.getElementById(id);
 const rand = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
@@ -1779,6 +1879,16 @@ ZONES.so108 = [];
 for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (grid[j][i] === "s") ZONES.so108.push([i, j]);
 
 function crowdWeights() {
+  const w = crowdWeightsBase();
+  if (!hasMod("indoor") || s.party) return w;
+  const out = {}, move = { vorplatz: "hall", ehrenhof: "galerie", innovillage: "galerie", food: "hall", abend: "abend" };
+  for (const [k, v] of Object.entries(w)) {
+    if (move[k] && move[k] !== k) { out[k] = (out[k] || 0) + v * .35; out[move[k]] = (out[move[k]] || 0) + v * .65; }
+    else out[k] = (out[k] || 0) + v;
+  }
+  return out;
+}
+function crowdWeightsBase() {
   const d = s.day, m = s.min;
   if (s.party) return { abend: 1 };
   if (d === 0) {
@@ -2649,6 +2759,15 @@ function tentRow(ctx, w, y, th, names, night, food) {
   }
 }
 
+// Regen auch in der First-Person-Sicht, wenn man draußen steht
+function fpWeather(ctx, w, h, place, t) {
+  if (!["street", "ehrenhof", "schneckenhof", "food", "party"].includes(place)) return;
+  if (hasMod("rain")) {
+    ctx.fillStyle = "rgba(30,40,80,.22)"; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(200,220,255,.5)";
+    for (let k = 0; k < 160; k++) { const x = Math.round(hash(k, 7) * (w + 40) - 20), y = Math.round((hash(k, 3) * (h + 30) + t * (260 + hash(k, 5) * 140)) % (h + 30)) - 15; ctx.fillRect(x - Math.round(y * .1), y, 1, 6); }
+  } else if (hasMod("heat") && !isNight()) { ctx.fillStyle = "rgba(255,170,80,.08)"; ctx.fillRect(0, 0, w, h); }
+}
 function drawPlace(ctx, w, h, place, t) {
   const night = isNight(), [skyT, skyB] = skyCols(), hz = Math.round(h * .5);
   switch (place) {
@@ -2659,7 +2778,7 @@ function drawPlace(ctx, w, h, place, t) {
       bigFacade(ctx, -10, Math.round(hz - h * .3), w + 20, Math.round(h * .3), night, { portal: place === "ehrenhof" });
       if (place === "ehrenhof") {
         perspFloor(ctx, w, h, hz, night ? "#3d3a40" : "#a39a89", night ? "#36333a" : "#998f7e", 9);
-        ctx.fillStyle = night ? "#16337f" : "#2152dd"; ctx.beginPath(); ctx.moveTo(w * .62, hz); ctx.lineTo(w * .7, hz); ctx.lineTo(w * 1.15, h); ctx.lineTo(w * .85, h); ctx.fill();
+        ctx.fillStyle = night ? "#16337f" : "#2152dd"; ctx.beginPath(); ctx.moveTo(w * .47, hz); ctx.lineTo(w * .53, hz); ctx.lineTo(w * .7, h); ctx.lineTo(w * .3, h); ctx.fill();
         for (const sx of [.12, .88]) { const x = Math.round(w * sx); px(ctx, x - 6, hz - 8, 12, 10, "#c9b48c"); px(ctx, x - 3, hz - 26, 6, 18, night ? "#2b3a30" : "#4c6354"); px(ctx, x - 2, hz - 30, 4, 4, night ? "#2b3a30" : "#58705f"); }
         miniPeople(ctx, w, hz + 3, t, 7, night);
       } else {
@@ -2911,7 +3030,7 @@ function fpRender(dt) {
   if (fp.view === "speech" || fp.view === "reveal") drawAudience(ctx, w, h, fp.t, fp.data);
   else if (fp.view === "dance") drawDance(ctx, w, h, fp.t, fp.data);
   else if (fp.view === "phone") drawPhoneIntro(ctx, w, h, fp.t, fp.data);
-  else drawPlace(ctx, w, h, fp.place, fp.t);
+  else { drawPlace(ctx, w, h, fp.place, fp.t); fpWeather(ctx, w, h, fp.place, fp.t); }
   if (fp.view === "talk" && fp.look) {
     const dlg = $("dialog"), dh = dlg.hidden ? 0 : dlg.getBoundingClientRect().height / FSCALE;
     const room = h - dh - 6;
@@ -3025,7 +3144,7 @@ const SIM = () => !!window.__sim;
 
 function newState() {
   const stats = {};
-  STATS.forEach(st => stats[st.key] = 55);
+  STATS.forEach(st => stats[st.key] = MODES[newState.diff || "normal"].start);
   const chat = {};
   CHATS.forEach(c => chat[c.id] = { msgs: [], unread: 0, last: 0 });
   return {
@@ -3038,6 +3157,7 @@ function newState() {
     log: [], actionsUsed: new Set(), pauseTab: "overview",
     energy: 80, coffees: 0, coffeeCd: 0, pigeons: [], tram: null, nextTram: 20, barks: [], nextBark: 3,
     met: new Set(), selfies: new Set(), visited: new Set(), scared: 0, runAch: new Set(), snap: null,
+    diff: newState.diff || "normal", mods: [], modHistory: [], mgJit: {},
     hype: {}, selfieLooks: {}, danceBest: 0, erstiMin: 100, speakerPlan: [], camPan: null, sceneWait: null, hud: false, fpPlace: null,
   };
 }
@@ -3083,8 +3203,8 @@ function initWorld() {
   s.pigeons = [];
   for (let k = 0; k < 16; k++) s.pigeons.push(newPigeon(k < 10 ? "ehrenhof" : "innovillage"));
   // Speaker des Tages kommen über den Tag verteilt an
-  const today = SPEAKERS.filter(sp => sp.day === s.day + 1);
-  s.speakerPlan = today.map((sp, k) => ({ sp, at: DAYS[s.day].start + 70 + k * Math.round((8 * 60) / today.length) + rand(-10, 10) }));
+  const today = shuffle(SPEAKERS.filter(sp => sp.day === s.day + 1)), delay = activeMods().reduce((a, m) => a + (m.speakerDelay || 0), 0);
+  s.speakerPlan = today.map((sp, k) => ({ sp, at: DAYS[s.day].start + 70 + delay + k * Math.round((8 * 60) / today.length) + rand(-10, 10) }));
 }
 function newPigeon(zone) {
   const [i, j] = pick(ZONES[zone]);
@@ -3209,7 +3329,8 @@ function renderStats(flash = {}) {
 }
 let statFlashTimer;
 function applyFx(fx, quiet) {
-  for (const [k, d] of Object.entries(fx)) s.stats[k] = clamp(s.stats[k] + d, 0, 100);
+  const floor = MODE().free ? 5 : 0;
+  for (const [k, d] of Object.entries(fx)) s.stats[k] = clamp(s.stats[k] + d, Math.min(floor, s.stats[k]), 100);
   s.erstiMin = Math.min(s.erstiMin, s.stats.erstis);
   renderStats(fx);
   clearTimeout(statFlashTimer); statFlashTimer = setTimeout(() => s && renderStats(), 1200);
@@ -3221,6 +3342,7 @@ function applyFx(fx, quiet) {
 }
 function infoToast(text) { $("toasts").innerHTML = `<span class="toast info">${text}</span>`; }
 function checkGameOver() {
+  if (MODE().free) return false;
   const dead = STATS.find(st => s.stats[st.key] <= 0);
   if (dead) { renderGameOver(dead); return true; }
   return false;
@@ -3235,7 +3357,7 @@ function showHud(on) {
 function pickEvent() {
   const h = s.min / 60;
   const today = e => !e.day || e.day === s.day + 1;
-  const worldFull = s.tasks.filter(t => t.kind !== "chat").length >= MAX_WORLD_TASKS;
+  const worldFull = s.tasks.filter(t => t.kind !== "chat").length >= MODE().maxWorld;
   const busy = e => !e.chat && TEAM[e.who] && npcByName(e.who)?.task;
   const ok = e => !s.used.has(e.id) && today(e) && (!e.requires || s.flags.has(e.requires)) && !busy(e) && !(worldFull && !e.chat);
   const followUps = EVENTS.filter(e => ok(e) && e.requires);
@@ -3250,7 +3372,7 @@ function spawnEvent() {
   if (!ev) return;
   s.used.add(ev.id);
   if (ev.chat) {
-    const task = { kind: "chat", ev, chat: ev.chat, deadline: s.min + CHAT_TIME, who: ev.who };
+    const task = { kind: "chat", ev, chat: ev.chat, deadline: s.min + Math.round(CHAT_TIME * MODE().time * modFactor("chatTime")), who: ev.who };
     s.tasks.push(task);
     pushMsg(ev.chat, { from: ev.who, text: ev.text, task });
   } else {
@@ -3264,7 +3386,7 @@ function spawnEvent() {
       placeAt(npc, ...randomNear(loc, 4));
       s.npcs.push(npc);
     }
-    const task = { kind: "world", ev, npc, loc: ev.loc, deadline: s.min + TASK_TIME, who: ev.who };
+    const task = { kind: "world", ev, npc, loc: ev.loc, deadline: s.min + Math.round(TASK_TIME * MODE().time), who: ev.who };
     npc.task = task;
     npc.path = findPath(tileOf(npc), [loc.x, loc.y]);
     npc.speed = Math.max(npc.speed, 55);
@@ -3318,7 +3440,9 @@ function resolveTask(task, opt, late) {
     }
   }
   // Wer zu spät kommt, kriegt die schlechtere Option und zusätzlich Frust im Team
-  const fx = late ? { ...opt.fx, team: (opt.fx.team || 0) - LATE_TEAM_PENALTY } : opt.fx;
+  const base = scaleFx(opt.fx, "task");
+  const fx = late ? { ...base, team: (base.team || 0) - MODE().late } : base;
+  s.lastFx = fx;
   applyFx(fx);
   addLog(task.who, opt.label, fx, late);
   if (late) { s.missed++; s.missedDay[s.day]++; sfx.late(); setTimeout(() => s && infoToast(`⏰ Zu spät! ${task.who} hat ohne dich entschieden`), 50); }
@@ -3487,13 +3611,14 @@ function openTaskDialog(task) {
         options: [
           { label: "Los geht's! 🎮", onPick: () => { fpHide(); startMg(task); } },
           { label: "Keine Zeit, sorry.", hint: hint({ fx: task.q.bad }), onPick: () => {
-            s.tasks = s.tasks.filter(t => t !== task); releaseNPC(npc); applyFx(task.q.bad); addLog(task.who, "Keine Zeit für das Minigame", task.q.bad); updateTaskBar();
-            if (!checkGameOver()) reactAndLeave(task.q.bad); } },
+            const bad = scaleFx(task.q.bad, "task");
+            s.tasks = s.tasks.filter(t => t !== task); releaseNPC(npc); applyFx(bad); addLog(task.who, "Keine Zeit für das Minigame", bad); updateTaskBar();
+            if (!checkGameOver()) reactAndLeave(bad); } },
         ] });
     } else {
       const ev = task.ev;
       openDialog({ name: task.who, role, look: npc.look, text: ev.text, timer: left, later: () => {}, place, mood: left < 30 ? "worried" : "neutral",
-        options: [ev.a, ev.b].map(o => ({ label: o.label, hint: hint(o), onPick: () => { resolveTask(task, o); if (s.mode !== "screen") reactAndLeave(o.fx); } })) });
+        options: [ev.a, ev.b].map(o => ({ label: o.label, hint: hint(o), onPick: () => { resolveTask(task, o); if (s.mode !== "screen") reactAndLeave(s.lastFx || o.fx); } })) });
     }
     dialogTask = task;
   });
@@ -4331,7 +4456,9 @@ function shiftTick() {
   const fx = {};
   const add = (k, d) => { if (d) fx[k] = (fx[k] || 0) + d; };
   for (const st of STATIONS) add(st.stat, -2 * stationStatus(st).missing);
+  for (const [k, v] of Object.entries(scaleFx(fx, "shift"))) fx[k] = v;
   add("erstis", pauseEffect());
+  for (const m of activeMods()) if (m.shift) for (const [k, v] of Object.entries(m.shift)) add(k, v);
   for (const k of Object.keys(fx)) if (!fx[k]) delete fx[k];
   if (!Object.keys(fx).length) return;
   applyFx(fx, true);
@@ -4396,7 +4523,8 @@ function renderPause() {
         <div class="fact card"><b>${Math.round(s.energy)}%</b><span>Energie</span></div>
         <div class="fact card"><b>${freeGroups()}</b><span>freie Ersti-Gruppen</span></div>
       </div>
-      <p class="note">Die gestrichelte Linie zeigt die kritische Grenze. Unter 25 blinkt der Wert, bei 0 ist die Q vorbei.</p>`;
+      ${activeMods().length ? `<div class="tagline" style="margin-top:12px">Tageslage · ${MODE().icon} ${MODE().name}</div>${modsHtml()}` : ""}
+      <p class="note">Die gestrichelte Linie zeigt die kritische Grenze. Unter 25 blinkt der Wert${MODE().free ? ". Im Freispiel gibt es kein Game Over." : ", bei 0 ist die Q vorbei."}</p>`;
   } else if (tab === "erstis") {
     const free = freeGroups();
     const row = (id, icon, name, info, cls, need) => {
@@ -4481,8 +4609,9 @@ function summary() {
   return `<div class="summary card">${STATS.map(st => `<div class="row"><span>${st.icon}</span>
     <div class="track"><div style="width:${s.stats[st.key]}%"></div></div><span class="num">${s.stats[st.key]}</span></div>`).join("")}</div>`;
 }
-function bestScore() { return Number(store.get("qs_best", 0)) || 0; }
-function saveBest(v) { if (v > bestScore()) store.set("qs_best", v); }
+const bestKey = diff => diff === "normal" ? "qs_best" : `qs_best_${diff}`;
+function bestScore(diff = s?.diff || "normal") { return Number(store.get(bestKey(diff), 0)) || 0; }
+function saveBest(v, diff = s?.diff || "normal") { if (v > bestScore(diff)) store.set(bestKey(diff), v); }
 let screenKeys = null;
 
 function resetUi() {
@@ -4497,7 +4626,7 @@ function renderTitle() {
   resetUi(); showHud(false); renderStats(); updateTaskBar(); updatePhoneBadge();
   lastClock = "";
   setMusic("title");
-  const best = bestScore();
+  const best = bestScore("normal"), bestChaos = bestScore("chaos");
   showOverlay(`<div class="ov bottom"><div class="title-wrap">
     <div class="logo"><div class="sub">SCHLOSS MANNHEIM · 2026</div><div class="q">Q-SUMMIT</div><div class="sub">FEEL THE Q SPIRIT</div></div>
     <p class="title-foot">Du bist Chair der Q-Summit. Zwei Tage im Schloss, sechs Divisions, ein Handy, das nie still ist.</p>
@@ -4509,15 +4638,29 @@ function renderTitle() {
         <button class="btn secondary" id="snd">${muted ? "🔇" : "🔊"} Ton</button>
       </div>
     </div>
-    <div class="best">${best ? `<span>Rekord <b>${best}</b></span>` : ""}<span>Speaker 2026 <b>${SPEAKERS.length}</b></span><span>Partner <b>50+</b></span></div>
+    <div class="best">${best ? `<span>Rekord <b>${best}</b></span>` : ""}${bestChaos ? `<span>🔥 Chaos <b>${bestChaos}</b></span>` : ""}<span>Speaker 2026 <b>${SPEAKERS.length}</b></span><span>Partner <b>50+</b></span></div>
   </div></div>`, "title");
-  $("start").onclick = () => { ensureAudio(); startGame(); };
+  $("start").onclick = () => { ensureAudio(); renderModeSelect(); };
   $("how").onclick = renderHow;
   $("achbtn").onclick = renderAchievements;
   $("snd").onclick = () => { ensureAudio(); muted = !muted; store.set("qs_mute", muted); musicVolume(); if (!muted) setMusic("title"); $("snd").textContent = `${muted ? "🔇" : "🔊"} Ton`; };
-  screenKeys = e => { if (e.key === "Enter") { ensureAudio(); startGame(); } };
+  screenKeys = e => { if (e.key === "Enter") { ensureAudio(); renderModeSelect(); } };
   const kick = () => { ensureAudio(); setMusic(null); setMusic("title"); window.removeEventListener("pointerdown", kick); };
   window.addEventListener("pointerdown", kick);
+}
+function renderModeSelect() {
+  const last = store.get("qs_diff", "normal");
+  showOverlay(`<div class="ov center"><div class="panel frame mode-panel">
+    <h2 class="pix" style="font-size:12px">WIE WILLST DU SPIELEN?</h2>
+    <p class="note">Jeder Durchlauf würfelt neue Tageslagen aus: Regen, Hitzewelle, Bahnstreik, Presse und mehr. Auch Speaker und Minigames kommen jedes Mal etwas anders.</p>
+    <div class="modes">${MODE_ORDER.map((k, i) => { const M = MODES[k], b = M.free ? 0 : bestScore(k); return `
+      <button class="mode card ${k === last ? "sel" : ""}" data-m="${k}"><span class="m-ic">${M.icon}</span><span class="m-txt"><b>${M.name}</b><small>${M.desc}</small></span>
+      <span class="m-best">${M.free ? "ohne Score" : b ? `Rekord ${b}` : "noch kein Rekord"}</span><span class="k">${i + 1}</span></button>`; }).join("")}</div>
+    <button class="btn secondary" id="mback">Zurück</button></div></div>`);
+  const go = k => { store.set("qs_diff", k); hideOverlay(); startGame(k); };
+  ov().querySelectorAll(".mode").forEach(b => b.onclick = () => go(b.dataset.m));
+  $("mback").onclick = renderTitle;
+  screenKeys = e => { const n = +e.key; if (n >= 1 && n <= MODE_ORDER.length) go(MODE_ORDER[n - 1]); if (e.key === "Enter") go(last); if (e.key === "Escape") renderTitle(); };
 }
 function renderHow() {
   showOverlay(`<div class="ov center"><div class="panel frame">
@@ -4543,15 +4686,21 @@ function renderAchievements() {
   screenKeys = e => { if (e.key === "Escape" || e.key === "Enter") renderTitle(); };
 }
 
-function startGame() {
+function startGame(diff) {
   ensureAudio();
-  s = newState(); initWorld();
+  if (typeof diff !== "string") diff = store.get("qs_diff", "normal");
+  if (!MODES[diff]) diff = "normal";
+  newState.diff = diff;
+  s = newState();
+  for (const q of MG_QUESTS) s.mgJit[q.id] = rand(-15, 20);
+  rollMods();
+  initWorld();
   resetUi(); hideOverlay();
   for (const m of START_MSGS) { const c = s.chat[m.chat]; c.msgs.push({ from: m.from, text: m.text, time: m.time }); c.last = s.seq++; }
   renderStats(); updateTaskBar(); updatePhoneBadge();
   if (SIM()) return renderDayIntro();
   s.mode = "screen"; screenKeys = null;
-  runIntro(() => { beginDay(); });
+  runIntro(() => { beginDay(); showBriefing(); });
 }
 
 function renderDayIntro() {
@@ -4560,7 +4709,7 @@ function renderDayIntro() {
   showHud(false);
   screenKeys = e => { if (e.key === "Enter") beginDay(); };
   if (s.day === 0) {
-    showOverlay(`<div class="ov center"><div class="tagline">Q-Summit · ${d.title}</div><h1 class="pix" style="font-size:18px;line-height:1.5">Die Türen öffnen gleich.</h1><button class="btn" id="go">${d.title} starten</button></div>`);
+    showOverlay(`<div class="ov center"><div class="tagline">Q-Summit · ${d.title} · ${MODE().icon} ${MODE().name}</div><h1 class="pix" style="font-size:18px;line-height:1.5">Die Türen öffnen gleich.</h1>${modsHtml()}<button class="btn" id="go">${d.title} starten</button></div>`);
   } else {
     const d1 = s.log.filter(l => l.day === 0);
     showOverlay(`<div class="ov center">
@@ -4569,14 +4718,27 @@ function renderDayIntro() {
       <div class="facts"><div class="fact card"><b>${d1.filter(l => !l.late && l.who !== "Schichtplan").length}</b><span>Entscheidungen</span></div><div class="fact card"><b>${s.missedDay[0]}</b><span>verpasst</span></div><div class="fact card"><b>${s.selfies.size}</b><span>Selfies</span></div></div>
       <p>${OVERNIGHT.text} Der Ersti-Schichtplan ist wieder auf den Morgen eingestellt.</p><div class="fxlist" style="justify-content:flex-start">${fxChips(OVERNIGHT.fx)}</div>${summary()}
       <p class="muted">${d.sub}. Von ${fmt(d.start)} bis ${fmt(d.end)} Uhr.</p>
+      <div class="tagline">Tageslage heute</div>${modsHtml()}
       <button class="btn gold" id="go">${d.title} starten ▶</button></div>`);
   }
-  $("go").onclick = beginDay;
+  $("go").onclick = () => { beginDay(); if (s.day === 0) showBriefing(); };
+}
+// Kleine Karte mit der Tageslage, verschwindet von selbst
+function showBriefing() {
+  if (SIM() || !activeMods().length) return;
+  const b = $("briefing");
+  b.innerHTML = `<div class="tagline">Tageslage · ${DAYS[s.day].title} · ${MODE().icon} ${MODE().name}</div>${modsHtml()}<small class="muted">Tippen zum Schließen</small>`;
+  b.hidden = false; b.classList.remove("out");
+  clearTimeout(showBriefing.t);
+  const close = () => { b.classList.add("out"); setTimeout(() => { b.hidden = true; }, 300); };
+  b.onclick = close;
+  showBriefing.t = setTimeout(close, 9000);
 }
 function beginDay() {
   screenKeys = null;
   hideOverlay();
   s.mode = "play";
+  for (const m of activeMods()) if (m.chat && s.chat[m.chat[0]]) pushMsg(m.chat[0], { from: m.chat[1], text: m.chat[2], silent: true });
   showHud(s.day > 0 || s.scenesDone.has("arrival"));
   setMusic("day");
 }
@@ -4589,6 +4751,8 @@ function endDay() {
   for (const [k, d] of Object.entries(OVERNIGHT.fx)) s.stats[k] = Math.min(100, s.stats[k] + d);
   s.energy = 85;
   s.tasks = []; s.stageLights = 0;
+  if (s.mods.includes("regen")) unlock("wetterfest");
+  rollMods();
   for (const c of Object.values(s.chat)) for (const m of c.msgs) if (m.task) m.answered = true;
   resetUi();
   initWorld();
@@ -4628,23 +4792,27 @@ function renderGameOver(stat) {
   screenKeys = e => { if (e.key === "Enter") startGame(); };
   showOverlay(`<div class="ov center">
     ${paper({ headline: "Q-Summit vorzeitig beendet", stamp: "GAME OVER", lead: [`${stat.icon} ${stat.name} bei null`, ` ${GAME_OVER[stat.key]} ${DAYS[s.day].title}, ${fmt(s.min)} Uhr.`],
-      extra: `<div class="score"><span>${s.decisions} ${s.decisions === 1 ? "Entscheidung" : "Entscheidungen"} · ${s.missed} verpasst</span></div>` })}
+      extra: `<div class="score"><span>${s.decisions} ${s.decisions === 1 ? "Entscheidung" : "Entscheidungen"} · ${s.missed} verpasst · ${MODE().icon} ${MODE().name}</span></div>` })}
     <button class="btn gold" id="again">Nochmal versuchen</button>
+    ${s.diff !== "leicht" ? `<button class="btn secondary" id="easier">${MODES.leicht.icon} Auf Leicht versuchen</button>` : ""}
     <button class="btn secondary" id="menu">Hauptmenü</button></div>`);
-  $("again").onclick = startGame;
+  $("again").onclick = () => startGame(s.diff);
+  if ($("easier")) $("easier").onclick = () => { store.set("qs_diff", "leicht"); startGame("leicht"); };
   $("menu").onclick = renderTitle;
 }
 
 function renderEnd() {
   s.mode = "screen";
   resetUi(); showHud(false);
-  const score = scoreNow();
-  const prevBest = bestScore();
-  saveBest(score);
-  unlock("ueberlebt");
-  if (score >= 85) unlock("legendaer");
+  const score = scoreNow(), free = MODE().free;
+  const prevBest = free ? Infinity : bestScore();
+  if (!free) saveBest(score);
+  if (s.mods.includes("regen")) unlock("wetterfest");
+  if (!free) unlock("ueberlebt");
+  if (s.diff === "chaos") unlock("chaos");
+  if (score >= 85 && !free && s.diff !== "leicht") unlock("legendaer");
   if (s.erstiMin >= 40) unlock("ersti_herz");
-  const [rating, headline, lead] =
+  const [rating, headline, lead] = free ? ["Freispiel", "Zwei Tage Schloss, null Stress: Chair genießt die Q", "Ohne Zeitdruck hat der Chair jede Ecke erkundet, Speaker getroffen und die Afterparty mitgenommen."] :
     score >= 85 ? ["Legendär", "Legendär: Q-Summit 2026 setzt neue Maßstäbe", "Konfetti, Lichterketten und ein erschöpftes, glückliches Team. Über diese Q wird noch in fünf Jahren geredet."] :
     score >= 75 ? ["Starke Q", "Starke Q: Das Schloss wird zum Startup-Zentrum", "Ein paar Pannen, aber Partner, Speaker und Team feiern zusammen im Schneckenhof."] :
     score >= 62 ? ["Überlebt", "Chaos mit Charme: Q-Summit übersteht zwei wilde Tage", "Es war chaotisch, aber die Q hat stattgefunden. Auf der Afterparty schläft das halbe Board im Stehen."] :
@@ -4653,13 +4821,16 @@ function renderEnd() {
   screenKeys = e => { if (e.key === "Enter") startGame(); };
   showOverlay(`<div class="ov center">
     ${paper({ headline, lead: ["Mannheim.", ` Zwei Tage, über 50 Partner und ${SPEAKERS.length} Speaker im Barockschloss. ${lead}`],
-      extra: `<div class="score"><span>Bewertung: <b style="font-size:16px">${rating}</b><br>${s.decisions} Entscheidungen · ${s.missed} verpasst</span><span style="text-align:right">Score<br><b>${score}</b>${score > prevBest ? `<br><span class="stamp" style="font-size:11px">Rekord!</span>` : ""}</span></div>` })}
+      extra: `<div class="score"><span>${free ? `${MODE().icon} <b style="font-size:16px">Freispiel</b>` : `Bewertung: <b style="font-size:16px">${rating}</b> · ${MODE().icon} ${MODE().name}`}<br>${s.decisions} Entscheidungen · ${s.missed} verpasst</span><span style="text-align:right">${free ? `Selfies<br><b>${s.selfies.size}</b>` : `Score<br><b>${score}</b>${score > prevBest ? `<br><span class="stamp" style="font-size:11px">Rekord!</span>` : ""}`}</span></div>
+      <div class="tagline" style="margin-top:8px">Tageslagen: ${[...new Set(s.modHistory)].map(id => { const m = DAY_MODS.find(x => x.id === id); return `${m.icon} ${m.name}`; }).join(" · ") || "keine"}</div>` })}
     ${summary()}
     ${newAch.length ? `<div class="tagline" style="text-align:center">Erfolge in diesem Durchlauf</div><div class="new-ach">${newAch.map(a => `<span>${a.icon} ${a.name}</span>`).join("")}</div>` : ""}
     <p class="tagline" style="text-align:center">Feel the Q Spirit 💙</p>
     <button class="btn gold" id="again">Nochmal spielen</button>
+    <button class="btn secondary" id="other">Anderer Modus</button>
     <button class="btn secondary" id="menu">Hauptmenü</button></div>`);
-  $("again").onclick = startGame;
+  $("other").onclick = renderModeSelect;
+  $("again").onclick = () => startGame(s.diff);
   $("menu").onclick = renderTitle;
 }
 
@@ -4776,7 +4947,7 @@ function updateTram(dt) {
   const tr = s.tram;
   if (!tr) {
     s.nextTram -= dt;
-    if (s.nextTram <= 0 && s.mode !== "scene") {
+    if (s.nextTram <= 0 && s.mode !== "scene" && !hasMod("noTram")) {
       s.nextTram = 40 + Math.random() * 35;
       const right = Math.random() < .5;
       s.tram = { x: right ? -8 * TS : W * TS + TS, vx: right ? 75 : -75, state: "pass", t: 0 };
@@ -4849,7 +5020,7 @@ function update(dt) {
   }
   if (s.mode === "play") {
     s.min += dt * 1000 / MS_PER_MIN;
-    s.energy = Math.max(0, s.energy - dt * 1000 / MS_PER_MIN * ENERGY_DRAIN);
+    s.energy = Math.max(0, s.energy - dt * 1000 / MS_PER_MIN * ENERGY_DRAIN * modFactor("drain"));
     updatePlayer(dt);
 
     const phase = JSON.stringify(crowdWeights());
@@ -4857,9 +5028,9 @@ function update(dt) {
 
     const scene = SCENES.find(sc => sc.day === s.day && s.min >= sc.at && !s.scenesDone.has(sc.id));
     if (scene) { runScene(scene); return; }
-    const q = MG_QUESTS.find(q => q.day === s.day && s.min >= q.at && !s.mgDone.has(q.id));
+    const q = MG_QUESTS.find(q => q.day === s.day && s.min >= q.at + (s.mgJit[q.id] || 0) && !s.mgDone.has(q.id));
     if (q) { s.mgDone.add(q.id); spawnMgQuest(q); }
-    if (s.min >= s.nextSpawn) { s.nextSpawn = s.min + rand(28, 42); spawnEvent(); }
+    if (s.min >= s.nextSpawn) { s.nextSpawn = s.min + Math.round(rand(...MODE().spawn) * modFactor("spawn")); spawnEvent(); }
     s.nextAmbient -= dt;
     if (s.nextAmbient <= 0) { s.nextAmbient = 9 + Math.random() * 12; ambientTick(); }
     if (s.min >= s.nextHist) { s.nextHist = s.min + 15; recordHist(); }
@@ -4979,6 +5150,7 @@ function drawAtmosphere(ctx, cx, cy, cw, ch) {
     g.globalCompositeOperation = "source-over"; g.clearRect(0, 0, cw, ch);
     g.drawImage(outdoorMask, cx, cy, cw, ch, 0, 0, cw, ch);
     g.globalCompositeOperation = "source-in";
+    if (hasMod("rain")) { g.fillStyle = "rgba(20,30,70,1)"; g.fillRect(0, 0, cw, ch); }
     const span = W * TS + 400;
     for (const c of CLOUDS) {
       const x = ((c.x + s.t * c.v) % span) - 200 - cx, y = c.y - cy + Math.sin(s.t * .05 + c.r) * 20;
@@ -4987,10 +5159,27 @@ function drawAtmosphere(ctx, cx, cy, cw, ch) {
       gr.addColorStop(0, "rgba(20,30,70,1)"); gr.addColorStop(.6, "rgba(20,30,70,.55)"); gr.addColorStop(1, "rgba(20,30,70,0)");
       g.fillStyle = gr; g.save(); g.translate(x, y); g.scale(1.6, 1); g.translate(-x, -y); g.fillRect(x - c.r, y - c.r, c.r * 2, c.r * 2); g.restore();
     }
-    ctx.globalAlpha = .16 * day; ctx.drawImage(shadowCanvas, cx, cy); ctx.globalAlpha = 1;
+    ctx.globalAlpha = (hasMod("rain") ? .3 : .16) * day; ctx.drawImage(shadowCanvas, cx, cy); ctx.globalAlpha = 1;
   }
+  // Regen: schräge Tropfen und kleine Spritzer, nur draußen
+  if (hasMod("rain") && !s.party) {
+    ctx.fillStyle = "rgba(190,215,255,.55)";
+    for (let k = 0; k < 140; k++) {
+      const sp = 200 + hash(k, 5) * 120, x = cx + hash(k, 7) * (cw + 60) - 30, y0 = cy + ((hash(k, 3) * (ch + 40) + s.t * sp) % (ch + 40)) - 20;
+      const xx = Math.round(x - (y0 - cy) * .12), yy = Math.round(y0);
+      if (!isOutdoorPx(xx, yy)) continue;
+      ctx.fillRect(xx, yy, 1, 4); ctx.fillRect(xx - 1, yy + 4, 1, 2);
+    }
+    ctx.fillStyle = "rgba(220,235,255,.5)";
+    for (let k = 0; k < 30; k++) {
+      const ph = (s.t * 3 + hash(k, 11) * 10) % 1, x = Math.round(cx + hash(k, Math.floor(s.t * 3 + hash(k, 11) * 10)) * cw), y = Math.round(cy + hash(Math.floor(s.t * 3 + hash(k, 11) * 10), k) * ch);
+      if (ph > .4 || !isOutdoorPx(x, y)) continue;
+      const r = Math.round(ph * 6); ctx.fillRect(x - r, y, 1, 1); ctx.fillRect(x + r, y, 1, 1); ctx.fillRect(x, y - 1, 1, 1);
+    }
+  }
+  if (hasMod("heat") && day > .3) { ctx.fillStyle = `rgba(255,170,80,${.07 * day})`; ctx.fillRect(cx, cy, cw, ch); }
   // Blütenblätter (April!) tagsüber, nachts ein paar Glühwürmchen im Schlossgarten
-  if (petals.length < (s.party ? 0 : 26) && Math.random() < .3) {
+  if (petals.length < (s.party || hasMod("rain") ? 0 : 26) && Math.random() < .3) {
     const x = cx + Math.random() * cw, y = cy + Math.random() * ch;
     if (isOutdoorPx(x, y)) petals.push({ x, y, z: 10 + Math.random() * 20, vx: 6 + Math.random() * 8, ph: Math.random() * 6, life: 4 + Math.random() * 4, t: 0, c: day > .5 ? (Math.random() < .5 ? "#ffd1dc" : "#fff4f7") : "#fff3a0" });
   }

@@ -14,6 +14,8 @@ Oder `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Dat
 
 - **Intro:** Wecker am Q-Day (Schlummern oder Aufstehen), Fahrt mit der Linie 5, Ankunft an der Haltestelle Schloss, Kamerafahrt über den Ehrenhof
 - **Karte nach dem echten Schloss:** Bismarckstraße mit Straßenbahn, von der Haltestelle führt der blaue Teppich geradeaus durch den Ehrenhof zum Haupteingang im Mittelbau (Foyer mit Check-in, großem Treppenhaus, Infopoint und Garderobe). Rechts schließt der Ostflügel an: Galerie, SO108 mit Mainstage, Speaker-Lounge, Hackathon-Raum, Hays Forum mit Koro-Müslibar, Qube und der Schneckenhof als geschlossener Innenhof mit Innovillage, Bühne, Bar, Essenszelten und Lichterketten
+- **Vier Spielmodi:** Leicht, Normal, Chaos (weniger Zeit, mehr Anfragen, härtere Folgen) und Freispiel (kein Game Over, doppelt so viel Zeit, ohne Score). Rekorde werden pro Modus gespeichert
+- **Zufällige Tagesabläufe:** Jeder Tag würfelt eine oder zwei Tageslagen aus, etwa Regentag, Hitzewelle, Bahnstreik, Großer Andrang, Presse vor Ort, Sparkurs, Partner-Laune, Ersti-Kater oder WLAN-Ausfall. Dazu kommen Speaker in zufälliger Reihenfolge und verschobene Minigames
 - **Grafik:** Wolkenschatten über den Außenflächen, Blütenblätter im Wind, weiche Schatten, Dächer mit First und Kaminen, Marmor mit Adern, Vignette, Lichter bei Nacht und scharfe Namensschilder und Sprechblasen in voller Bildschirmauflösung
 - **First-Person-Sicht:** Gespräche werden aus deiner Sicht gezeigt, mit großem Porträt und dem Ort im Hintergrund. Reden auf der Mainstage siehst du von der Bühne aus ins Publikum, das live reagiert
 - **Echte Partner und Speaker 2026** (laut q-summit.com): Booths von PERI, Schwarz Gruppe, Dronivo, KPMG und weiteren, 20 Speaker laufen durchs Schloss. Was sie im Spiel sagen und wann sie da sind, ist ausgedacht
@@ -34,6 +36,7 @@ Alles Inhaltliche steht oben im Script, vor dem Abschnitt `ENGINE`:
 - `TEAM`: Namen, Rollen, Haarfarbe und Stammplatz der Teammitglieder
 - `LOCS`: Orte auf der Karte
 - `STATIONS`, `ACTIONS`, `AGENDA`: Schichtplan, Maßnahmen und Programm im Dashboard
+- `MODES`, `DAY_MODS`: Schwierigkeitsstufen und Tageslagen (Startwerte, Faktoren auf Entscheidungen, Extras pro Schichtprüfung)
 - `SPEAKERS`, `BOOTH_SIGNS`, `SPEECHES`, `BARKS`, `ACHIEVEMENTS`, `NEWS_STORIES`: Speaker, Booth-Schilder, Reden, Sprechblasen, Erfolge und Zeitungsgeschichten
 
 Ein Event sieht so aus:
@@ -59,7 +62,15 @@ await import("./tools/balance-sim.js");
 simMany("human", 50);                  // normaler Spieler
 simMany("human", 50, { skipRate: .2 }); // verpasst jede 5. Aufgabe
 simMany("good", 30); simMany("random", 30); simMany("lazy", 20);
-localStorage.removeItem("qs_best");     // Bot-Rekorde wieder löschen
+localStorage.setItem("qs_diff", '"chaos"'); // Modus für die nächsten Bot-Runden: leicht, normal, chaos, frei
+Object.keys(localStorage).filter(k => k.startsWith("qs_best")).forEach(k => localStorage.removeItem(k)); // Bot-Rekorde löschen
 ```
 
-Stand jetzt: Gut gespielt landet bei etwa 85 Punkten, normal bei etwa 80 („Starke Q“), wer jede fünfte Aufgabe verpasst bei etwa 67. Zufälliges Klicken überlebt nicht.
+Stand jetzt, mit zufälligen Tageslagen:
+
+| Modus | Gut gespielt | Normal gespielt | Zufällig geklickt |
+| --- | --- | --- | --- |
+| Leicht | überlebt, ~113 Punkte | überlebt, ~100 | überlebt etwa jedes zweite Mal |
+| Normal | überlebt, ~86 | überlebt, ~80 | überlebt nicht |
+| Chaos | überlebt, ~64 | überlebt etwa 2 von 3, ~64 | überlebt nicht |
+| Freispiel | kein Game Over | kein Game Over | kein Game Over |
