@@ -2,7 +2,8 @@
 window.simRun = function (policy, opts = {}) {
   const realTimeout = window.setTimeout;
   window.setTimeout = (fn) => { try { fn(); } catch (e) { console.error(e); } return 0; };
-  muted = true;
+  window.__sim = true;
+  const realMuted = muted; muted = true;
   const DT = opts.dt || 0.2;
   const errors = [];
   let busyUntil = 0, lastShiftMgmt = -999; window.__simDay = 0;
@@ -89,6 +90,7 @@ window.simRun = function (policy, opts = {}) {
     }
   } catch (e) { errors.push(String(e.stack || e)); }
   window.setTimeout = realTimeout;
+  window.__sim = false; muted = realMuted;
   const over = $("overlay").innerText.includes("GAME OVER");
   const dead = over ? STATS.find(st => s.stats[st.key] <= 0)?.key : null;
   return { policy, over, dead, day: s.day + 1, time: fmt(s.min), score: scoreNow(), stats: { ...s.stats }, decisions: s.decisions, missed: s.missed,

@@ -4,20 +4,24 @@ Ein Pixel-Art-Spiel im Browser: Du bist Chair der Q-Summit und läufst zwei Konf
 
 ## Spielen
 
-`index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Datei, ohne Installation. Nur die Pixel-Schriften werden von Google Fonts geladen, ohne Internet fällt es auf eine Standardschrift zurück.
+Online: **https://jonathan-ernst.github.io/q-summit-game/** (läuft auch am Handy)
 
-**Steuerung:** Tippen oder klicken zum Laufen, WASD oder Pfeiltasten, E zum Reden, P fürs Handy, Esc für Pause.
+Oder `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Datei, ohne Installation. Nur die Pixel-Schriften werden von Google Fonts geladen, ohne Internet fällt es auf eine Standardschrift zurück.
+
+**Steuerung:** Tippen oder klicken zum Laufen, WASD oder Pfeiltasten, E zum Reden, P fürs Handy, M für die Karte, Esc für Pause.
 
 ## Was drin ist
 
-- **Karte:** Ehrenhof mit blauem Teppich, Foyer mit Check-in, Goodie Bags und Garderobe, SO108 mit Mainstage, Hays Forum mit Müslibar, Qube, Speaker-Lounge, Hackathon-Raum und das Innovillage mit Booths, Essenszelten, Entertainment-Ecke und Themenabend-Bühne
-- **Leute:** das Team aus dem Organigramm, Participants, Investoren und Partner an den Booths. Sie laufen nach Tagesablauf: morgens am Check-in, zur Opening Speech in SO108, mittags an den Essenszelten, abends am Themenabend
-- **Aufgaben:** Wer ein ❗ über dem Kopf hat, braucht eine Entscheidung. Wer zu lange wartet, entscheidet selbst, und zwar schlechter
-- **Handy:** Gruppenchats (Board, Team, Erstis, Partner, Finance, Marketing, Hackathon, Mama) mit Hintergrund-Nachrichten, Entscheidungen per Antwort und Reaktionen auf frühere Entscheidungen
-- **Szenen:** Intro, Opening Speech, Themenabend, Pitchbattle-Siegerehrung, Closing Speech und Afterparty
-- **Minigames:** Goodie Bags packen, Badge-Ausgabe, Infopoint (Wegfragen beantworten), Mic-Check (Opening und Pitchbattle)
-- **Pause & Dashboard** (⏸ oder Esc): Übersicht mit Score und Verlauf aller Werte, Ersti-Schichtplan (8 Gruppen auf Check-in, Garderobe, Booths, Speaker, Catering und Pause verteilen), Maßnahmen einmal pro Tag, Tagesablauf und Log aller Entscheidungen
-- **Tag und Nacht:** Abends wird es dunkel, Lichterketten und Bühnenlicht gehen an, bei der Afterparty gibt es Disco-Licht
+- **Intro:** Wecker am Q-Day (Schlummern oder Aufstehen), Fahrt mit der Linie 5, Ankunft an der Haltestelle Schloss, Kamerafahrt über den Ehrenhof
+- **Karte nach dem echten Schloss:** Bismarckstraße mit Straßenbahn, Ehrenhof mit Statuen, Rasen und blauem Teppich, Mittelbau mit Fahne, Foyer im Ehrenhof Ost (Check-in, Treppenhaus, Infopoint, Garderobe), SO108 mit Mainstage, Speaker-Lounge, Hackathon-Raum, Hays Forum mit Koro-Müslibar, Qube und der Schneckenhof als geschlossener Innenhof mit Innovillage, Bühne, Bar, Essenszelten und Lichterketten
+- **First-Person-Sicht:** Gespräche werden aus deiner Sicht gezeigt, mit großem Porträt und dem Ort im Hintergrund. Reden auf der Mainstage siehst du von der Bühne aus ins Publikum, das live reagiert
+- **Echte Partner und Speaker 2026** (laut q-summit.com): Booths von PERI, Schwarz Gruppe, Dronivo, KPMG und weiteren, 20 Speaker laufen durchs Schloss. Was sie im Spiel sagen und wann sie da sind, ist ausgedacht
+- **Minigames:** Goodie Bags, Badge-Ausgabe, Infopoint, Mic-Check, Opening- und Closing-Rede (Redezeilen wählen, Hype-Meter), Pitchbattle-Siegerehrung (Trommelwirbel-Timing), Dance-Off bei der Afterparty
+- **Handy:** Homescreen mit Chats, Speaker-Album (Selfies sammeln), Q-App mit Ablauf und Erfolgen
+- **Leben in der Welt:** Sprechblasen, Schlosstauben, Straßenbahnen, Energie und Kaffee, Tag-Nacht-Wechsel mit leuchtenden Fenstern, Musik
+- **16 Erfolge**, die im Browser gespeichert bleiben, und ein Tutorial beim ersten Start
+- **Pause & Dashboard** (⏸ oder Esc): Übersicht, Ersti-Schichtplan, Maßnahmen, Ablauf, Log
+- **Ende:** Titelseite des „Quadrate-Kurier“ mit Foto von der Afterparty und Geschichten zu deinen Entscheidungen
 
 ## Inhalte ergänzen
 
@@ -29,6 +33,7 @@ Alles Inhaltliche steht oben im Script, vor dem Abschnitt `ENGINE`:
 - `TEAM`: Namen, Rollen, Haarfarbe und Stammplatz der Teammitglieder
 - `LOCS`: Orte auf der Karte
 - `STATIONS`, `ACTIONS`, `AGENDA`: Schichtplan, Maßnahmen und Programm im Dashboard
+- `SPEAKERS`, `BOOTH_SIGNS`, `SPEECHES`, `BARKS`, `ACHIEVEMENTS`, `NEWS_STORIES`: Speaker, Booth-Schilder, Reden, Sprechblasen, Erfolge und Zeitungsgeschichten
 
 Ein Event sieht so aus:
 
@@ -56,4 +61,4 @@ simMany("good", 30); simMany("random", 30); simMany("lazy", 20);
 localStorage.removeItem("qs_best");     // Bot-Rekorde wieder löschen
 ```
 
-Stand jetzt: Gut gespielt landet bei etwa 89 Punkten („Legendär“), normal bei etwa 80 („Starke Q“), wer jede fünfte Aufgabe verpasst bei etwa 64 und überlebt in 4 von 5 Fällen. Zufälliges Klicken überlebt fast nie.
+Stand jetzt: Gut gespielt landet bei etwa 85 Punkten, normal bei etwa 80 („Starke Q“), wer jede fünfte Aufgabe verpasst bei etwa 67. Zufälliges Klicken überlebt nicht.
