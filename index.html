@@ -572,23 +572,27 @@ const GAME_OVER = {
 
 // Orte auf der Karte (Kachel-Koordinaten)
 const LOCS = {
-  haltestelle:   { x: 21, y: 40, label: "Haltestelle Schloss",  icon: "🚋" },
-  ehrenhof:      { x: 18, y: 29, label: "Ehrenhof",             icon: "🏰" },
-  eingang:       { x: 21, y: 15, label: "Haupteingang Mittelbau", icon: "🟦" },
-  checkin:       { x: 25, y: 9,  label: "Check-in",             icon: "🧾" },
-  treppe:        { x: 21, y: 6,  label: "Treppenhaus",          icon: "🛍️" },
-  hall:          { x: 13, y: 8,  label: "Foyer & Infopoint",    icon: "ℹ️" },
-  galerie:       { x: 38, y: 26, label: "Galerie Ostflügel",    icon: "🖼️" },
-  so108:         { x: 50, y: 9,  label: "SO108",                icon: "🎤" },
-  buehne:        { x: 51, y: 4,  label: "Mainstage SO108",      icon: "🎙️" },
-  lounge:        { x: 60, y: 7,  label: "Speaker-Lounge",       icon: "🛋️" },
-  hackathon:     { x: 67, y: 10, label: "Hackathon-Raum",       icon: "💻" },
-  hays:          { x: 67, y: 17, label: "Hays Forum",           icon: "🥣" },
-  qube:          { x: 67, y: 30, label: "Qube",                 icon: "🦁" },
-  innovillage:   { x: 53, y: 21, label: "Innovillage",          icon: "⛺" },
-  food:          { x: 50, y: 30, label: "Essenszelte",          icon: "🍕" },
-  entertainment: { x: 54, y: 27, label: "Entertainment-Ecke",   icon: "🏒" },
-  abend:         { x: 53, y: 17, label: "Schneckenhof-Bühne",   icon: "🪩" },
+  haltestelle:   { x: 31, y: 50, label: "Haltestelle Schloss",  icon: "🚋" },
+  eingang:       { x: 29, y: 47, label: "Haupteingang",         icon: "🟦" },
+  checkin:       { x: 35, y: 45, label: "Check-in",             icon: "🧾" },
+  treppe:        { x: 29, y: 46, label: "Treppe",               icon: "🛍️" },
+  hall:          { x: 24, y: 46, label: "Foyer & Infopoint",    icon: "ℹ️" },
+  lager:         { x: 12, y: 45, label: "Lagergang",            icon: "📦" },
+  kiosk:         { x: 28, y: 37, label: "Kiosk",                icon: "🥤" },
+  so108:         { x: 12, y: 39, label: "SO108",                icon: "🎤" },
+  buehne:        { x: 13, y: 35, label: "Mainstage SO108",      icon: "🎙️" },
+  lounge:        { x: 39, y: 37, label: "Speaker-Lounge",       icon: "🛋️" },
+  hackathon:     { x: 48, y: 41, label: "Hackathon-Raum",       icon: "💻" },
+  speeddating:   { x: 29, y: 6,  label: "Speed Dating",         icon: "💞" },
+  workshops:     { x: 22, y: 7,  label: "Workshops",            icon: "🛠️" },
+  campfire:      { x: 43, y: 7,  label: "Campfire Session",     icon: "🔥" },
+  hays:          { x: 17, y: 17, label: "Hays Forum",           icon: "🥣" },
+  qube:          { x: 36, y: 17, label: "Qube",                 icon: "🦁" },
+  innovillage:   { x: 25, y: 28, label: "Innovillage",          icon: "⛺" },
+  food:          { x: 13, y: 30, label: "Essenszelte",          icon: "🍕" },
+  entertainment: { x: 25, y: 31, label: "Entertainment-Ecke",   icon: "🏒" },
+  abend:         { x: 27, y: 25, label: "Schneckenhof-Bühne",   icon: "🪩" },
+  ehrenhof:      { x: 67, y: 33, label: "Ehrenhof",             icon: "🏰" },
 };
 
 // Das Team aus dem Organigramm. Du selbst spielst den Chair.
@@ -657,7 +661,7 @@ const EVENTS = [
     b: { label: "Lassen, das ist Charme.", fx: { participants: -10 } } },
 
   { id: "checkin", day: 1, from: 8, to: 10, loc: "checkin", who: "Anna",
-    text: "Die Schlange am Check-in reicht schon über den ganzen Ehrenhof!",
+    text: "Die Schlange am Check-in reicht schon bis raus auf die Bismarckstraße!",
     a: { label: "Erstis von der Garderobe an einen zweiten Tisch.", fx: { participants: 10, erstis: -5, team: -5 } },
     b: { label: "Durchhalten, das geht gleich schneller.", fx: { participants: -10 } } },
 
@@ -970,7 +974,7 @@ const EVENTS = [
     b: { label: "Alle Logos bleiben gleich groß.", fx: { partner: -5 } } },
 
   { id: "drohne", day: 1, from: 9, to: 15, loc: "eingang", who: "Franz",
-    text: "Ich hab eine Drohne dabei! Ein Shot vom ganzen Ehrenhof wäre krank. Die Uni hat aber nie zugestimmt...",
+    text: "Ich hab eine Drohne dabei! Ein Shot vom ganzen Schneckenhof wäre krank. Die Uni hat aber nie zugestimmt...",
     a: { label: "Flieg! Nur kurz.", fx: { participants: 5, team: 5 }, sets: "drohne" },
     b: { label: "Lieber nicht, wir fragen nächstes Jahr.", fx: { team: -5 } } },
 
@@ -1136,7 +1140,7 @@ const AMBIENT = [
   { chat: "finance", from: "Lea", text: "Bitte bitte alle Belege fotografieren 📸" },
   { chat: "marketing", from: "Emi", text: "Reel vom Opening ist online 🎬", day: 1, from_: 10.5 },
   { chat: "marketing", from: "Adrian", text: "Uni-Initiative aus Heidelberg sagt danke für die Einladung 🙏" },
-  { chat: "marketing", from: "Franz", text: "Drohnenshot vom Ehrenhof ist krank 🤯" },
+  { chat: "marketing", from: "Franz", text: "Drohnenshot vom Schneckenhof ist krank 🤯" },
   { chat: "mama", from: "Mama", text: "Schatz, isst du auch genug? 🍝" },
   { chat: "mama", from: "Mama", text: "Papa hat dich auf Instagram gesehen!! 👏" },
   { chat: "mama", from: "Mama", text: "Ruf mal an, wenn du Zeit hast ❤️" },
@@ -1153,7 +1157,7 @@ const AMBIENT = [
   { chat: "team", from: "Julius", text: "Wer heute noch nichts gegessen hat: Hand hoch ✋" },
   { chat: "team", from: "Amelie", text: "Wer hat den Schlüssel für den Lagerraum??" },
   { chat: "team", from: "Emi", text: "Die Schilder kommen auf Insta so gut an 😍 Alle fragen, wer die gemalt hat" },
-  { chat: "team", from: "Jordis", text: "Abstimmung Gruppenfoto: Treppe oder Ehrenhof? 📸" },
+  { chat: "team", from: "Jordis", text: "Abstimmung Gruppenfoto: Treppe oder Schneckenhof? 📸" },
   { chat: "team", from: "Valentin", text: "Speaker-Feedback bisher: 10/10 💜" },
   { chat: "team", from: "Ciaran", text: "Ein VC hat gefragt, ob wir nächstes Jahr ein zweites Qube machen 👀", day: 2 },
   { chat: "team", from: "Franz", text: "Rekord an der Fußballwand: 11 Treffer in 30 Sekunden ⚽🔥" },
@@ -1187,7 +1191,7 @@ const AMBIENT = [
 const START_MSGS = [
   { chat: "board", from: "Jonathan", text: "Morgen ist es soweit 💙 Schlaft gut!", time: "23:41" },
   { chat: "board", from: "Lea", text: "Gute Nacht ihr Lieben 🥹", time: "23:45" },
-  { chat: "team", from: "Amelie", text: "Treffpunkt 7:15 im Ehrenhof!! Wer zu spät ist, pustet Ballons 🎈", time: "22:10" },
+  { chat: "team", from: "Amelie", text: "Treffpunkt 7:15 am Haupteingang!! Wer zu spät ist, pustet Ballons 🎈", time: "22:10" },
   { chat: "erstis", from: "Sophie", text: "Morgen geht's los! Denkt an euer blaues Shirt 💙", time: "21:02" },
   { chat: "mama", from: "Mama", text: "Viel Erfolg morgen mein Schatz!! 🍀", time: "20:15" },
 ];
@@ -1198,7 +1202,7 @@ const MG_QUESTS = [
     text: "Chair! Bevor der Einlass aufmacht, müssen noch Goodie Bags gepackt werden. Hilfst du kurz?",
     bad: { participants: -10, erstis: -5 }, play: () => playGoodies() },
   { id: "badges", day: 0, at: 8 * 60 + 20, who: "Anna", loc: "checkin",
-    text: "Der Check-in geht los und die Schlange reicht bis in den Ehrenhof! Kannst du mit Badges ausgeben?",
+    text: "Der Check-in geht los und die Schlange reicht bis auf die Bismarckstraße! Kannst du mit Badges ausgeben?",
     bad: { participants: -10, partner: -5 }, play: () => playBadges() },
   { id: "opening_mic", day: 0, at: 9 * 60 + 15, who: "Otto", loc: "buehne",
     text: "Gleich ist Opening! Checkst du mit mir die Mikros auf der Mainstage?",
@@ -1217,17 +1221,18 @@ const MG_QUESTS = [
 const SCENES = [
   { id: "arrival", day: 0, at: 7 * 60 + 15, steps: [
     { hud: false },
-    { place: "player", x: 21, y: 40, dir: "up", hidden: true },
-    { place: "Amelie", x: 21, y: 31, dir: "down" },
+    { place: "player", x: 28, y: 50, dir: "up", hidden: true },
+    { place: "Amelie", x: 31, y: 50, dir: "left" },
     { cam: "haltestelle", snap: true },
     { tram: "arrive" },
     { wait: 700 },
-    { pan: [[21, 31], [21, 10], [21, 30]], ms: 4200 },
+    { pan: [[29, 46], [28, 36], [28, 27], [29, 47]], ms: 5200 },
     { titlecard: true },
-    { walk: ["player", 21, 33] },
+    { walk: ["player", 30, 50] },
     { fp: "ehrenhof" },
     { say: ["Amelie", "Guten Morgen, Chair! ☀️ Heute ist es soweit: Q26. 700 Leute, zwei Tage, ein Schloss."] },
-    { say: ["Amelie", "Um 8:30 öffnet der Check-in im Foyer, da hinten über den blauen Teppich. Um 10 Uhr ist Opening in SO108."] },
+    { say: ["Amelie", "Hier rein, Haupteingang Ostflügel. Um 8:30 öffnet der Check-in im Foyer, und um 10 Uhr ist Opening auf der Mainstage: am Kiosk links."] },
+    { say: ["Amelie", "Speed Dating, Workshops und Campfire Sessions sind oben: im Foyer einfach die Treppe hoch. Geradeaus durch den Kiosk kommst du raus in den Schneckenhof zum Innovillage."] },
     { say: ["Amelie", "Wer ein ❗ über dem Kopf hat, braucht dich. Warte nicht zu lang, sonst entscheiden die Leute ohne dich."] },
     { say: ["Amelie", "Und wenn du Speaker siehst: Sag Hallo und frag nach einem Selfie 📸 Ich glaub, im Schneckenhof sind schon die ersten Partner."] },
     { hud: true },
@@ -1235,8 +1240,8 @@ const SCENES = [
   ] },
   { id: "opening", day: 0, at: 9 * 60 + 58, steps: [
     { seat: true },
-    { place: "player", x: 49, y: 4, dir: "down" },
-    { place: "Jonathan", x: 51, y: 4, dir: "down" },
+    { place: "player", x: 12, y: 35, dir: "down" },
+    { place: "Jonathan", x: 14, y: 35, dir: "down" },
     { cam: "buehne" },
     { lights: true },
     { wait: 500 },
@@ -1245,8 +1250,8 @@ const SCENES = [
     { wait: 900 },
   ] },
   { id: "abend", day: 0, at: 19 * 60, steps: [
-    { place: "Emi", x: 53, y: 19, dir: "down" },
-    { place: "player", x: 53, y: 21, dir: "up" },
+    { place: "Emi", x: 27, y: 24, dir: "down" },
+    { place: "player", x: 27, y: 26, dir: "up" },
     { cam: "abend" },
     { wait: 600 },
     { fp: "schneckenhof" },
@@ -1254,18 +1259,18 @@ const SCENES = [
     { say: ["Emi", "An der Bar gibt's Rothaus, Lillet und Kleiner Klopfer. Das Flagship Dinner läuft parallel, die Investoren sind schon rüber."] },
   ] },
   { id: "morning2", day: 1, at: 8 * 60, steps: [
-    { place: "Vanessa", x: 21, y: 31, dir: "down" },
-    { place: "player", x: 21, y: 33, dir: "up" },
-    { cam: "ehrenhof" },
+    { place: "Vanessa", x: 29, y: 46, dir: "down" },
+    { place: "player", x: 29, y: 47, dir: "up" },
+    { cam: "eingang" },
     { wait: 500 },
-    { fp: "ehrenhof" },
+    { fp: "foyer" },
     { say: ["Vanessa", "Morgen Chair! Tag 2. Die Hälfte ist müde vom Themenabend, aber wir ziehen das durch 💪"] },
     { say: ["Vanessa", "Heute: Female Brunch, Qube, um 18 Uhr Pitchbattle-Finale, dann Closing und Afterparty im Schneckenhof!"] },
   ] },
   { id: "pitch", day: 1, at: 19 * 60 + 15, steps: [
     { seat: true },
-    { place: "Nick", x: 51, y: 4, dir: "down" },
-    { place: "player", x: 49, y: 4, dir: "down" },
+    { place: "Nick", x: 14, y: 35, dir: "down" },
+    { place: "player", x: 12, y: 35, dir: "down" },
     { cam: "buehne" },
     { lights: true },
     { wait: 500 },
@@ -1275,8 +1280,8 @@ const SCENES = [
   ] },
   { id: "closing", day: 1, at: 19 * 60 + 35, steps: [
     { seat: true },
-    { place: "player", x: 49, y: 4, dir: "down" },
-    { place: "Jonathan", x: 51, y: 4, dir: "down" },
+    { place: "player", x: 12, y: 35, dir: "down" },
+    { place: "Jonathan", x: 14, y: 35, dir: "down" },
     { cam: "buehne" },
     { lights: true },
     { wait: 500 },
@@ -1286,10 +1291,10 @@ const SCENES = [
   ] },
   { id: "afterparty", day: 1, at: 20 * 60 + 15, steps: [
     { party: true },
-    { place: "player", x: 53, y: 18, dir: "up" },
-    { place: "Lennart", x: 55, y: 18, dir: "left" },
-    { place: "Jonathan", x: 51, y: 18, dir: "right" },
-    { place: "Ben", x: 53, y: 16, dir: "down" },
+    { place: "player", x: 27, y: 25, dir: "up" },
+    { place: "Lennart", x: 29, y: 25, dir: "left" },
+    { place: "Jonathan", x: 25, y: 25, dir: "right" },
+    { place: "Ben", x: 27, y: 24, dir: "down" },
     { cam: "abend" },
     { confetti: true },
     { wait: 1200 },
@@ -1323,7 +1328,7 @@ const GOODIES_WRONG = [["🔌", "Kabel"], ["🎈", "Luftballon"], ["🍹", "Aper
 const INFO_PLACES = {
   "SO108": "🎤", "Hays Forum": "🥣", "Garderobe": "🧥", "Innovillage": "⛺", "Qube": "🦁", "Hackathon-Raum": "💻",
   "Essenszelte": "🍕", "Entertainment-Ecke": "🏒", "Check-in": "🧾", "Speaker-Lounge": "🛋️", "Treppenhaus": "🛍️",
-  "Schneckenhof-Bühne": "🪩", "Haltestelle": "🚋",
+  "Schneckenhof-Bühne": "🪩", "Haltestelle": "🚋", "Speed Dating": "💞", "Workshops": "🛠️", "Kiosk": "🥤", "Campfire Session": "🔥",
 };
 const INFO_QUESTIONS = [
   ["Wo ist die Mainstage?", "SO108"], ["Wo gibt's Frühstück?", "Hays Forum"], ["Wo kann ich meine Jacke abgeben?", "Garderobe"],
@@ -1334,7 +1339,8 @@ const INFO_QUESTIONS = [
   ["Wo gibt's die Poke Bowls?", "Essenszelte"], ["Wo ist die Closing Speech?", "SO108"], ["Ich bin Speaker, wo kann ich mich vorbereiten?", "Speaker-Lounge"],
   ["Wo spricht Eva Spannagl von OpenAI?", "SO108"], ["Wo ist der Stand von PERI?", "Innovillage"], ["Wo ist heute Abend der Themenabend?", "Schneckenhof-Bühne"],
   ["Wo gibt's Rothaus und Lillet?", "Schneckenhof-Bühne"], ["Wie komm ich zum Hauptbahnhof?", "Haltestelle"], ["Wo ist der Stand von Dronivo?", "Innovillage"],
-  ["Wo gibt's yfood?", "Essenszelte"], ["Wo treffe ich Investoren von HV Capital?", "Qube"],
+  ["Wo gibt's yfood?", "Essenszelte"], ["Wo ist das Speed Dating?", "Speed Dating"], ["Wo finden die Workshops statt?", "Workshops"],
+  ["Wo bekomm ich zwischendurch was zu trinken?", "Kiosk"], ["Wo ist die Campfire Session?", "Campfire Session"], ["Wo treffe ich Investoren von HV Capital?", "Qube"],
 ];
 
 // Ersti-Schichtplan im Dashboard: 8 Gruppen à 5 Erstis werden auf Stationen verteilt.
@@ -1423,7 +1429,7 @@ EVENTS.push(
     b: { label: "Jonathan soll das machen.", fx: { team: 5, partner: -5 } } },
 
   { id: "tram_voll", day: 1, from: 8, to: 10, chat: "erstis", who: "Ersti Lina",
-    text: "Die Bahn an der Haltestelle Schloss ist komplett voll mit Participants 🚋 Sollen wir sie am Ehrenhof abholen?",
+    text: "Die Bahn an der Haltestelle Schloss ist komplett voll mit Participants 🚋 Sollen wir sie an der Haltestelle abholen?",
     a: { label: "Ja, zwei Erstis mit Schildern hin.", fx: { participants: 10, erstis: -5 } },
     b: { label: "Die finden den blauen Teppich schon.", fx: { participants: -5 } } },
 
@@ -1448,7 +1454,7 @@ AMBIENT.push(
   { chat: "partner", from: "Jaan", text: "Der Dronivo-Stand hat eine Drohne im Zelt hängen. Alle machen Fotos 🚁" },
   { chat: "partner", from: "Lenny", text: "Picnic hat Snacks für alle Booths verteilt 🥕" },
   { chat: "team", from: "Madeleine", text: "Vita Coco und Fachingen sind im Backoffice, bedient euch 💧" },
-  { chat: "team", from: "Franz", text: "Die Tauben im Ehrenhof haben mehr Follower als wir 🕊️" },
+  { chat: "team", from: "Franz", text: "Die Tauben im Schneckenhof haben mehr Follower als wir 🕊️" },
   { chat: "team", from: "Emi", text: "Bahn fährt alle paar Minuten direkt vorm Schloss, sagt das allen, die zum Hbf wollen 🚋" },
   { chat: "erstis", from: "Ersti Tom", text: "Ich hab gerade ein Selfie mit einem Speaker gemacht 😭🤳" },
   { chat: "board", from: "Jonathan", text: "Wer hat Bock, morgen das Opening-Video zu schneiden? 🎬", day: 1, from_: 17 },
@@ -1596,7 +1602,7 @@ const ACHIEVEMENTS = [
 // Zeitung am Ende: Geschichten zu Entscheidungen
 const NEWS_STORIES = [
   { flag: "tiktok",       title: "Backstage geht viral",            text: "Ein Ersti-TikTok aus dem Backstage von SO108 knackt die 50.000 Views." },
-  { flag: "drohne",       title: "Drohne über dem Ehrenhof",        text: "Spektakuläre Bilder vom Schloss. Die Uni-Verwaltung ist weniger begeistert." },
+  { flag: "drohne",       title: "Drohne über dem Schneckenhof",        text: "Spektakuläre Bilder vom Schloss. Die Uni-Verwaltung ist weniger begeistert." },
   { flag: "spontan",      title: "Überraschungsgast auf der Bühne", text: "Ein Gründer aus dem Publikum stiehlt allen die Show und überzieht großzügig." },
   { flag: "ben_dj",       title: "Hackathon-Chair am DJ-Pult",      text: "Als der DJ krank wird, springt Ben vom Hackathon ein. Die Tanzfläche dankt." },
   { flag: "kabel_risiko", title: "Stolperfalle Mainstage",          text: "Ein Gaffa-Kabel sorgt für kurze Dunkelheit in SO108." },
@@ -1634,7 +1640,7 @@ const MODE = () => MODES[(s && s.diff) || "normal"];
 // Tageslagen: Jeder Tag würfelt eine oder zwei davon aus, damit kein Durchlauf wie der andere ist.
 // start: einmalig zu Tagesbeginn, task/taskNeg/taskPos: Faktoren auf Entscheidungen, shift: Extra pro Schichtprüfung
 const DAY_MODS = [
-  { id: "regen", icon: "☔", name: "Regentag", desc: "Alle drängen sich ins Foyer und in die Galerie. Die Partner im Schneckenhof kämpfen mit nassen Zelten.",
+  { id: "regen", icon: "☔", name: "Regentag", desc: "Alle drängen sich ins Foyer, an den Kiosk und hoch ins OG. Die Partner im Schneckenhof kämpfen mit nassen Zelten.",
     start: { partner: -4 }, task: { partner: 1.25 }, indoor: true, rain: true, not: ["hitze"],
     chat: ["team", "Franz", "Es SCHÜTTET 🌧️ Wer hat die Planen für die Innovillage-Zelte??"] },
   { id: "hitze", icon: "🌡️", name: "Hitzewelle", desc: "28 Grad im April. Du brauchst mehr Kaffee, und die Erstis brauchen mehr Pausen.",
@@ -1648,7 +1654,7 @@ const DAY_MODS = [
     chat: ["board", "Anna", "Die Schlange geht bis zur Bismarckstraße 🤯 Wir sind ÜBERBUCHT im besten Sinne."] },
   { id: "presse", icon: "📸", name: "Presse vor Ort", desc: "SWR und Mannheimer Morgen sind da. Bei Participants und Partnern zählt jede Entscheidung stärker, im Guten wie im Schlechten.",
     task: { participants: 1.35, partner: 1.35 },
-    chat: ["marketing", "Jordis", "Kamerateam vom SWR ist im Ehrenhof! Alle lächeln 📸"] },
+    chat: ["marketing", "Jordis", "Kamerateam vom SWR steht vor dem Haupteingang! Alle lächeln 📸"] },
   { id: "sparkurs", icon: "💸", name: "Sparkurs", desc: "Finance hat den Gürtel enger geschnallt. Ausgaben tun doppelt weh.",
     start: { budget: -4 }, taskNeg: { budget: 1.5 },
     chat: ["finance", "Lea", "Kurzer Reminder: Wir sind 3 % über Budget. Jeder Euro zählt heute 🙏"] },
@@ -1714,9 +1720,11 @@ const store = {
 };
 
 // ---------------- Karte ----------------
-// Blick von der Bismarckstraße aufs Schloss: Von der Haltestelle führt der blaue Teppich geradeaus durch den Ehrenhof
-// zum Haupteingang im Mittelbau. Rechts schließt der Ostflügel an, mit Galerie, SO108 und dem Schneckenhof als Innenhof.
-const TS = 16, W = 72, H = 47;
+// Der Ostflügel von der Bismarckstraße aus: unten Straße und Haltestelle, darüber der Haupteingang mit Foyer und Treppe.
+// Geradeaus geht es durch den Kiosk in den Schneckenhof, links vom Kiosk liegt die Mainstage, links vom Foyer der Lagergang,
+// rechts der Gang zum Rest der Uni. Das 1. Obergeschoss mit Speed Dating, Workshops und Campfire liegt als eigene Ebene oben
+// auf der Karte und ist über die Treppe im Foyer erreichbar.
+const TS = 16, W = 72, H = 57;
 const grid = Array.from({ length: H }, () => Array(W).fill("R"));
 const floor = Array.from({ length: H }, () => Array(W).fill("R"));
 const OBJECTS = [];
@@ -1729,113 +1737,133 @@ function obj(x, y, w, h, c, extra) {
 function door(x, y) { grid[y][x] = "D"; }
 
 (function buildMap() {
-  // Schlossgarten hinter dem Schloss
-  rect(0, 0, W, 2, "w");
-  for (let x = 1; x < W; x += 3) obj(x, 0, 1, 1, "t");
-  // Ehrenhof, nach unten zur Straße offen
-  rect(8, 14, 26, 26, ",");
-  rect(10, 30, 6, 6, "w"); rect(26, 30, 6, 6, "w");
-  rect(10, 18, 6, 6, "w"); rect(26, 18, 6, 6, "w");
-  // Fassaden zur Straße
-  rect(0, 36, 8, 1, "W"); rect(0, 37, 8, 1, "V");
-  rect(34, 36, 38, 1, "W"); rect(34, 37, 38, 1, "V");
-  set(3, 37, "P"); set(4, 37, "P");
-  // Vorplatz, Straße mit Straßenbahn, gegenüber die Quadrate
-  rect(0, 38, 8, 2, "-"); rect(34, 38, 38, 2, "-"); rect(0, 40, W, 1, "-");
-  rect(0, 41, W, 3, "="); rect(0, 42, W, 1, "~");
-  rect(0, 44, W, 1, "-"); rect(0, 45, W, 2, "U");
+  // ---- 1. Obergeschoss (eigene Ebene) ----
+  rect(0, 0, W, 14, "O");
+  rect(12, 1, 36, 12, "#");
+  rect(13, 2, 6, 6, ".");   // Workshop A
+  rect(20, 2, 5, 6, ".");   // Workshop B
+  rect(26, 2, 8, 6, ".");   // Speed Dating, direkt an der Treppe
+  rect(35, 2, 5, 6, ".");   // Workshop C
+  rect(41, 2, 6, 6, "_");   // Campfire Session
+  rect(13, 9, 34, 2, ":");  // Flur
+  for (const [x, y] of [[16, 8], [22, 8], [29, 8], [30, 8], [37, 8], [43, 8]]) door(x, y);
+  set(29, 11, "E"); set(30, 11, "E");
 
-  // Mittelbau mit Foyer, Treppenhaus und Check-in, Fassade zum Ehrenhof
-  rect(8, 2, 26, 12, "#");
-  rect(9, 3, 24, 9, ":");
-  rect(8, 12, 26, 1, "W"); rect(8, 13, 26, 1, "V");
-  for (const [x, y] of [[20, 12], [21, 12], [20, 13], [21, 13]]) door(x, y);
-  // Ostflügel-Galerie zwischen Ehrenhof und Schneckenhof
-  rect(34, 2, 10, 34, "#");
-  rect(35, 3, 8, 33, ":");
-  rect(38, 3, 2, 33, "B");
-  for (const [x, y] of [[33, 7], [34, 7], [33, 8], [34, 8], [43, 4], [44, 4], [43, 5], [44, 5], [34, 24], [34, 25], [43, 20], [43, 21]]) door(x, y);
-
-  // Nordflügel: SO108, Speaker-Lounge, Hackathon
-  rect(44, 2, 28, 12, "#");
-  rect(45, 3, 12, 9, "_");
-  rect(46, 3, 10, 2, "S");
-  for (let y = 6; y <= 10; y++) { rect(45, y, 5, 1, "s"); rect(52, y, 5, 1, "s"); }
-  rect(58, 3, 5, 9, ".");
-  rect(64, 3, 7, 9, "c");
-  rect(44, 12, 20, 1, "W"); rect(44, 13, 20, 1, "V");
-  for (const [x, y] of [[48, 12], [48, 13], [60, 12], [60, 13], [65, 12], [65, 13]]) door(x, y);
-
+  // ---- Schneckenhof-Block ----
+  // Hinterflügel mit Hays Forum und Qube
+  rect(10, 14, 36, 8, "#");
+  rect(11, 15, 16, 5, ".");
+  rect(28, 15, 17, 5, "c");
+  rect(10, 20, 36, 1, "W"); rect(10, 21, 36, 1, "V");
+  for (const [x, y] of [[18, 20], [18, 21], [36, 20], [36, 21]]) door(x, y);
   // Schneckenhof
-  rect(44, 14, 20, 20, "g");
-  rect(53, 34, 2, 4, "G");
-  // Ostflügel Ost: Hays Forum und Qube
-  rect(64, 14, 8, 22, "#");
-  rect(65, 14, 6, 10, ".");
-  rect(65, 25, 6, 10, "c");
-  for (const [x, y] of [[64, 18], [64, 19], [64, 29], [64, 30]]) door(x, y);
+  rect(10, 22, 36, 11, "g");
+  // Vorderbau: Mainstage, Kiosk, Speaker-Lounge, Hackathon, darunter Lagergang, Foyer und Gang
+  rect(2, 33, 52, 17, "#");
+  rect(3, 34, 20, 8, "_");
+  rect(6, 34, 14, 2, "S");
+  for (let y = 37; y <= 40; y++) { rect(3, y, 8, 1, "s"); rect(14, y, 8, 1, "s"); }
+  rect(24, 34, 10, 8, ".");
+  rect(35, 34, 9, 8, ".");
+  rect(45, 34, 8, 8, "c");
+  rect(3, 43, 18, 5, "c");
+  rect(22, 43, 16, 5, ":");
+  rect(39, 43, 14, 5, ":");
+  rect(29, 43, 2, 3, "E");
+  rect(2, 48, 52, 1, "W"); rect(2, 49, 52, 1, "V");
+  for (const [x, y] of [[28, 33], [29, 33], [23, 37], [23, 38], [34, 37], [34, 38], [24, 42], [25, 42], [32, 42], [33, 42], [49, 42],
+    [21, 46], [21, 47], [38, 45], [38, 46], [53, 45], [53, 46], [29, 48], [30, 48], [29, 49], [30, 49]]) door(x, y);
+
+  // ---- Draußen: Stillerhof, Ehrenhof, Straße ----
+  rect(54, 16, 5, 34, "-");
+  rect(63, 16, 9, 34, ",");
+  rect(65, 20, 5, 5, "w"); rect(65, 38, 5, 5, "w");
+  rect(0, 50, W, 1, "-");
+  rect(0, 51, W, 3, "="); rect(0, 52, W, 1, "~");
+  rect(0, 54, W, 1, "-"); rect(0, 55, W, 2, "U");
+  rect(29, 50, 2, 1, "B");
 
   // ---- Möbel und Deko ----
-  // Ehrenhof: blauer Teppich von der Haltestelle bis zum Portal
-  rect(20, 14, 2, 27, "B");
-  obj(18, 14, 1, 1, "b"); obj(23, 14, 1, 1, "b"); obj(19, 16, 1, 1, "u"); obj(22, 16, 1, 1, "u");
-  obj(14, 27, 1, 1, "x"); obj(27, 27, 1, 1, "x");
-  for (const [x, y] of [[9, 15], [32, 15], [9, 38], [32, 38], [17, 26], [24, 26]]) obj(x, y, 1, 1, "L");
-  obj(11, 26, 2, 1, "%"); obj(28, 26, 2, 1, "%");
-  obj(24, 37, 1, 1, "n", "Q-SUMMIT");
-  for (const x of [1, 5, 36, 40, 44, 48, 59, 63, 67, 70]) obj(x, 39, 1, 1, "t");
-  obj(15, 40, 3, 1, "z");
-  // Foyer im Mittelbau
-  obj(18, 3, 6, 3, "^"); obj(25, 4, 2, 1, "j"); obj(15, 4, 2, 1, "j");
-  obj(9, 3, 1, 3, "h"); obj(10, 3, 1, 3, "h");
-  obj(23, 8, 5, 1, "k");
-  obj(12, 9, 2, 1, "i");
-  obj(31, 3, 1, 2, "M");
-  obj(19, 10, 1, 1, "u"); obj(22, 10, 1, 1, "u");
-  obj(9, 11, 1, 1, "p"); obj(32, 11, 1, 1, "p"); obj(28, 3, 1, 1, "p"); obj(13, 3, 1, 1, "p");
-  // Galerie im Ostflügel
-  obj(35, 12, 1, 1, "u"); obj(42, 15, 1, 1, "p"); obj(35, 30, 1, 1, "p"); obj(42, 34, 1, 1, "p");
-  for (const y of [5, 17, 28]) obj(35, y, 1, 2, "A");
-  for (const y of [11, 24, 31]) obj(42, y, 1, 2, "A");
-  // SO108
-  obj(47, 3, 1, 1, "l");
-  obj(46, 2, 10, 1, "X");
-  // Speaker-Lounge
-  obj(59, 5, 2, 1, "v"); obj(59, 9, 2, 1, "v"); obj(61, 7, 1, 1, "r"); obj(62, 3, 1, 1, "C"); obj(58, 3, 1, 1, "p"); obj(62, 11, 1, 1, "p");
-  // Hackathon
-  for (const y of [5, 8]) { obj(64, y, 3, 1, "e"); obj(68, y, 3, 1, "e"); }
-  obj(64, 2, 7, 1, "H");
-  // Schneckenhof: Bühne, Bar, Innovillage, Essen, Entertainment
-  obj(50, 14, 8, 2, "Z");
-  rect(49, 16, 10, 3, "d");
-  obj(45, 14, 3, 1, "y");
-  obj(61, 14, 1, 1, "Y");
-  const tents = [[45, 19], [60, 19], [50, 22], [55, 22], [45, 23], [60, 23], [45, 27], [60, 27]];
-  tents.forEach(([x, y], k) => obj(x, y, 3, 2, "T", { name: BOOTH_SIGNS[k], k }));
-  for (const [x, y] of [[50, 20], [57, 20], [53, 25], [49, 26], [58, 26]]) obj(x, y, 1, 1, "q");
-  obj(52, 28, 2, 1, "a");
-  obj(63, 30, 1, 2, "f");
-  rect(55, 29, 4, 2, "o");
-  obj(45, 31, 3, 2, "K", { name: FOOD_SIGNS[0] }); obj(49, 31, 3, 2, "K", { name: FOOD_SIGNS[1] }); obj(58, 31, 3, 2, "K", { name: FOOD_SIGNS[2] });
+  // Obergeschoss
+  obj(14, 1, 4, 1, "X"); obj(21, 1, 3, 1, "X"); obj(36, 1, 3, 1, "X");
+  for (const y of [4, 6]) { obj(14, y, 4, 1, "Ä"); obj(21, y, 3, 1, "Ä"); obj(36, y, 3, 1, "Ä"); }
+  for (const [x, y] of [[27, 3], [30, 3], [33, 3], [27, 5], [32, 5]]) obj(x, y, 1, 1, "r");
+  obj(43, 4, 2, 2, "F");
+  for (const [x, y] of [[41, 3], [46, 3], [41, 6], [46, 6], [42, 2], [45, 2]]) obj(x, y, 1, 1, "Ü");
+  obj(13, 9, 1, 1, "p"); obj(46, 9, 1, 1, "p"); obj(27, 10, 1, 1, "u"); obj(32, 10, 1, 1, "u");
   // Hays Forum und Qube
-  obj(66, 14, 4, 1, "m");
-  for (const [x, y] of [[66, 18], [69, 18], [67, 21]]) obj(x, y, 1, 1, "r");
-  obj(70, 15, 1, 1, "p"); obj(65, 23, 1, 1, "p");
-  obj(66, 26, 2, 2, "N");
-  for (const [x, y] of [[69, 27], [66, 32], [69, 32]]) obj(x, y, 1, 1, "r");
+  obj(12, 15, 4, 1, "m");
+  for (const [x, y] of [[14, 18], [20, 17], [24, 18]]) obj(x, y, 1, 1, "r");
+  obj(26, 15, 1, 1, "p");
+  obj(30, 15, 2, 2, "N");
+  for (const [x, y] of [[34, 18], [39, 17], [42, 16]]) obj(x, y, 1, 1, "r");
+  obj(44, 19, 1, 1, "p");
+  // Schneckenhof: Bühne, Bar, Innovillage, Essen, Entertainment
+  obj(24, 22, 8, 2, "Z");
+  rect(23, 24, 10, 3, "d");
+  obj(11, 22, 3, 1, "y");
+  obj(43, 22, 1, 1, "Y");
+  const tents = [[11, 25], [16, 25], [37, 25], [42, 25], [11, 28], [16, 28], [37, 28], [42, 28]];
+  tents.forEach(([x, y], k) => obj(x, y, 3, 2, "T", { name: BOOTH_SIGNS[k], k }));
+  for (const [x, y] of [[21, 27], [34, 27], [21, 31], [35, 31], [27, 28]]) obj(x, y, 1, 1, "q");
+  obj(24, 30, 2, 1, "a");
+  obj(45, 29, 1, 2, "f");
+  rect(30, 29, 4, 2, "o");
+  obj(11, 31, 3, 2, "K", { name: FOOD_SIGNS[0] }); obj(15, 31, 3, 2, "K", { name: FOOD_SIGNS[1] }); obj(41, 31, 3, 2, "K", { name: FOOD_SIGNS[2] });
+  // Mainstage SO108
+  obj(8, 34, 1, 1, "l");
+  obj(8, 33, 10, 1, "X");
+  // Kiosk
+  obj(24, 34, 3, 1, "Q");
+  obj(31, 35, 2, 1, "v"); obj(31, 39, 2, 1, "v"); obj(26, 39, 2, 1, "v");
+  obj(33, 34, 1, 1, "p");
+  // Speaker-Lounge
+  obj(36, 35, 2, 1, "v"); obj(36, 39, 2, 1, "v"); obj(40, 37, 1, 1, "r"); obj(43, 34, 1, 1, "C"); obj(42, 41, 1, 1, "p");
+  // Hackathon
+  for (const y of [36, 39]) { obj(45, y, 3, 1, "e"); obj(49, y, 3, 1, "e"); }
+  obj(45, 33, 8, 1, "H");
+  // Lagergang
+  for (const x of [4, 8, 12, 16]) obj(x, 43, 2, 1, "I");
+  for (const [x, y] of [[5, 47], [10, 47], [15, 46], [19, 43]]) obj(x, y, 1, 1, "J");
+  // Foyer
+  obj(28, 43, 1, 3, "|"); obj(31, 43, 1, 3, "|");
+  obj(26, 43, 2, 1, "j");
+  obj(33, 44, 5, 1, "k");
+  obj(24, 45, 2, 1, "i");
+  obj(22, 43, 1, 3, "h");
+  obj(36, 46, 1, 2, "M");
+  obj(27, 47, 1, 1, "u"); obj(32, 47, 1, 1, "u");
+  obj(23, 47, 1, 1, "p"); obj(34, 47, 1, 1, "p");
+  // Gang zur Uni
+  obj(42, 43, 1, 1, "p"); obj(47, 43, 1, 2, "A"); obj(51, 43, 1, 1, "p");
+  // Draußen
+  for (const x of [3, 9, 15, 21, 39, 45, 51, 57, 63, 69]) obj(x, 54, 1, 1, "t");
+  for (const y of [18, 26, 34, 42]) obj(56, y, 1, 1, "t");
+  // Deko auf dem schmalen Gehweg bleibt begehbar, damit er nicht zugestellt ist
+  const deco = (x, y, w, h, c, extra) => { obj(x, y, w, h, c, extra); rect(x, y, w, h, "-"); };
+  deco(24, 50, 3, 1, "z");
+  deco(33, 50, 1, 1, "n", "Q-SUMMIT");
+  deco(27, 50, 1, 1, "b"); deco(32, 50, 1, 1, "b"); deco(36, 50, 1, 1, "L");
+  obj(55, 30, 1, 1, "L"); obj(64, 18, 1, 1, "L"); obj(70, 46, 1, 1, "L");
+  obj(64, 30, 1, 1, "x"); obj(70, 30, 1, 1, "x"); obj(66, 27, 2, 1, "%"); obj(66, 45, 2, 1, "%");
 })();
 
-const WALK = new Set([",", "g", "-", "B", ":", ".", "_", "c", "s", "S", "D", "w", "o", "d", "G"]);
+// Treppe im Foyer: oberste Stufe führt ins 1. OG, die Treppe im OG wieder runter
+const PORTALS = new Map();
+const pkey = (i, j) => j * W + i;
+for (const i of [29, 30]) { PORTALS.set(pkey(i, 43), [i, 10]); PORTALS.set(pkey(i, 11), [i, 44]); }
+
+const WALK = new Set([",", "g", "-", "B", ":", ".", "_", "c", "s", "S", "D", "w", "o", "d", "G", "E"]);
 const isWalk = (i, j) => i >= 0 && j >= 0 && i < W && j < H && WALK.has(grid[j][i]);
 // Kaffee-Punkte: Kaffeemaschine in der Lounge, Kaffeewagen im Schneckenhof, Müslibar im Hays Forum
-const COFFEE = [[62, 3], [61, 14], [67, 14], [68, 14]];
+const COFFEE = [[43, 34], [43, 22], [13, 15], [14, 15], [25, 34]];
 
 function nearestWalkable(i, j) {
   if (isWalk(i, j)) return [i, j];
   for (let r = 1; r < 8; r++)
     for (let dj = -r; dj <= r; dj++) for (let di = -r; di <= r; di++)
       if (Math.max(Math.abs(di), Math.abs(dj)) === r && isWalk(i + di, j + dj)) return [i + di, j + dj];
-  return [20, 30];
+  return [29, 46];
 }
 for (const L of Object.values(LOCS)) [L.x, L.y] = nearestWalkable(L.x, L.y);
 
@@ -1858,6 +1886,8 @@ function findPath(from, to) {
       if (prev[k] !== -1) continue;
       prev[k] = cur; q.push(k);
     }
+    const pt = PORTALS.get(cur);
+    if (pt) { const k = key(pt[0], pt[1]); if (prev[k] === -1) { prev[k] = cur; q.push(k); } }
   }
   if (prev[goal] === -1) return [];
   const path = [];
@@ -1867,8 +1897,8 @@ function findPath(from, to) {
 
 // Zonen, in denen sich die Crowd aufhält
 const ZONE_RECTS = {
-  vorplatz: [0, 38, 72, 3], ehrenhof: [9, 15, 24, 23], hall: [9, 6, 24, 6], galerie: [35, 14, 8, 20], hays: [65, 15, 6, 9], qube: [65, 26, 6, 8],
-  innovillage: [44, 19, 20, 11], food: [44, 29, 20, 5], abend: [48, 16, 12, 6], lounge: [58, 4, 5, 8],
+  vorplatz: [0, 50, 72, 1], ehrenhof: [63, 16, 9, 34], hall: [22, 43, 16, 5], kiosk: [24, 34, 10, 8], og: [13, 2, 34, 9],
+  hays: [11, 15, 16, 5], qube: [28, 15, 17, 5], innovillage: [10, 24, 36, 6], food: [10, 30, 36, 3], abend: [22, 24, 12, 3], lounge: [35, 34, 9, 8],
 };
 const ZONES = {};
 for (const [k, [x, y, w, h]] of Object.entries(ZONE_RECTS)) {
@@ -1881,7 +1911,7 @@ for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (grid[j][i] === "s") 
 function crowdWeights() {
   const w = crowdWeightsBase();
   if (!hasMod("indoor") || s.party) return w;
-  const out = {}, move = { vorplatz: "hall", ehrenhof: "galerie", innovillage: "galerie", food: "hall", abend: "abend" };
+  const out = {}, move = { vorplatz: "hall", innovillage: "kiosk", food: "og" };
   for (const [k, v] of Object.entries(w)) {
     if (move[k] && move[k] !== k) { out[k] = (out[k] || 0) + v * .35; out[move[k]] = (out[move[k]] || 0) + v * .65; }
     else out[k] = (out[k] || 0) + v;
@@ -1892,20 +1922,20 @@ function crowdWeightsBase() {
   const d = s.day, m = s.min;
   if (s.party) return { abend: 1 };
   if (d === 0) {
-    if (m < 8 * 60 + 30) return { vorplatz: .3, ehrenhof: .55, hall: .15 };
-    if (m < 9 * 60 + 40) return { hall: .35, hays: .3, ehrenhof: .2, galerie: .15 };
-    if (m < 10 * 60 + 40) return { so108: .85, hall: .15 };
-    if (m < 12 * 60) return { innovillage: .5, so108: .2, hays: .15, qube: .15 };
+    if (m < 8 * 60 + 30) return { vorplatz: .45, hall: .35, kiosk: .2 };
+    if (m < 9 * 60 + 40) return { hall: .3, hays: .3, kiosk: .25, vorplatz: .15 };
+    if (m < 10 * 60 + 40) return { so108: .85, kiosk: .15 };
+    if (m < 12 * 60) return { innovillage: .45, og: .2, so108: .15, hays: .1, qube: .1 };
     if (m < 13 * 60 + 30) return { food: .6, innovillage: .4 };
-    if (m < 17 * 60) return { innovillage: .45, so108: .3, qube: .1, hays: .15 };
-    if (m < 19 * 60) return { innovillage: .6, hall: .1, galerie: .1, hays: .2 };
+    if (m < 17 * 60) return { innovillage: .4, so108: .25, og: .2, qube: .1, kiosk: .05 };
+    if (m < 19 * 60) return { innovillage: .55, kiosk: .2, og: .1, hays: .15 };
     return { abend: .75, innovillage: .25 };
   }
-  if (m < 9 * 60) return { vorplatz: .15, ehrenhof: .25, hall: .25, hays: .35 };
-  if (m < 12 * 60) return { innovillage: .4, qube: .2, so108: .25, hays: .15 };
+  if (m < 9 * 60) return { vorplatz: .15, hall: .3, kiosk: .2, hays: .35 };
+  if (m < 12 * 60) return { innovillage: .35, og: .2, qube: .2, so108: .15, hays: .1 };
   if (m < 13 * 60) return { food: .6, innovillage: .4 };
-  if (m < 18 * 60) return { innovillage: .45, so108: .35, qube: .2 };
-  if (m < 20 * 60) return { so108: .85, hall: .15 };
+  if (m < 18 * 60) return { innovillage: .4, so108: .3, og: .15, qube: .15 };
+  if (m < 20 * 60) return { so108: .85, kiosk: .15 };
   return { abend: .8, innovillage: .2 };
 }
 function pickWeighted(w) {
@@ -1968,13 +1998,13 @@ const PAL = {
 const WINDOWS = [];   // Fensterflächen, die nachts leuchten
 const GLOWS = [];     // Bildschirme, Laternen und andere Lichtpunkte
 const isFacade = c => c === "W" || c === "V" || c === "P";
-const isWallish = c => c === "R" || c === "#" || isFacade(c) || c === "U";
+const isWallish = c => c === "R" || c === "#" || isFacade(c) || c === "U" || c === "O";
 
 function drawGround(ctx, c, X, Y, i, j) {
   const h = hash(i, j);
   switch (c) {
     case ",": { // Pflaster im Ehrenhof, mit hellen Granitbändern auf den Achsen
-      if (i === 20 || i === 21 || j === 28 || (j === 14 && i > 8 && i < 33)) {
+      if (i === 67 || j === 32) {
         px(ctx, X, Y, 16, 16, "#a59d8e");
         for (const [a, b] of [[0, 0], [8, 0], [0, 8], [8, 8]]) px(ctx, X + a, Y + b, 7, 7, hash(i * 2 + a, j * 2 + b + 7) > .5 ? "#c4bcad" : "#bcb4a4");
         break;
@@ -2067,8 +2097,8 @@ function drawGround(ctx, c, X, Y, i, j) {
       px(ctx, X, Y, 16, 16, "#3a9e49"); px(ctx, X, Y + 15, 16, 1, "#2b7c37");
       if (grid[j][i - 1] !== "o") px(ctx, X, Y, 2, 16, "#f2f2f2");
       if (grid[j][i + 1] !== "o") px(ctx, X + 14, Y, 2, 16, "#f2f2f2");
-      if (i === 58 && j === 29) { ellipse(ctx, X + 8, Y + 10, 2, 1, "#111"); px(ctx, X + 8, Y + 2, 1, 8, "#eee"); px(ctx, X + 9, Y + 2, 4, 3, "#e33"); }
-      if (i === 55 && j === 30) circ(ctx, X + 6, Y + 8, 1, "#fff");
+      if (i === 33 && j === 29) { ellipse(ctx, X + 8, Y + 10, 2, 1, "#111"); px(ctx, X + 8, Y + 2, 1, 8, "#eee"); px(ctx, X + 9, Y + 2, 4, 3, "#e33"); }
+      if (i === 30 && j === 30) circ(ctx, X + 6, Y + 8, 1, "#fff");
       break;
     }
     case "d": {
@@ -2084,8 +2114,26 @@ function drawGround(ctx, c, X, Y, i, j) {
     case "=": {
       px(ctx, X, Y, 16, 16, "#3b3d44");
       for (let k = 0; k < 5; k++) px(ctx, X + Math.floor(hash(i * 5 + k, j) * 16), Y + Math.floor(hash(j * 5 + k, i) * 16), 1, 1, "#45484f");
-      if (j === 41) { px(ctx, X, Y, 16, 2, "#c8c6bf"); px(ctx, X, Y + 2, 16, 1, "#2c2e33"); }
-      if (j === 43) { if (i % 2 === 0) px(ctx, X + 2, Y + 7, 10, 1, "#d9d7cf"); px(ctx, X, Y + 14, 16, 2, "#c8c6bf"); }
+      if (j === 51) { px(ctx, X, Y, 16, 2, "#c8c6bf"); px(ctx, X, Y + 2, 16, 1, "#2c2e33"); }
+      if (j === 53) { if (i % 2 === 0) px(ctx, X + 2, Y + 7, 10, 1, "#d9d7cf"); px(ctx, X, Y + 14, 16, 2, "#c8c6bf"); }
+      break;
+    }
+    case "E": { // Treppenstufen mit Läufer, Pfeil zeigt hoch ins OG oder runter ins Foyer
+      const top = !WALK.has(grid[j - 1]?.[i]) || grid[j - 1]?.[i] === "D", up = j > 30;
+      for (let k = 0; k < 4; k++) {
+        const l = up ? .78 + k * .07 : 1 - k * .07;
+        px(ctx, X, Y + k * 4, 16, 4, shade("#e3dac6", l)); px(ctx, X, Y + k * 4 + 3, 16, 1, shade("#a99f8a", l));
+      }
+      const left = grid[j][i - 1] !== "E";
+      px(ctx, left ? X + 6 : X, Y, 10, 16, "#1f4fd8");
+      for (let k = 0; k < 4; k++) px(ctx, left ? X + 6 : X, Y + k * 4 + 3, 10, 1, "#173fae");
+      if (left) px(ctx, X + 5, Y, 1, 16, "#d9b35f"); else px(ctx, X + 10, Y, 1, 16, "#d9b35f");
+      if (top || !up) {
+        const ax = left ? X + 15 : X, ay = Y + 5;
+        ctx.fillStyle = "#ffffff";
+        if (up) { ctx.fillRect(ax - 1, ay, 2, 6); ctx.fillRect(ax - 3, ay + 2, 6, 1); ctx.fillRect(ax - 2, ay + 1, 4, 1); }
+        else { ctx.fillRect(ax - 1, ay, 2, 6); ctx.fillRect(ax - 3, ay + 3, 6, 1); ctx.fillRect(ax - 2, ay + 4, 4, 1); }
+      }
       break;
     }
     case "~": {
@@ -2124,11 +2172,17 @@ function drawWallTile(ctx, c, X, Y, i, j) {
     if (!isWallish(grid[j]?.[i + 1] ?? "R")) px(ctx, X + 14, Y, 2, 16, PAL.roofD);
     return;
   }
+  if (c === "O") { // Rund ums Obergeschoss: Bauplan-Look, damit klar ist, dass das eine eigene Ebene ist
+    px(ctx, X, Y, 16, 16, "#0c1438");
+    if (i % 2 === 0 && j % 2 === 0) px(ctx, X, Y, 1, 1, "#1d2a63");
+    if (j === 13) { px(ctx, X, Y + 6, 16, 1, "#2a3a80"); if (i % 2) px(ctx, X + 4, Y + 6, 8, 1, "#0c1438"); }
+    return;
+  }
   if (c === "U") { // Häuser in den Quadraten gegenüber
     const block = Math.floor(i / 5), cols = ["#e7c6a4", "#c9d6e3", "#e8b4a0", "#d9d2b5", "#bfd4c0", "#e3cfa0"];
     px(ctx, X, Y, 16, 16, cols[block % cols.length]);
     if (i % 5 === 0) px(ctx, X, Y, 1, 16, "#00000033");
-    if (j === 45) { px(ctx, X + 4, Y + 4, 8, 9, "#4f6b8a"); px(ctx, X + 4, Y + 4, 8, 1, "#ffffff55"); WINDOWS.push([X + 4, Y + 4, 8, 9]); }
+    if (j === 55) { px(ctx, X + 4, Y + 4, 8, 9, "#4f6b8a"); px(ctx, X + 4, Y + 4, 8, 1, "#ffffff55"); WINDOWS.push([X + 4, Y + 4, 8, 9]); }
     else { px(ctx, X, Y, 16, 4, ["#d94b4b", "#2f6bff", "#2fae74", "#f2b705"][block % 4]); for (let k = 0; k < 4; k++) px(ctx, X + k * 4, Y + 4, 2, 1, "#00000033"); px(ctx, X + 2, Y + 6, 12, 10, "#2a3442"); px(ctx, X + 3, Y + 7, 10, 8, "#5e7a96"); }
     return;
   }
@@ -2179,7 +2233,7 @@ function drawWallTile(ctx, c, X, Y, i, j) {
       px(ctx, X, Y + 4, 16, 12, face);
       const ws = floor[j + 1][i] === "_" || floor[j + 1][i] === "c" ? "#2a2e5a" : PAL.wainscot;
       px(ctx, X, Y + 11, 16, 4, ws); px(ctx, X, Y + 15, 16, 1, "#8f7656");
-      if (j === 2 && face === PAL.wallFace && hash(i, j) > .55) { // Fenster zum Garten
+      if ((j === 1 || j === 14) && face === PAL.wallFace && hash(i, j) > .55) { // Fenster zum Garten
         px(ctx, X + 4, Y + 5, 8, 6, "#9cc7e6"); px(ctx, X + 4, Y + 5, 8, 1, "#ffffff"); px(ctx, X + 7, Y + 5, 1, 6, "#e8e2d6");
       } else if (face === PAL.wallFace && hash(i + 3, j) > .82) { // Bild
         px(ctx, X + 4, Y + 5, 8, 5, "#8a6038"); px(ctx, X + 5, Y + 6, 6, 3, ["#6fa0c8", "#c87f6f", "#8fbf7a"][i % 3]);
@@ -2462,6 +2516,59 @@ function drawObj(ctx, o) {
       px(ctx, X + 4, Y + h - 4, 1, 4, "#333"); px(ctx, X + 11, Y + h - 4, 1, 4, "#333");
       break;
     }
+    case "|": { // Balustrade am Treppenhaus
+      px(ctx, X + 4, Y - 4, 8, h + 4, "#c9b48c"); px(ctx, X + 4, Y - 4, 8, 2, "#ddca9f"); px(ctx, X + 11, Y - 4, 1, h + 4, "#a8956d");
+      for (let k = 0; k < h; k += 4) px(ctx, X + 6, Y + k, 4, 2, "#8f7c57");
+      px(ctx, X + 3, Y + h - 7, 10, 7, "#bba57b"); circ(ctx, X + 8, Y + h - 9, 3, "#ddca9f");
+      break;
+    }
+    case "Q": { // Kiosk-Theke mit Kühlschrank
+      px(ctx, X, Y + 4, w, 11, "#6e4527"); px(ctx, X, Y + 4, w, 2, "#a06a3d"); px(ctx, X, Y + 14, w, 2, "#3e2614");
+      px(ctx, X + w - 14, Y - 10, 13, 24, "#e8eef5"); px(ctx, X + w - 13, Y - 9, 11, 20, "#9fd3ff"); GLOWS.push({ x: X + w - 8, y: Y, r: 16, c: "160,220,255", i: .6 });
+      for (let k = 0; k < 3; k++) for (let m = 0; m < 3; m++) px(ctx, X + w - 12 + m * 4, Y - 8 + k * 6, 2, 4, ["#e63946", "#ffd166", "#3ecf8e"][(k + m) % 3]);
+      for (let k = 0; k < 5; k++) px(ctx, X + 3 + k * 5, Y + 1, 3, 4, ["#ff8a3d", "#fff", "#e94e8a", "#ffd166", "#6fb1ff"][k]);
+      signBoard(ctx, "KIOSK", X + (w - 14) / 2, Y + 7, "#ffd166", "#0b1640");
+      break;
+    }
+    case "I": { // Regal im Lagergang
+      px(ctx, X, Y - 10, w, 25, "#5a5f6b"); px(ctx, X + 1, Y - 9, w - 2, 23, "#3a3e48");
+      for (let k = 0; k < 3; k++) {
+        px(ctx, X + 1, Y - 2 + k * 7, w - 2, 1, "#8a909c");
+        for (let m = 0; m < 4; m++) if (hash(o.x * 3 + m, k) > .25) px(ctx, X + 2 + m * 7, Y - 8 + k * 7, 6, 6, ["#c8a272", "#b88a58", "#1f4fd8", "#d9c39a"][(m + k + o.x) % 4]);
+      }
+      break;
+    }
+    case "J": { // Kisten und Kartons
+      ellipse(ctx, X + 8, Y + 14, 8, 2, "rgba(0,0,0,.25)");
+      px(ctx, X + 1, Y + 4, 14, 11, "#c8a272"); px(ctx, X + 1, Y + 4, 14, 2, "#d9b88a"); px(ctx, X + 7, Y + 4, 2, 11, "#a8834f");
+      px(ctx, X + 3, Y - 4, 10, 8, "#b88a58"); px(ctx, X + 3, Y - 4, 10, 2, "#cfa06c");
+      px(ctx, X + 4, Y + 9, 4, 3, "#1f4fd8");
+      break;
+    }
+    case "F": { // Campfire: LED-Lagerfeuer zwischen Sitzsäcken
+      ellipse(ctx, X + w / 2, Y + h / 2 + 4, 14, 6, "#3a2a1e");
+      for (const [a, b] of [[-9, 2], [9, 2], [0, 6], [-5, -2], [5, -2]]) circ(ctx, X + w / 2 + a, Y + h / 2 + 4 + b, 2, "#7a7a80");
+      px(ctx, X + w / 2 - 8, Y + h / 2 + 2, 16, 3, "#6b4a2b"); px(ctx, X + w / 2 - 3, Y + h / 2 - 1, 6, 8, "#5a3a22");
+      for (let k = 0; k < 5; k++) { const fx = X + w / 2 - 5 + k * 2.5, hgt = 6 + (k % 2) * 4; px(ctx, Math.round(fx), Y + h / 2 + 2 - hgt, 2, hgt, k % 2 ? "#ffd166" : "#ff8a3d"); }
+      px(ctx, X + w / 2 - 1, Y + h / 2 - 10, 2, 4, "#fff3c4");
+      GLOWS.push({ x: X + w / 2, y: Y + h / 2, r: 60, c: "255,150,60", i: 1 });
+      break;
+    }
+    case "Ä": { // Workshop-Tische mit Stühlen
+      px(ctx, X, Y + 2, w, 7, "#e9e3d5"); px(ctx, X, Y + 2, w, 1, "#ffffff"); px(ctx, X, Y + 8, w, 1, "#b8ae98");
+      for (let k = 0; k < o.w; k++) {
+        const x = X + k * 16;
+        px(ctx, x + 3, Y + 10, 10, 5, "#1f4fd8"); px(ctx, x + 3, Y + 10, 10, 1, "#5b80ea");
+        if (hash(o.x + k, o.y) > .4) px(ctx, x + 5, Y + 3, 5, 3, ["#fff", "#ffd166", "#9fe3ff"][(k + o.y) % 3]);
+      }
+      break;
+    }
+    case "Ü": { // Sitzsack
+      ellipse(ctx, X + 8, Y + 13, 7, 2, "rgba(0,0,0,.25)");
+      ellipse(ctx, X + 8, Y + 9, 7, 5, ["#ff8a3d", "#1f4fd8", "#3ecf8e", "#e94e8a"][(o.x + o.y) % 4]);
+      ellipse(ctx, X + 7, Y + 7, 4, 2, "#ffffff44");
+      break;
+    }
     case "H": {
       px(ctx, X, Y + 3, w, 12, "#111"); px(ctx, X + 2, Y + 4, w - 4, 10, "#0b1a2a");
       break;
@@ -2472,8 +2579,9 @@ function drawObj(ctx, o) {
 const mapCanvas = document.createElement("canvas");
 mapCanvas.width = W * TS; mapCanvas.height = H * TS;
 const SIGNS = [
-  ["SO108", 50, 12], ["LOUNGE", 58, 12], ["HAYS FORUM", 64, 17], ["QUBE", 64, 28], ["GALERIE", 34, 23],
-  ["HACKATHON", 67, 12],
+  ["HAYS FORUM", 14, 20], ["QUBE", 40, 20], ["KIOSK", 31, 33], ["MAINSTAGE", 23, 36], ["LOUNGE", 34, 36], ["HACKATHON", 47, 42],
+  ["LAGERGANG", 21, 44], ["ZUR UNI", 38, 44], ["TREPPE ZUM OG", 29.5, 42], ["SPEED DATING", 29.5, 8], ["WORKSHOP", 18, 8],
+  ["WORKSHOP", 24, 8], ["WORKSHOP", 39, 8], ["CAMPFIRE", 45, 8], ["ERDGESCHOSS", 29.5, 11.6], ["1. OBERGESCHOSS", 6, 6],
 ];
 (function prerenderMap() {
   const mctx = mapCanvas.getContext("2d");
@@ -2495,22 +2603,14 @@ const SIGNS = [
     if (left && (left === "R" || left === "#")) [.16, .1, .05].forEach((al, r) => px(mctx, i * TS + r * 2, j * TS, 2, 16, `rgba(10,12,40,${al})`));
   }
   // Q-Summit-Banner am Portal des Mittelbaus
-  for (const bx of [18, 23]) {
-    const X = bx * TS + 4, Y = 12 * TS - 2;
+  for (const bx of [27, 32]) {
+    const X = bx * TS + 4, Y = 48 * TS - 2;
     px(mctx, X - 1, Y - 1, 10, 32, "#0b1640"); px(mctx, X, Y, 8, 28, "#1f4fd8"); px(mctx, X, Y, 8, 2, "#5b80ea");
     px(mctx, X + 2, Y + 5, 4, 4, "#fff"); px(mctx, X + 3, Y + 6, 2, 2, "#1f4fd8"); px(mctx, X + 5, Y + 8, 1, 1, "#fff");
     pixText(mctx, "Q", X + 2, Y + 13, "#ffd166");
     for (let k = 0; k < 3; k++) px(mctx, X + k * 3, Y + 28, 2, 2 + (k % 2), "#1f4fd8");
   }
 
-  // Durchfahrt im Südflügel
-  for (const j of [36, 37]) for (const i of [53, 54]) {
-    const X = i * TS, Y = j * TS;
-    if (j === 36) { px(mctx, X, Y, 16, 16, PAL.plaster); px(mctx, X, Y, 16, 3, PAL.sand); px(mctx, X, Y + 6, 16, 10, "#3b2d20"); px(mctx, X + (i === 53 ? 0 : 8), Y + 3, 8, 4, PAL.sand); }
-    else { px(mctx, X, Y, 16, 16, "#5c5344"); for (let b = 0; b < 4; b++) px(mctx, X, Y + b * 4, 16, 1, "#4a4236"); }
-  }
-  for (const [x, j] of [[52, 36], [52, 37]]) { px(mctx, x * TS + 12, j * TS, 4, 16, PAL.sand); }
-  for (const [x, j] of [[55, 36], [55, 37]]) { px(mctx, x * TS, j * TS, 4, 16, PAL.sand); }
   // Objekte von hinten nach vorne
   [...OBJECTS].sort((a, b) => (a.y + a.h) - (b.y + b.h)).forEach(o => drawObj(mctx, o));
   // Raumschilder
@@ -2519,7 +2619,7 @@ const SIGNS = [
 
 // Lichterketten über dem Schneckenhof
 const STRINGS = [];
-[[[44.2, 18], [63.8, 18]], [[44.2, 24], [63.8, 24]], [[44.2, 30], [63.8, 30]], [[48, 14.2], [48, 33.8]], [[59, 14.2], [59, 33.8]]].forEach(([[x1, y1], [x2, y2]]) => {
+[[[10.2, 24.5], [45.8, 24.5]], [[10.2, 27.5], [45.8, 27.5]], [[10.2, 30.5], [45.8, 30.5]], [[19, 22.2], [19, 32.8]], [[36, 22.2], [36, 32.8]]].forEach(([[x1, y1], [x2, y2]]) => {
   const pts = [];
   for (let k = 0; k <= 24; k++) {
     const t = k / 24, sag = Math.sin(Math.PI * t) * 10;
@@ -2637,7 +2737,7 @@ function drawPigeon(ctx, p, t) {
 }
 
 function drawTram(ctx, tr) {
-  const x = Math.round(tr.x), y = 41 * TS + 6, L = 7 * TS;
+  const x = Math.round(tr.x), y = 51 * TS + 6, L = 7 * TS;
   px(ctx, x + 4, y + 30, L - 8, 4, "rgba(0,0,0,.3)");
   for (let seg = 0; seg < 2; seg++) {
     const sx = x + seg * (L / 2 + 2), sw = L / 2 - 2;
@@ -2656,11 +2756,11 @@ function drawTram(ctx, tr) {
 // Gespräche, Reden und Story-Momente werden aus deiner Sicht gezeigt: Ort im Hintergrund, die Person groß davor.
 const PLACE_OF = {
   haltestelle: "street", ehrenhof: "ehrenhof", eingang: "ehrenhof", checkin: "foyer", treppe: "foyer", hall: "foyer",
-  galerie: "foyer", so108: "so108", buehne: "so108", lounge: "lounge", hackathon: "hackathon", hays: "hays", qube: "qube",
+  lager: "foyer", kiosk: "lounge", speeddating: "lounge", workshops: "so108", campfire: "lounge", so108: "so108", buehne: "so108", lounge: "lounge", hackathon: "hackathon", hays: "hays", qube: "qube",
   innovillage: "schneckenhof", food: "food", entertainment: "schneckenhof", abend: "schneckenhof",
 };
 const PLACE_NAMES = {
-  street: "Bismarckstraße · Haltestelle Schloss", ehrenhof: "Ehrenhof", foyer: "Foyer Ostflügel", so108: "SO108 · Mainstage", lounge: "Speaker-Lounge",
+  street: "Bismarckstraße · Haltestelle Schloss", ehrenhof: "Haupteingang · Bismarckstraße", foyer: "Foyer Ostflügel", so108: "SO108 · Mainstage", lounge: "Speaker-Lounge",
   hackathon: "Hackathon-Raum", hays: "Hays Forum", qube: "Qube", schneckenhof: "Schneckenhof · Innovillage", food: "Schneckenhof · Essenszelte",
   party: "Schneckenhof · Afterparty", bedroom: "Zuhause", tram: "Linie 5 Richtung Schloss",
 };
@@ -3169,7 +3269,7 @@ function placeAt(ent, i, j) { ent.x = i * TS + 8; ent.y = j * TS + 13; ent.path 
 const tileOf = ent => [Math.floor(ent.x / TS), Math.floor((ent.y - 4) / TS)];
 function lookFor(name, base) {
   const h = strHash(name);
-  return Object.assign({ skin: SKINS[h % SKINS.length], hair: HAIRS[(h >> 3) % HAIRS.length], style: (h >> 6) % 4, long: ((h >> 8) % 3) === 0, glasses: ((h >> 10) % 4) === 0 }, base);
+  return Object.assign({ skin: SKINS[h % SKINS.length], hair: HAIRS[(h >>> 3) % HAIRS.length], style: (h >>> 6) % 4, long: ((h >>> 8) % 3) === 0, glasses: ((h >>> 10) % 4) === 0 }, base);
 }
 
 function initWorld() {
@@ -3201,7 +3301,7 @@ function initWorld() {
   s.player.dir = "up";
   // Schlosstauben
   s.pigeons = [];
-  for (let k = 0; k < 16; k++) s.pigeons.push(newPigeon(k < 10 ? "ehrenhof" : "innovillage"));
+  for (let k = 0; k < 16; k++) s.pigeons.push(newPigeon(k < 5 ? "vorplatz" : k < 9 ? "ehrenhof" : "innovillage"));
   // Speaker des Tages kommen über den Tag verteilt an
   const today = shuffle(SPEAKERS.filter(sp => sp.day === s.day + 1)), delay = activeMods().reduce((a, m) => a + (m.speakerDelay || 0), 0);
   s.speakerPlan = today.map((sp, k) => ({ sp, at: DAYS[s.day].start + 70 + delay + k * Math.round((8 * 60) / today.length) + rand(-10, 10) }));
@@ -3916,7 +4016,7 @@ function nextSceneStep() {
   if (st.fp) { s.fpPlace = st.fp; return nextSceneStep(); }
   if (st.tram) {
     if (SIM()) { s.player.hidden = false; return nextSceneStep(); }
-    s.tram = { x: -8 * TS, vx: 120, stopAt: 14 * TS, state: "in", t: 0 };
+    s.tram = { x: -8 * TS, vx: 120, stopAt: 23 * TS, state: "in", t: 0 };
     sfx.ding();
     return waitFor(() => !s.tram || (s.tram.state === "out" && s.tram.t > .4));
   }
@@ -4837,12 +4937,24 @@ function renderEnd() {
 // ---------------- Bewegung ----------------
 function moveAlong(ent, dt) {
   const [ti, tj] = ent.path[0];
+  const [ci, cj] = tileOf(ent);
+  if (Math.abs(ti - ci) + Math.abs(tj - cj) > 1 && PORTALS.get(pkey(ci, cj))?.[0] === ti && PORTALS.get(pkey(ci, cj))?.[1] === tj) {
+    ent.x = ti * TS + 8; ent.y = tj * TS + 13; ent.path.shift();
+    if (ent === s.player) floorChanged();
+    return;
+  }
   const tx = ti * TS + 8, ty = tj * TS + 13;
   const dx = tx - ent.x, dy = ty - ent.y, d = Math.hypot(dx, dy), step = ent.speed * dt;
   if (d <= step) { ent.x = tx; ent.y = ty; ent.path.shift(); }
   else { ent.x += dx / d * step; ent.y += dy / d * step; }
   if (d > .01) ent.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
   ent.walkT += step; ent.frame = Math.floor(ent.walkT / 5) % 2;
+}
+const OG_EDGE = 13.5 * TS; // alles darüber gehört zum 1. Obergeschoss
+function floorChanged() {
+  s.camSnap = true;
+  const up = s.player.y < 14 * TS;
+  infoToast(up ? "⬆️ 1. OG · Speed Dating, Workshops, Campfire" : "⬇️ Erdgeschoss · Foyer");
 }
 function canStand(x, y) {
   for (const ox of [-3, 3]) if (!isWalk(Math.floor((x + ox) / TS), Math.floor((y - 1) / TS))) return false;
@@ -4871,6 +4983,9 @@ function updatePlayer(dt) {
     if (canStand(p.x, ny)) p.y = ny;
     p.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? "right" : "left") : (vy > 0 ? "down" : "up");
     p.walkT += step; p.frame = Math.floor(p.walkT / 5) % 2;
+    const [ci, cj] = tileOf(p), dest = PORTALS.get(pkey(ci, cj));
+    if (dest && p.lastPortal !== pkey(ci, cj)) { placeAt(p, dest[0], dest[1]); p.dir = dest[1] < 20 ? "up" : "down"; floorChanged(); }
+    p.lastPortal = PORTALS.has(pkey(...tileOf(p))) ? pkey(...tileOf(p)) : null;
   } else if (p.path.length) {
     moveAlong(p, dt);
   } else p.frame = 0;
@@ -4882,7 +4997,7 @@ function updatePlayer(dt) {
   }
 }
 
-const ROAM = ["lounge", "so108", "innovillage", "hays", "innovillage", "hall"];
+const ROAM = ["lounge", "so108", "innovillage", "hays", "innovillage", "hall", "kiosk", "speeddating", "workshops"];
 function updateNPC(n, dt) {
   if (n.kind === "static") return;
   if (n.path.length) { moveAlong(n, dt); return; }
@@ -4894,7 +5009,7 @@ function updateNPC(n, dt) {
   if (n.wait > 0) return;
   if (n.leaveAt && s.min > n.leaveAt) {
     if (n.kind === "speaker") {
-      if (!n.leaving) { n.leaving = true; n.path = findPath([ti, tj], [20, 40]); return; }
+      if (!n.leaving) { n.leaving = true; n.path = findPath([ti, tj], [31, 50]); return; }
       n.remove = true; return;
     }
     n.remove = true; return;
@@ -4914,7 +5029,7 @@ function spawnSpeakers() {
     const sp = p.sp;
     const n = makeNPC({ kind: "speaker", name: sp.name, role: `${sp.role} · ${sp.org}`, sp, speed: 40, line: pick(SPEAKER_LINES), leaveAt: p.at + 200,
       look: lookFor(sp.name, { shirt: pick(["#2b2f3a", "#3d405b", "#ffffff", "#8d99ae", "#1b263b", "#6d597a"]), pants: "#1b1b24", suit: strHash(sp.name) % 2 === 0, lanyard: "#9b51e0" }) });
-    placeAt(n, 21 + rand(-2, 2), 40);
+    placeAt(n, 31 + rand(-3, 3), 50);
     n.path = findPath(tileOf(n), [LOCS.lounge.x, LOCS.lounge.y]);
     s.npcs.push(n);
   }
@@ -4951,7 +5066,7 @@ function updateTram(dt) {
       s.nextTram = 40 + Math.random() * 35;
       const right = Math.random() < .5;
       s.tram = { x: right ? -8 * TS : W * TS + TS, vx: right ? 75 : -75, state: "pass", t: 0 };
-      if (s.player && s.player.y > 34 * TS) sfx.ding();
+      if (s.player && s.player.y > 44 * TS) sfx.ding();
     }
     return;
   }
@@ -5013,7 +5128,7 @@ function update(dt) {
 
   if (s.mode === "title") {
     s.titleT += dt;
-    s.camTarget = { x: 620 + Math.sin(s.titleT * .08) * 380, y: 380 + Math.cos(s.titleT * .06) * 170 };
+    s.camTarget = { x: 576 + Math.sin(s.titleT * .08) * 320, y: 590 + Math.cos(s.titleT * .06) * 230 };
     for (const n of s.npcs) updateNPC(n, dt);
     updatePigeons(dt); updateTram(dt);
     return;
@@ -5072,13 +5187,15 @@ function dayTint() {
 }
 
 const LIGHTS = [
-  { x: 53.5 * TS, y: 15 * TS, r: 90, c: "255,170,80", i: 1, stage: true },
-  { x: 51 * TS, y: 4 * TS, r: 80, c: "170,110,255", i: .9 }, { x: 39 * TS, y: 22 * TS, r: 70, c: "255,230,180", i: .7 },
-  { x: 38 * TS, y: 30 * TS, r: 60, c: "255,230,180", i: .6 }, { x: 60 * TS, y: 7 * TS, r: 60, c: "255,200,140", i: .7 },
-  { x: 67 * TS, y: 7 * TS, r: 70, c: "120,170,255", i: .6 }, { x: 38 * TS, y: 8 * TS, r: 60, c: "255,230,180", i: .6 },
-  { x: 14 * TS, y: 7 * TS, r: 80, c: "255,225,170", i: .7 }, { x: 27 * TS, y: 7 * TS, r: 80, c: "255,225,170", i: .7 },
-  { x: 21 * TS, y: 4 * TS, r: 60, c: "255,240,200", i: .6 }, { x: 67 * TS, y: 18 * TS, r: 60, c: "255,230,180", i: .6 },
-  { x: 67 * TS, y: 29 * TS, r: 60, c: "60,220,255", i: .6 }, { x: 46 * TS, y: 14.5 * TS, r: 40, c: "255,200,120", i: .8 },
+  { x: 28 * TS, y: 23 * TS, r: 90, c: "255,170,80", i: 1, stage: true },
+  { x: 13 * TS, y: 35 * TS, r: 80, c: "170,110,255", i: .9 }, { x: 28 * TS, y: 37 * TS, r: 70, c: "255,220,160", i: .7 },
+  { x: 26 * TS, y: 45 * TS, r: 70, c: "255,230,180", i: .7 }, { x: 34 * TS, y: 45 * TS, r: 60, c: "255,230,180", i: .6 },
+  { x: 39 * TS, y: 37 * TS, r: 60, c: "255,200,140", i: .7 }, { x: 48 * TS, y: 37 * TS, r: 70, c: "120,170,255", i: .6 },
+  { x: 18 * TS, y: 17 * TS, r: 60, c: "255,230,180", i: .6 }, { x: 36 * TS, y: 17 * TS, r: 60, c: "60,220,255", i: .6 },
+  { x: 43.5 * TS, y: 22.5 * TS, r: 40, c: "255,200,120", i: .8 }, { x: 20 * TS, y: 9.5 * TS, r: 60, c: "255,230,180", i: .5 },
+  { x: 38 * TS, y: 9.5 * TS, r: 60, c: "255,230,180", i: .5 }, { x: 30 * TS, y: 5 * TS, r: 70, c: "255,140,200", i: .6 },
+  { x: 16 * TS, y: 4 * TS, r: 50, c: "255,240,210", i: .5 }, { x: 37 * TS, y: 4 * TS, r: 50, c: "255,240,210", i: .5 },
+  { x: 11 * TS, y: 45 * TS, r: 50, c: "255,220,150", i: .5 }, { x: 45 * TS, y: 45 * TS, r: 50, c: "255,230,180", i: .5 },
 ];
 const BULBS = [];
 for (const pts of STRINGS) for (let k = 1; k < pts.length - 1; k += 2) BULBS.push(pts[k]);
@@ -5090,30 +5207,30 @@ function hslToRgb(h) {
 
 function drawDynamicMap(ctx, a) {
   // Tanzfläche
-  if (a > .2 || s.party) for (let j = 16; j <= 18; j++) for (let i = 49; i <= 58; i++) {
+  if (a > .2 || s.party) for (let j = 24; j <= 26; j++) for (let i = 23; i <= 32; i++) {
     const hue = (s.t * (s.party ? 120 : 40) + (i + j) * 30) % 360, on = s.party ? .55 + .45 * Math.sin(s.t * 8 + i * 1.3 + j) : .35;
     ctx.fillStyle = `rgba(${hslToRgb(hue)},${on * .55})`; ctx.fillRect(i * TS + 1, j * TS + 1, 14, 14);
   }
   // LED-Wand der Bühne im Schneckenhof
-  const sx = 50 * TS + 12, sy = 14 * TS + 5, sw = 8 * TS - 24, sh = 13;
+  const sx = 24 * TS + 12, sy = 22 * TS + 5, sw = 8 * TS - 24, sh = 13;
   px(ctx, sx, sy, sw, sh, "#0d1020");
   if (a > .2 || s.party) {
     for (let k = 0; k < 14; k++) { const hgt = Math.round(3 + Math.abs(Math.sin(s.t * 6 + k)) * 9); px(ctx, sx + 4 + k * 7, sy + sh - hgt, 5, hgt, `rgb(${hslToRgb((s.t * 60 + k * 25) % 360)})`); }
     pixTextC(ctx, s.party ? "AFTERPARTY" : "THEMENABEND", sx + sw / 2, sy + 1, "#ffffff");
   } else { px(ctx, sx + 1, sy + 1, sw - 2, sh - 2, "#1f4fd8"); pixTextC(ctx, "Q-SUMMIT 2026", sx + sw / 2, sy + 4, "#ffffff"); }
   // Leinwand in SO108
-  const X = 46 * TS + 2, Y = 2 * TS + 3, w = 10 * TS - 4;
+  const X = 8 * TS + 2, Y = 33 * TS + 3, w = 10 * TS - 4;
   const orgs = SPEAKERS.filter(x => x.day === s.day + 1).map(x => x.org.toUpperCase());
   const slide = s.mode === "scene" ? "Q-SUMMIT 2026" : orgs[Math.floor(s.t / 6) % orgs.length] || "Q-SUMMIT";
   px(ctx, X, Y, w, 11, "#e9eefc"); px(ctx, X, Y, 10, 11, "#1f4fd8"); pixText(ctx, "Q", X + 3, Y + 3, "#fff");
   pixTextC(ctx, slide.replace(/[^A-Z0-9ÄÖÜ &.\-]/g, "").slice(0, 30), X + w / 2 + 5, Y + 3, "#0b1640");
   // Countdown im Hackathon-Raum
   const left = Math.max(0, s.day === 0 ? (24 * 60 - s.min) + 11 * 60 : 11 * 60 - s.min);
-  const hx = 64 * TS + 2, hy = 2 * TS + 4;
-  px(ctx, hx, hy, 7 * TS - 4, 10, "#0b1a2a");
-  pixTextC(ctx, `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(Math.floor(left % 60)).padStart(2, "0")} BIS ABGABE`, hx + 3.5 * TS - 2, hy + 3, left > 0 ? "#3ecf8e" : "#ffd166");
-  // Fahne auf dem Mittelbau
-  const fx = 9 * TS + 8, fy = 2 * TS + 8;
+  const hx = 45 * TS + 2, hy = 33 * TS + 4;
+  px(ctx, hx, hy, 8 * TS - 4, 10, "#0b1a2a");
+  pixTextC(ctx, `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(Math.floor(left % 60)).padStart(2, "0")} BIS ABGABE`, hx + 4 * TS - 2, hy + 3, left > 0 ? "#3ecf8e" : "#ffd166");
+  // Fahne auf dem Dach des Ostflügels
+  const fx = 60 * TS + 8, fy = 24 * TS;
   px(ctx, fx, fy - 22, 1, 30, "#ddd");
   for (let k = 0; k < 14; k++) { const wv = Math.round(Math.sin(s.t * 5 - k * .5) * 1.5); px(ctx, fx + 1 + k, fy - 22 + wv, 1, 9, k < 2 ? "#ffffff" : "#1f4fd8"); }
   pixText(ctx, "Q", fx + 6, fy - 20 + Math.round(Math.sin(s.t * 5 - 3) * 1.5), "#fff");
@@ -5121,7 +5238,7 @@ function drawDynamicMap(ctx, a) {
 
 // ---------------- Atmosphäre ----------------
 // Wolkenschatten ziehen nur über Außenflächen, dazu Blütenblätter im Wind und eine leichte Vignette.
-const INDOOR = new Set([":", ".", "_", "c", "s", "S", "#"]);
+const INDOOR = new Set([":", ".", "_", "c", "s", "S", "#", "O", "E"]);
 const outdoorMask = document.createElement("canvas");
 outdoorMask.width = W * TS; outdoorMask.height = H * TS;
 const OUT = new Uint8Array(W * H);
@@ -5131,7 +5248,6 @@ const OUT = new Uint8Array(W * H);
   for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
     const c = floor[j][i], gc = grid[j][i];
     if (INDOOR.has(c) || INDOOR.has(gc) || gc === "D") continue;
-    if (c === "B" && (floor[j][i - 1] === ":" || floor[j][i + 1] === ":")) continue; // Läufer in der Galerie
     OUT[j * W + i] = 1;
     g.fillRect(i * TS, j * TS, TS, TS);
   }
@@ -5257,7 +5373,8 @@ function render() {
   }
   const target = { ...(s.camTarget || { x: p.x, y: p.y - 8 }) };
   const mw = W * TS, mh = H * TS;
-  const k = s.mode === "title" ? 1 : s.camPan ? .5 : .15;
+  const k = s.mode === "title" || s.camSnap ? 1 : s.camPan ? .5 : .15;
+  s.camSnap = false;
   cam.x += (target.x - cw / 2 - cam.x) * k;
   cam.y += (target.y - ch / 2 - cam.y) * k;
   cam.x = mw < cw ? (mw - cw) / 2 : clamp(cam.x, 0, mw - cw);
@@ -5294,17 +5411,18 @@ function render() {
 
   // Namensschilder und Sprechblasen landen auf der scharfen Label-Ebene
   labelsQ.length = 0;
+  const sameFloor = e => (e.y < OG_EDGE) === (p.y < OG_EDGE);
   if (s.mode !== "title" && s.mode !== "scene" && !s.party) {
     for (const n of s.npcs) {
       if (!n.name || n.kind === "static") continue;
       const near = Math.hypot(n.x - p.x, n.y - p.y) < 44;
       const sel = n.kind === "speaker" && !s.met.has(n.sp.name);
-      if (!near && !n.task && !sel) continue;
+      if ((!near && !n.task && !sel) || !sameFloor(n)) continue;
       const label = n.kind === "speaker" ? (near ? `${n.name} · ${n.sp.org}` : n.sp.org) : n.name;
       labelsQ.push({ k: "name", x: n.x, y: n.y - (n.task || sel ? 40 : 25), text: label, sp: n.kind === "speaker", team: n.kind === "team" });
       if (sel && !n.task) drawBang(ctx, n.x, n.y, s.t, "selfie");
     }
-    for (const b of s.barks) labelsQ.push({ k: "bark", x: b.npc.x, y: b.npc.y - 36, text: b.text });
+    for (const b of s.barks) if (sameFloor(b.npc)) labelsQ.push({ k: "bark", x: b.npc.x, y: b.npc.y - 36, text: b.text });
   }
   for (const t of s.tasks) if (t.npc) drawBang(ctx, t.npc.x, t.npc.y, s.t, t.kind, t.deadline - s.min < 30);
   if (s.mode === "play" && s.energy < 20 && !p.hidden) labelsQ.push({ k: "emoji", x: p.x + 8, y: p.y - 24 + Math.sin(s.t * 3) * 2, text: "🥱" });
@@ -5325,7 +5443,7 @@ function render() {
     for (const L of lights) {
       if (L.x < cx - L.r || L.x > cx + cw + L.r || L.y < cy - L.r || L.y > cy + ch + L.r) continue;
       let col = L.c;
-      if (s.party && L.y < 34 * TS && L.y > 13 * TS && L.x > 44 * TS) col = hslToRgb((s.t * 90 + L.x) % 360);
+      if (s.party && L.y < 33 * TS && L.y > 21 * TS && L.x > 10 * TS && L.x < 46 * TS) col = hslToRgb((s.t * 90 + L.x) % 360);
       const flick = s.party ? .6 + .4 * Math.sin(s.t * 10 + L.x) : 1;
       const g = ctx.createRadialGradient(L.x, L.y, 0, L.x, L.y, L.r);
       g.addColorStop(0, `rgba(${col},${a * L.i * .5 * flick})`); g.addColorStop(1, "rgba(0,0,0,0)");
@@ -5336,12 +5454,19 @@ function render() {
   if (s.stageLights > 0) {
     ctx.globalCompositeOperation = "lighter";
     for (let k2 = 0; k2 < 3; k2++) {
-      const lx = (47 + k2 * 4) * TS + Math.sin(s.t * 2 + k2) * 20, ly = 4 * TS;
+      const lx = (9 + k2 * 3.5) * TS + Math.sin(s.t * 2 + k2) * 20, ly = 35 * TS;
       const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 50);
       g.addColorStop(0, `rgba(${["255,120,220", "120,170,255", "255,210,120"][k2]},${.35 * Math.min(1, s.stageLights)})`); g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g; ctx.fillRect(lx - 50, ly - 50, 100, 100);
     }
     ctx.globalCompositeOperation = "source-over";
+  }
+  // Die andere Etage ausblenden: Wer oben ist, sieht das Erdgeschoss nicht und umgekehrt
+  if (s.mode !== "title") {
+    const up = p.y < OG_EDGE;
+    ctx.fillStyle = "#0a1030";
+    if (up) ctx.fillRect(cx, OG_EDGE - 6, cw, cy + ch - OG_EDGE + 6);
+    else if (cy < OG_EDGE) ctx.fillRect(cx, cy, cw, OG_EDGE - cy - 6);
   }
   ctx.restore();
   drawLabels(cx, cy);
