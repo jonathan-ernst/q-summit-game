@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#071650">
-<meta name="description" content="Q-Summit: Feel the Q Spirit. Ein Pixel-Art-Spiel: Du bist Chair der Q-Summit im Mannheimer Schloss.">
-<title>Q-Summit: Feel the Q Spirit</title>
+<meta name="description" content="Q-Summit: Where innovators shape tomorrow. Ein Pixel-Art-Spiel: Du bist Chair der Q-Summit im Mannheimer Schloss.">
+<title>Q-Summit: Where innovators shape tomorrow</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Press+Start+2P&family=UnifrakturMaguntia&family=Old+Standard+TT:wght@400;700&display=swap" rel="stylesheet">
@@ -42,6 +42,64 @@
   #world.zoom { filter: brightness(1.15) blur(1px); }
   #labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity .2s; }
   #world.zoom + #labels { opacity: 0; }
+  #drones { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9; }
+  .title-wrap { transition: opacity .9s, transform .9s; }
+  .title-wrap.intro { opacity: 0; transform: translateY(24px); pointer-events: none; }
+  .logo .sub { max-width: 92vw; line-height: 1.7; }
+  /* Badge */
+  .badge-screen { display: grid; gap: 10px; justify-items: center; width: min(420px, 100%); padding: 10px 0 20px; }
+  #badgec { touch-action: none; cursor: grab; display: block; }
+  #badgec:active { cursor: grabbing; }
+  .badge-form { width: 100%; display: grid; gap: 10px; padding: 14px; }
+  .badge-form input { appearance: none; border: 2px solid #ffffff33; background: #0b1640; color: #fff; font-size: 20px; font-weight: 800; padding: 12px 14px; border-radius: 10px; width: 100%; box-sizing: border-box; }
+  .badge-form input:focus { outline: none; border-color: var(--warn); }
+  .cam-row { display: flex; gap: 8px; }
+  .cam-row .btn { font-size: 14px; padding: 12px 8px; }
+  .cam-panel { width: min(420px, calc(100vw - 32px)); display: grid; gap: 12px; }
+  .cam-wrap { position: relative; width: min(300px, 70vw); aspect-ratio: 1; margin: 0 auto; border-radius: 12px; overflow: hidden; background: #0b1640; box-shadow: 0 0 0 3px #ffd166, 0 8px 0 rgba(0,0,0,.4); }
+  .cam-wrap canvas { width: 100%; height: 100%; image-rendering: pixelated; display: block; }
+  .cam-frame { position: absolute; inset: 14%; border: 2px dashed #ffffff66; border-radius: 50% 50% 40% 40%; pointer-events: none; }
+  .cam-msg { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 20px; color: #cfe0ff; font-size: 14px; }
+  .mode-badge { appearance: none; border: 0; background: #ffffff14; color: #fff; border-radius: 999px; padding: 8px 14px; font-weight: 700; cursor: pointer; justify-self: center; display: flex; gap: 8px; align-items: center; }
+  .mode-badge canvas { width: 26px; height: 26px; border-radius: 50%; image-rendering: pixelated; }
+  /* Wrapped */
+  #overlay.wrapped-ov { background: #000; padding: 0; }
+  .wrapped { position: relative; width: min(460px, 100%); min-height: 100%; color: #fff; display: flex; flex-direction: column; padding: max(14px, env(safe-area-inset-top)) 22px 28px; box-sizing: border-box; animation: wIn .45s ease; }
+  @keyframes wIn { from { opacity: 0; transform: scale(.97); } }
+  .w-prog { display: flex; gap: 4px; margin-bottom: 18px; }
+  .w-prog span { flex: 1; height: 3px; background: #ffffff40; border-radius: 2px; overflow: hidden; }
+  .w-prog i { display: block; height: 100%; width: 0; background: #fff; }
+  .w-prog i.full { width: 100%; }
+  .w-prog i.run { animation: wRun 6s linear forwards; }
+  @keyframes wRun { to { width: 100%; } }
+  .w-x { position: absolute; right: 14px; top: max(26px, calc(env(safe-area-inset-top) + 14px)); appearance: none; border: 0; background: #00000033; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 16px; cursor: pointer; z-index: 3; }
+  .w-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; position: relative; z-index: 2; pointer-events: none; }
+  .w-body button, .w-body img { pointer-events: auto; }
+  .w-body > * { animation: wUp .6s ease both; }
+  .w-body > *:nth-child(2) { animation-delay: .15s; } .w-body > *:nth-child(3) { animation-delay: .3s; } .w-body > *:nth-child(4) { animation-delay: .45s; } .w-body > *:nth-child(5) { animation-delay: .6s; }
+  @keyframes wUp { from { opacity: 0; transform: translateY(18px); } }
+  .w-kicker { font-family: var(--pix); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #ffffffcc; }
+  .w-big { font-size: clamp(32px, 9vw, 46px); font-weight: 900; line-height: 1.05; letter-spacing: -.5px; }
+  .w-num { font-size: clamp(64px, 20vw, 104px); font-weight: 900; line-height: 1; letter-spacing: -2px; }
+  .wrapped p { font-size: 18px; line-height: 1.4; margin: 0; }
+  .w-small { font-size: 15px !important; opacity: .8; }
+  .w-emoji { font-size: 64px; } .w-emoji.big { font-size: 110px; }
+  .w-bars { display: grid; gap: 10px; }
+  .w-bars div { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; font-weight: 700; }
+  .w-bars i { grid-column: 1 / -1; height: 10px; border-radius: 5px; background: #fff; animation: wBar 1s ease both .4s; transform-origin: left; }
+  @keyframes wBar { from { transform: scaleX(0); } }
+  .w-bars small { opacity: .8; }
+  .w-card { width: min(260px, 60vw); border-radius: 14px; box-shadow: 0 12px 30px rgba(0,0,0,.45); align-self: center; }
+  .w-actions { display: grid; gap: 8px; }
+  .w-tap { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 2fr; z-index: 1; }
+  .w-tap span { cursor: pointer; }
+  /* Disco */
+  #game.disco #world { animation: disco 2.2s linear infinite; }
+  @keyframes disco { from { filter: hue-rotate(0deg) saturate(1.6); } to { filter: hue-rotate(360deg) saturate(1.6); } }
+  #game.disco::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 3; mix-blend-mode: screen;
+    background: radial-gradient(circle at 20% 30%, rgba(255,80,200,.35), transparent 22%), radial-gradient(circle at 75% 60%, rgba(80,200,255,.35), transparent 24%), radial-gradient(circle at 50% 85%, rgba(255,220,80,.3), transparent 20%);
+    background-size: 200% 200%; animation: discoSpots 3s ease-in-out infinite alternate; }
+  @keyframes discoSpots { from { background-position: 0% 0%, 100% 0%, 50% 100%; } to { background-position: 100% 100%, 0% 100%, 0% 0%; } }
 
   /* Pixel-Rahmen */
   .frame { background: var(--panel); border: 2px solid var(--ink); border-radius: 6px; box-shadow: inset 0 0 0 2px var(--edge), inset 0 -5px 0 2px rgba(0,0,0,.22), 0 4px 0 rgba(0,0,0,.45); }
@@ -500,6 +558,7 @@
 <div id="game">
   <canvas id="world"></canvas>
   <canvas id="labels"></canvas>
+  <canvas id="drones" hidden></canvas>
   <div id="hud" class="off">
     <div class="hud-row">
       <div id="clockcard" class="glass">
@@ -1092,6 +1151,7 @@ const EVENTS = [
 // Hintergrund-Nachrichten in den Chats (keine Entscheidung nötig).
 // from_/to: Zeitfenster in Stunden, day: nur an diesem Tag, requires: nur nach dieser Entscheidung
 const AMBIENT = [
+  { chat: "team", from: "Franz", text: "Ganz hinten links im Lagergang steht so ein uraltes Regal. Wenn man davor stehen bleibt, knarzt es 👻" },
   { chat: "team", from: "Franz", text: "Wer hat das Gaffa? 🙏" },
   { chat: "team", from: "Jordis", text: "Bitte alle um 9:15 zum Gruppenfoto auf die Treppe!! 📸", day: 1, to: 9.2 },
   { chat: "team", from: "Ben", text: "Hat jemand ein USB-C-Kabel?" },
@@ -1303,7 +1363,8 @@ const SCENES = [
     { dance: true },
     { say: ["Jonathan", "Wir haben's geschafft. Q26 ist durch! 🥂"] },
     { say: ["Lennart", () => s.stats.partner >= 50 ? "Die Partner wollen nächstes Jahr alle wiederkommen! 💼" : "Ein paar Partner sind... naja. Aber heute wird gefeiert! 🙃"] },
-    { say: ["Du", "Feel the Q Spirit 💙"] },
+    { say: ["Du", "Q-Summit: Where innovators shape tomorrow 💙"] },
+    { drones: true },
     { snapshot: true },
     { wait: 800 },
     { end: true },
@@ -1530,7 +1591,7 @@ const SPEECHES = {
         { t: "Ich hab ehrlich gesagt auch nicht alles im Kopf.", v: 0, react: "laugh" } ],
         cohost: "Und morgen um 18 Uhr: das Pitchbattle-Finale 🏆" },
     ],
-    finale: "Und jetzt alle zusammen: FEEL THE Q SPIRIT!",
+    finale: "Und jetzt alle zusammen: Q-SUMMIT! Where innovators shape tomorrow!",
   },
   closing: {
     title: "Closing Speech", cohost: "Jonathan", stat: { team: 1, speaker: .5, partner: .5, participants: .5 },
@@ -1556,7 +1617,7 @@ const SPEECHES = {
         { t: "Nächstes Jahr gibt's bestimmt wieder eine Q. Vermutlich.", v: 1, react: "laugh" } ],
         cohost: "Ein letztes Mal, ganz laut!" },
     ],
-    finale: "Zum letzten Mal: FEEL THE Q SPIRIT!",
+    finale: "Zum letzten Mal: Q-SUMMIT! Where innovators shape tomorrow!",
   },
 };
 
@@ -1573,7 +1634,7 @@ const BARKS = {
   morning: ["Wo ist der Check-in?", "Erster Kaffee 🙏", "So viele Leute!", "Der blaue Teppich 😍", "Hast du dein Badge?", "Die Bahn war so voll", "Ist das echt ein Schloss?"],
   day: ["Hast du den Pitch gesehen?", "Wo ist die Müslibar?", "3 Praktika in Aussicht 😳", "Mein Akku: 9 % 🪫", "Wer hat einen Kuli?", "Bei Dronivo gibt's Drohnen!", "LinkedIn-Post kommt heute Abend", "Speed-Dating war krass", "Wo ist SO108?", "Noch Goodie Bags da?", "Das WLAN… 🙃", "Ich gründe. Morgen. Vielleicht.", "Airhockey-Revanche?"],
   evening: ["Kommst du zum Themenabend?", "Noch ein Lillet? 🍸", "Die Lichterketten ✨", "Ich kann nicht mehr 😂", "Wer legt heute auf?", "Beste Konferenz ever"],
-  party: ["🎶🎶🎶", "LAUTER!", "Feel the Q Spirit!! 💙", "Wo ist der Chair?", "Noch ein Lied!", "🪩🪩"],
+  party: ["🎶🎶🎶", "LAUTER!", "Q-SUMMIT!! 💙", "Wo ist der Chair?", "Noch ein Lied!", "🪩🪩"],
   team: ["Chair! 👋", "Läuft bei dir?", "Alles im Griff!", "Kaffee? ☕", "Brauchst du was?"],
 };
 
@@ -1597,11 +1658,16 @@ const ACHIEVEMENTS = [
   { id: "ersti_herz", icon: "🐣", name: "Ersti-Liebling",     desc: "Erstis-Wert nie unter 40." },
   { id: "chaos",      icon: "🔥", name: "Chaos-Chair",        desc: "Beide Tage auf Chaos geschafft." },
   { id: "wetterfest", icon: "☔", name: "Wetterfest",         desc: "Einen Regentag auf der Q überstanden." },
+  { id: "geheimgang", icon: "🕯️", name: "Geheimgang",         desc: "Den versteckten Rittersaal gefunden." },
+  { id: "taubenkoenig", icon: "👑", name: "Taubenkönig",      desc: "Den Taubenkönig fünfmal erwischt." },
+  { id: "disco",      icon: "🪩", name: "Disco-Schloss",      desc: "Das geheime Disco-Schloss eingeschaltet." },
 ];
 
 // Zeitung am Ende: Geschichten zu Entscheidungen
 const NEWS_STORIES = [
   { flag: "tiktok",       title: "Backstage geht viral",            text: "Ein Ersti-TikTok aus dem Backstage von SO108 knackt die 50.000 Views." },
+  { flag: "rittersaal",   title: "Spuk im Rittersaal?",              text: "Ein Chair will hinter einem Regal im Lagergang einen geheimen Saal voller Geister gefunden haben. Die Uni dementiert." },
+  { flag: "taubenkoenig", title: "Krönung im Schneckenhof",          text: "Augenzeugen berichten von einer Taube mit Krone, die sich am Ende vor dem Chair verneigte." },
   { flag: "drohne",       title: "Drohne über dem Schneckenhof",        text: "Spektakuläre Bilder vom Schloss. Die Uni-Verwaltung ist weniger begeistert." },
   { flag: "spontan",      title: "Überraschungsgast auf der Bühne", text: "Ein Gründer aus dem Publikum stiehlt allen die Show und überzieht großzügig." },
   { flag: "ben_dj",       title: "Hackathon-Chair am DJ-Pult",      text: "Als der DJ krank wird, springt Ben vom Hackathon ein. Die Tanzfläche dankt." },
@@ -1748,6 +1814,13 @@ function door(x, y) { grid[y][x] = "D"; }
   rect(13, 9, 34, 2, ":");  // Flur
   for (const [x, y] of [[16, 8], [22, 8], [29, 8], [30, 8], [37, 8], [43, 8]]) door(x, y);
   set(29, 11, "E"); set(30, 11, "E");
+  // ---- Geheimer Rittersaal (nur über das alte Regal hinten im Lagergang) ----
+  rect(52, 1, 18, 11, "#");
+  rect(53, 2, 16, 8, ":");
+  rect(59, 2, 2, 8, "_");
+  set(60, 10, "E");
+  obj(56, 5, 8, 1, "Ö");
+  for (const [x, y] of [[53, 2], [68, 2], [53, 9], [68, 9]]) obj(x, y, 1, 1, "p");
 
   // ---- Schneckenhof-Block ----
   // Hinterflügel mit Hays Forum und Qube
@@ -1824,6 +1897,7 @@ function door(x, y) { grid[y][x] = "D"; }
   obj(45, 33, 8, 1, "H");
   // Lagergang
   for (const x of [4, 8, 12, 16]) obj(x, 43, 2, 1, "I");
+  obj(3, 43, 1, 2, "Ï");
   for (const [x, y] of [[5, 47], [10, 47], [15, 46], [19, 43]]) obj(x, y, 1, 1, "J");
   // Foyer
   obj(28, 43, 1, 3, "|"); obj(31, 43, 1, 3, "|");
@@ -1852,6 +1926,7 @@ function door(x, y) { grid[y][x] = "D"; }
 const PORTALS = new Map();
 const pkey = (i, j) => j * W + i;
 for (const i of [29, 30]) { PORTALS.set(pkey(i, 43), [i, 10]); PORTALS.set(pkey(i, 11), [i, 44]); }
+PORTALS.set(pkey(60, 10), [4, 45]); // Geheimtreppe zurück in den Lagergang
 
 const WALK = new Set([",", "g", "-", "B", ":", ".", "_", "c", "s", "S", "D", "w", "o", "d", "G", "E"]);
 const isWalk = (i, j) => i >= 0 && j >= 0 && i < W && j < H && WALK.has(grid[j][i]);
@@ -2563,6 +2638,19 @@ function drawObj(ctx, o) {
       }
       break;
     }
+    case "Ö": { // Lange Tafel im Rittersaal
+      ellipse(ctx, X + w / 2, Y + 15, w / 2, 3, "rgba(0,0,0,.25)");
+      px(ctx, X, Y + 2, w, 11, "#5a3a22"); px(ctx, X, Y + 2, w, 2, "#7b5232"); px(ctx, X + 2, Y + 4, w - 4, 7, "#f4efe2");
+      for (let k = 0; k < o.w; k++) { const x = X + k * 16; circ(ctx, x + 8, Y + 7, 2, "#e8e2d6"); if (k % 3 === 1) { px(ctx, x + 7, Y - 4, 2, 9, "#b8892d"); px(ctx, x + 7, Y - 6, 2, 2, "#ffd166"); GLOWS.push({ x: x + 8, y: Y - 5, r: 18, c: "255,200,110", i: .9 }); } }
+      break;
+    }
+    case "Ï": { // Altes Regal, das in Wahrheit eine Tür ist
+      px(ctx, X + 1, Y - 8, 14, h + 6, "#4a3020"); px(ctx, X + 2, Y - 7, 12, h + 4, "#2e1d12");
+      for (let k = 0; k < 4; k++) { px(ctx, X + 2, Y - 1 + k * 7, 12, 1, "#6b4a2b"); px(ctx, X + 3 + (k % 2) * 5, Y - 6 + k * 7, 4, 5, ["#7a2a2a", "#2a4a6a", "#5a5a2a", "#6a3a6a"][k]); }
+      px(ctx, X + 10, Y - 12, 2, 4, "#fff3c4"); px(ctx, X + 10, Y - 13, 2, 1, "#ffb347");
+      px(ctx, X + 1, Y - 8, 3, 1, "#ffffff55"); px(ctx, X + 1, Y - 7, 1, 3, "#ffffff55");
+      break;
+    }
     case "Ü": { // Sitzsack
       ellipse(ctx, X + 8, Y + 13, 7, 2, "rgba(0,0,0,.25)");
       ellipse(ctx, X + 8, Y + 9, 7, 5, ["#ff8a3d", "#1f4fd8", "#3ecf8e", "#e94e8a"][(o.x + o.y) % 4]);
@@ -2601,6 +2689,17 @@ const SIGNS = [
       [.2, .14, .09, .05, .03].forEach((al, r) => px(mctx, i * TS, j * TS + r * 2, 16, 2, `rgba(10,12,40,${al * k})`));
     }
     if (left && (left === "R" || left === "#")) [.16, .1, .05].forEach((al, r) => px(mctx, i * TS + r * 2, j * TS, 2, 16, `rgba(10,12,40,${al})`));
+  }
+  // Rittersaal: Ahnengalerie und Kronleuchter
+  for (const [k, x] of [54, 57, 62, 65].entries()) {
+    const X = x * TS + 1, Y = 1 * TS + 3;
+    px(mctx, X - 1, Y - 1, 16, 13, "#b8892d"); px(mctx, X, Y, 14, 11, ["#3a2a4a", "#2a3a2a", "#4a2a2a", "#2a2a4a"][k]);
+    circ(mctx, X + 7, Y + 5, 3, "#e8c9a0"); px(mctx, X + 3, Y + 8, 8, 3, ["#8a2a2a", "#2a4a8a", "#5a2a7a", "#2a6a4a"][k]); px(mctx, X + 4, Y + 1, 6, 2, "#eeeeee");
+  }
+  for (const x of [56, 64]) {
+    const X = x * TS + 8, Y = 3 * TS + 6;
+    px(mctx, X, Y - 22, 1, 12, "#b8892d"); ellipse(mctx, X, Y - 8, 9, 3, "#b8892d");
+    for (const dx of [-8, -4, 0, 4, 8]) { px(mctx, X + dx, Y - 12, 1, 3, "#fff3c4"); px(mctx, X + dx, Y - 13, 1, 1, "#ffd166"); }
   }
   // Q-Summit-Banner am Portal des Mittelbaus
   for (const bx of [27, 32]) {
@@ -2910,7 +3009,7 @@ function drawPlace(ctx, w, h, place, t) {
       const sw = Math.round(w * .56), sh = Math.round(h * .3), sx = Math.round(w / 2 - sw / 2), sy = Math.round(h * .08);
       glow(ctx, w / 2, sy + sh / 2, sw * .8, "140,170,255", .35);
       px(ctx, sx - 2, sy - 2, sw + 4, sh + 4, "#000"); px(ctx, sx, sy, sw, sh, "#e9eefc");
-      pixTextC(ctx, "Q-SUMMIT 2026", w / 2, sy + sh / 2 - 6, "#1f4fd8", 2); pixTextC(ctx, "FEEL THE Q SPIRIT", w / 2, sy + sh / 2 + 8, "#5a6aa0");
+      pixTextC(ctx, "Q-SUMMIT 2026", w / 2, sy + sh / 2 - 6, "#1f4fd8", 2); pixTextC(ctx, "WHERE INNOVATORS SHAPE TOMORROW", w / 2, sy + sh / 2 + 8, "#5a6aa0");
       for (let k = 0; k < 5; k++) { const lx = Math.round(w * (.1 + k * .2)), a = Math.sin(t * 1.2 + k) * .4; ctx.fillStyle = `rgba(${["255,120,220", "120,170,255", "255,210,120", "120,255,200", "200,140,255"][k]},.12)`; ctx.beginPath(); ctx.moveTo(lx, 0); ctx.lineTo(lx + w * a - 30, h * .62); ctx.lineTo(lx + w * a + 30, h * .62); ctx.fill(); px(ctx, lx - 3, 0, 6, 4, "#333"); }
       px(ctx, 0, Math.round(h * .5), w, Math.round(h * .08), "#24212e"); px(ctx, 0, Math.round(h * .5), w, 2, "#5c567a");
       for (let r = 0; r < 4; r++) {
@@ -3257,7 +3356,8 @@ function newState() {
     log: [], actionsUsed: new Set(), pauseTab: "overview",
     energy: 80, coffees: 0, coffeeCd: 0, pigeons: [], tram: null, nextTram: 20, barks: [], nextBark: 3,
     met: new Set(), selfies: new Set(), visited: new Set(), scared: 0, runAch: new Set(), snap: null,
-    diff: newState.diff || "normal", mods: [], modHistory: [], mgJit: {},
+    diff: newState.diff || "normal", mods: [], modHistory: [], mgJit: {}, king: null, kingDone: false,
+    track: { loc: {}, dist: 0, stairs: 0, fast: null, evening: 0 },
     hype: {}, selfieLooks: {}, danceBest: 0, erstiMin: 100, speakerPlan: [], camPan: null, sceneWait: null, hud: false, fpPlace: null,
   };
 }
@@ -3272,8 +3372,32 @@ function lookFor(name, base) {
   return Object.assign({ skin: SKINS[h % SKINS.length], hair: HAIRS[(h >>> 3) % HAIRS.length], style: (h >>> 6) % 4, long: ((h >>> 8) % 3) === 0, glasses: ((h >>> 10) % 4) === 0 }, base);
 }
 
+const SECRET_NPCS = [
+  { name: "Kurfürst Carl Philipp", role: "Bauherr des Schlosses · Geist", x: 60, y: 4, dir: "down", coin: true,
+    look: { hair: "#f4f4f4", skin: "#e9eef7", shirt: "#7a4fc9", pants: "#3a2a5a", long: true, style: 1 },
+    lines: ["Ah, Besuch! Ich habe dieses Schloss bauen lassen. Dass hier einmal Startups vor Investoren pitchen, hätte ich mir nicht träumen lassen.", "Nimm diesen Taler. Für das Budget. Und erzähl Finance nicht, woher er kommt. 🪙"] },
+  { name: "Ex-Chair", role: "Geist einer früheren Q", x: 57, y: 4, dir: "down", look: { hair: "#c9d2e8", skin: "#e9eef7", shirt: "#9fb3e6", long: false, style: 2 },
+    lines: ["Wer einmal eine Q organisiert hat, kommt nie ganz weg. Wir tagen hier jedes Jahr. 👻", "Tipp: Lass die Erstis Pause machen. Ein müder Ersti ist ein trauriger Ersti."] },
+  { name: "Ex-Head of Finance", role: "Geist einer früheren Q", x: 63, y: 4, dir: "down", look: { hair: "#d9dfee", skin: "#e9eef7", shirt: "#9fd0c8", long: true, glasses: true },
+    lines: ["Das Budget ist immer knapper, als man denkt. Oder größer. Keiner weiß es genau. Bis heute nicht."] },
+  { name: "Ex-Head of Partner", role: "Geist einer früheren Q", x: 58, y: 6, dir: "up", look: { hair: "#e0e4ee", skin: "#e9eef7", shirt: "#c8b3e6", style: 3 },
+    lines: ["Schon den Taubenkönig getroffen? Nein? Dann scheuch mehr Tauben auf. Viel mehr. 🕊️👑"] },
+  { name: "Ex-Head of PR", role: "Geist einer früheren Q", x: 62, y: 6, dir: "up", look: { hair: "#d0d8ea", skin: "#e9eef7", shirt: "#e6b3c8", long: true, style: 1 },
+    lines: ["Psst. Kennst du den Konami-Code? Oben, oben, unten, unten, links, rechts, links, rechts, B, A. Probier's mal aus. 🪩"] },
+];
+function secretTalk(n) {
+  keys.clear();
+  const k = n.talks = (n.talks || 0);
+  n.talks++;
+  const text = n.cfg.lines[Math.min(k, n.cfg.lines.length - 1)];
+  openDialog({ name: n.name, role: n.role, look: n.look, text, place: "foyer", mood: "happy", onNext: () => {
+    fpHide(); if (s.mode === "dialog") s.mode = "play";
+    if (n.cfg.coin && k === 1 && !s.flags.has("taler")) { s.flags.add("taler"); applyFx({ budget: 6 }); infoToast("🪙 Ein Kurfürsten-Taler! Budget +6"); }
+  } });
+}
 function initWorld() {
   s.npcs = [];
+  for (const c of SECRET_NPCS) { const n = makeNPC({ kind: "secret", name: c.name, role: c.role, look: c.look, cfg: c, dir: c.dir }); placeAt(n, c.x, c.y); n.dir = c.dir; s.npcs.push(n); }
   for (const [name, t] of Object.entries(TEAM)) {
     const n = makeNPC({ kind: "team", name, role: t.role, home: t.home, speed: 46,
       look: { hair: t.hair, skin: SKINS[strHash(name) % 3], shirt: "#1f4fd8", team: true, long: t.long, glasses: t.glasses, style: strHash(name) % 4 } });
@@ -3472,7 +3596,7 @@ function spawnEvent() {
   if (!ev) return;
   s.used.add(ev.id);
   if (ev.chat) {
-    const task = { kind: "chat", ev, chat: ev.chat, deadline: s.min + Math.round(CHAT_TIME * MODE().time * modFactor("chatTime")), who: ev.who };
+    const task = { kind: "chat", ev, chat: ev.chat, deadline: s.min + Math.round(CHAT_TIME * MODE().time * modFactor("chatTime")), who: ev.who, born: s.min };
     s.tasks.push(task);
     pushMsg(ev.chat, { from: ev.who, text: ev.text, task });
   } else {
@@ -3486,7 +3610,7 @@ function spawnEvent() {
       placeAt(npc, ...randomNear(loc, 4));
       s.npcs.push(npc);
     }
-    const task = { kind: "world", ev, npc, loc: ev.loc, deadline: s.min + Math.round(TASK_TIME * MODE().time), who: ev.who };
+    const task = { kind: "world", ev, npc, loc: ev.loc, deadline: s.min + Math.round(TASK_TIME * MODE().time), who: ev.who, born: s.min };
     npc.task = task;
     npc.path = findPath(tileOf(npc), [loc.x, loc.y]);
     npc.speed = Math.max(npc.speed, 55);
@@ -3524,6 +3648,8 @@ function releaseNPC(npc) {
 function resolveTask(task, opt, late) {
   s.tasks = s.tasks.filter(t => t !== task);
   s.decisions++;
+  if (!late && task.born != null) s.track.fast = Math.min(s.track.fast ?? 999, s.min - task.born);
+  if (s.min >= 18 * 60) s.track.evening++;
   if (s.decisions === 1) unlock("erste");
   if (opt.sets) s.flags.add(opt.sets);
   if (opt.sets === "mama") unlock("mama");
@@ -3655,7 +3781,7 @@ function openDialog({ name, role, look, avatar, text, options, later, onNext, ti
         : `<button class="dlg-opt next" data-next="1"><span>Weiter ▸</span></button>`}
     </div>
     ${later ? `<button class="dlg-later" id="dlater">Später (Esc)</button>` : ""}`;
-  const full = typeof text === "function" ? text() : text;
+  const full = youName(typeof text === "function" ? text() : text);
   let n = 0;
   const textEl = $("dtext"), optsEl = $("dopts");
   const finish = () => { clearInterval(typeTimer); textEl.textContent = full; optsEl.hidden = false; fp.talking = false; };
@@ -3776,6 +3902,7 @@ const nameColor = name => ["#53bdeb", "#ff8a65", "#25d366", "#ffd279", "#c792ea"
 let notifTimer;
 function pushMsg(chatId, msg) {
   const c = s.chat[chatId];
+  if (!msg.me && msg.text) msg.text = youName(msg.text);
   msg.time = msg.time || fmt(s.min);
   c.msgs.push(msg);
   c.last = s.seq++;
@@ -4028,7 +4155,7 @@ function nextSceneStep() {
   if (st.titlecard) {
     if (SIM()) return nextSceneStep();
     setMusic("title");
-    showOverlay(`<div class="ov center" style="pointer-events:none"><div class="logo" style="animation:popIn2 .6s ease"><div class="sub">DONNERSTAG · 9. APRIL 2026</div><div class="q">Q-SUMMIT</div><div class="sub">FEEL THE Q SPIRIT</div></div></div>`, "clear");
+    showOverlay(`<div class="ov center" style="pointer-events:none"><div class="logo" style="animation:popIn2 .6s ease"><div class="sub">DONNERSTAG · 9. APRIL 2026</div><div class="q">Q-SUMMIT</div><div class="sub">WHERE INNOVATORS SHAPE TOMORROW</div></div></div>`, "clear");
     return setTimeout(() => { hideOverlay(); setMusic("day"); nextSceneStep(); }, 2600);
   }
   if (st.walk) {
@@ -4056,6 +4183,21 @@ function nextSceneStep() {
   if (st.speech) return runSpeech(st.speech, nextSceneStep);
   if (st.reveal) return runReveal(nextSceneStep);
   if (st.dance) return runDance(nextSceneStep);
+  if (st.drones) {
+    if (SIM()) return nextSceneStep();
+    fpHide(); showHud(false);
+    const free = MODE().free, word = ratingWord(scoreNow(), free);
+    startDroneShow([
+      { draw: SHAPES.logo, color: ["90,140,255", "255,255,255"], hold: 900 },
+      { draw: SHAPES.text("Q26"), color: ["255,209,102", "255,255,255"], hold: 900 },
+      { draw: SHAPES.text(word), color: ["255,120,220", "120,200,255", "255,220,120", "140,255,180"], hold: 1300 },
+      { draw: SHAPES.text((me.name || "DANKE!").toUpperCase()), color: ["255,255,255", "255,209,102"], hold: 1300 },
+      { draw: SHAPES.heart, color: ["255,90,140", "255,160,190"], hold: 1100 },
+    ], { dark: .5, cy: .36, done: () => setTimeout(nextSceneStep, 400) });
+    const skip = () => { window.removeEventListener("pointerdown", skip); skipDroneShow(); };
+    window.addEventListener("pointerdown", skip);
+    return;
+  }
   if (st.snapshot) { if (!SIM()) { try { s.snap = canvas.toDataURL("image/png"); } catch {} } return nextSceneStep(); }
   if (st.say) {
     const [who, text] = st.say;
@@ -4727,8 +4869,8 @@ function renderTitle() {
   lastClock = "";
   setMusic("title");
   const best = bestScore("normal"), bestChaos = bestScore("chaos");
-  showOverlay(`<div class="ov bottom"><div class="title-wrap">
-    <div class="logo"><div class="sub">SCHLOSS MANNHEIM · 2026</div><div class="q">Q-SUMMIT</div><div class="sub">FEEL THE Q SPIRIT</div></div>
+  showOverlay(`<div class="ov bottom"><div class="title-wrap intro" id="twrap">
+    <div class="logo"><div class="sub">SCHLOSS MANNHEIM · 2026</div><div class="q">Q-SUMMIT</div><div class="sub">WHERE INNOVATORS SHAPE TOMORROW</div></div>
     <p class="title-foot">Du bist Chair der Q-Summit. Zwei Tage im Schloss, sechs Divisions, ein Handy, das nie still ist.</p>
     <div class="menu">
       <button class="btn gold" id="start">▶ Neues Spiel</button>
@@ -4740,17 +4882,23 @@ function renderTitle() {
     </div>
     <div class="best">${best ? `<span>Rekord <b>${best}</b></span>` : ""}${bestChaos ? `<span>🔥 Chaos <b>${bestChaos}</b></span>` : ""}<span>Speaker 2026 <b>${SPEAKERS.length}</b></span><span>Partner <b>50+</b></span></div>
   </div></div>`, "title");
-  $("start").onclick = () => { ensureAudio(); renderModeSelect(); };
+  const begin = () => { ensureAudio(); store.get("qs_badge", false) ? renderModeSelect() : renderBadge(renderModeSelect); };
+  $("start").onclick = begin;
+  const reveal = () => { const w = $("twrap"); if (w) w.classList.remove("intro"); };
+  titleDroneShow(reveal);
+  ov().onpointerdown = () => { if ($("twrap")?.classList.contains("intro")) { skipDroneShow(); reveal(); } };
+  let logoTaps = 0; document.querySelector(".logo .q").onclick = () => { if (++logoTaps >= 7) { logoTaps = 0; toggleDisco(); } };
   $("how").onclick = renderHow;
   $("achbtn").onclick = renderAchievements;
   $("snd").onclick = () => { ensureAudio(); muted = !muted; store.set("qs_mute", muted); musicVolume(); if (!muted) setMusic("title"); $("snd").textContent = `${muted ? "🔇" : "🔊"} Ton`; };
-  screenKeys = e => { if (e.key === "Enter") { ensureAudio(); renderModeSelect(); } };
+  screenKeys = e => { if ($("twrap")?.classList.contains("intro")) { skipDroneShow(); reveal(); return; } if (e.key === "Enter") begin(); };
   const kick = () => { ensureAudio(); setMusic(null); setMusic("title"); window.removeEventListener("pointerdown", kick); };
   window.addEventListener("pointerdown", kick);
 }
 function renderModeSelect() {
   const last = store.get("qs_diff", "normal");
   showOverlay(`<div class="ov center"><div class="panel frame mode-panel">
+    <button class="mode-badge" id="mbadge"><canvas id="mface" width="26" height="26"></canvas>${me.name ? esc(me.name) : "Badge erstellen"} · ✏️</button>
     <h2 class="pix" style="font-size:12px">WIE WILLST DU SPIELEN?</h2>
     <p class="note">Jeder Durchlauf würfelt neue Tageslagen aus: Regen, Hitzewelle, Bahnstreik, Presse und mehr. Auch Speaker und Minigames kommen jedes Mal etwas anders.</p>
     <div class="modes">${MODE_ORDER.map((k, i) => { const M = MODES[k], b = M.free ? 0 : bestScore(k); return `
@@ -4760,6 +4908,8 @@ function renderModeSelect() {
   const go = k => { store.set("qs_diff", k); hideOverlay(); startGame(k); };
   ov().querySelectorAll(".mode").forEach(b => b.onclick = () => go(b.dataset.m));
   $("mback").onclick = renderTitle;
+  drawMyFace($("mface").getContext("2d"), 0, 0, 26);
+  $("mbadge").onclick = () => renderBadge(renderModeSelect);
   screenKeys = e => { const n = +e.key; if (n >= 1 && n <= MODE_ORDER.length) go(MODE_ORDER[n - 1]); if (e.key === "Enter") go(last); if (e.key === "Escape") renderTitle(); };
 }
 function renderHow() {
@@ -4787,7 +4937,7 @@ function renderAchievements() {
 }
 
 function startGame(diff) {
-  ensureAudio();
+  ensureAudio(); stopDrones();
   if (typeof diff !== "string") diff = store.get("qs_diff", "normal");
   if (!MODES[diff]) diff = "normal";
   newState.diff = diff;
@@ -4902,6 +5052,11 @@ function renderGameOver(stat) {
 }
 
 function renderEnd() {
+  if (SIM()) return renderEndPaper();
+  s.mode = "screen"; resetUi(); showHud(false); stopDrones();
+  showWrapped(renderEndPaper);
+}
+function renderEndPaper() {
   s.mode = "screen";
   resetUi(); showHud(false);
   const score = scoreNow(), free = MODE().free;
@@ -4925,11 +5080,13 @@ function renderEnd() {
       <div class="tagline" style="margin-top:8px">Tageslagen: ${[...new Set(s.modHistory)].map(id => { const m = DAY_MODS.find(x => x.id === id); return `${m.icon} ${m.name}`; }).join(" · ") || "keine"}</div>` })}
     ${summary()}
     ${newAch.length ? `<div class="tagline" style="text-align:center">Erfolge in diesem Durchlauf</div><div class="new-ach">${newAch.map(a => `<span>${a.icon} ${a.name}</span>`).join("")}</div>` : ""}
-    <p class="tagline" style="text-align:center">Feel the Q Spirit 💙</p>
+    <p class="tagline" style="text-align:center">Where innovators shape tomorrow 💙</p>
     <button class="btn gold" id="again">Nochmal spielen</button>
+    <button class="btn secondary" id="rewrap">🎁 Q-Wrapped nochmal</button>
     <button class="btn secondary" id="other">Anderer Modus</button>
     <button class="btn secondary" id="menu">Hauptmenü</button></div>`);
   $("other").onclick = renderModeSelect;
+  $("rewrap").onclick = () => showWrapped(renderEndPaper);
   $("again").onclick = () => startGame(s.diff);
   $("menu").onclick = renderTitle;
 }
@@ -4950,11 +5107,13 @@ function moveAlong(ent, dt) {
   if (d > .01) ent.dir = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
   ent.walkT += step; ent.frame = Math.floor(ent.walkT / 5) % 2;
 }
-const OG_EDGE = 13.5 * TS; // alles darüber gehört zum 1. Obergeschoss
+const OG_EDGE = 13.5 * TS; // alles darüber gehört zum 1. Obergeschoss, rechts oben liegt der geheime Rittersaal
+const floorId = (x, y) => y >= OG_EDGE ? 0 : x >= 50 * TS ? 2 : 1;
+const FLOOR_RECT = { 1: [0, 0, 50 * TS, OG_EDGE - 6], 2: [50 * TS, 0, W * TS - 50 * TS, OG_EDGE - 6] };
 function floorChanged() {
-  s.camSnap = true;
-  const up = s.player.y < 14 * TS;
-  infoToast(up ? "⬆️ 1. OG · Speed Dating, Workshops, Campfire" : "⬇️ Erdgeschoss · Foyer");
+  s.camSnap = true; s.track.stairs++;
+  const f = floorId(s.player.x, s.player.y);
+  infoToast(f === 1 ? "⬆️ 1. OG · Speed Dating, Workshops, Campfire" : f === 2 ? "🏰 Rittersaal" : "⬇️ Erdgeschoss · Foyer");
 }
 function canStand(x, y) {
   for (const ox of [-3, 3]) if (!isWalk(Math.floor((x + ox) / TS), Math.floor((y - 1) / TS))) return false;
@@ -4964,8 +5123,8 @@ function walkToNPC(npc) {
   s.pendingTalk = npc;
   s.player.path = findPath(tileOf(s.player), tileOf(npc));
 }
-const wantsTalk = n => n && (n.task || (n.kind === "speaker" && !s.met.has(n.sp.name)));
-function talkTo(n) { if (n.task) openTaskDialog(n.task); else if (n.kind === "speaker") openSpeakerDialog(n); }
+const wantsTalk = n => n && (n.task || n.kind === "secret" || (n.kind === "speaker" && !s.met.has(n.sp.name)));
+function talkTo(n) { if (n.kind === "secret") return secretTalk(n); if (n.task) openTaskDialog(n.task); else if (n.kind === "speaker") openSpeakerDialog(n); }
 
 function updatePlayer(dt) {
   const p = s.player;
@@ -4999,7 +5158,7 @@ function updatePlayer(dt) {
 
 const ROAM = ["lounge", "so108", "innovillage", "hays", "innovillage", "hall", "kiosk", "speeddating", "workshops"];
 function updateNPC(n, dt) {
-  if (n.kind === "static") return;
+  if (n.kind === "static" || n.kind === "secret") return;
   if (n.path.length) { moveAlong(n, dt); return; }
   n.frame = 0;
   if (n.task) { if (s.mode === "play") n.dir = facing(n, s.player); return; }
@@ -5118,6 +5277,467 @@ function updateWorldChecks(dt) {
   }
 }
 
+// ---------------- Identität: Name, Badge und Pixel-Selfie ----------------
+// Name und Selfie bleiben im Browser (localStorage), nichts wird hochgeladen.
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const me = { name: store.get("qs_name", ""), face: store.get("qs_face", null), faceLook: store.get("qs_facelook", null), faceImg: null };
+function loadFace() {
+  me.faceImg = null;
+  if (!me.face) return;
+  const im = new Image(); im.onload = () => { me.faceImg = im; }; im.src = me.face;
+}
+function applyFaceLook() {
+  const base = { hair: "#6b4226", skin: "#f1c7a5" };
+  Object.assign(PLAYER_LOOK, me.faceLook || base); Object.assign(PLAYER_LOOK_BUST, me.faceLook || base);
+  spriteCache.clear();
+}
+loadFace(); applyFaceLook();
+// NPCs sprechen dich mit Namen an: "Chair!" wird zu "Lena!"
+const youName = t => me.name && typeof t === "string" ? t.replace(/\bChair(?=[!?,.])/g, me.name) : t;
+
+// Kamera live in Pixel-Art: Sättigung und Kontrast hoch, dann auf wenige Farbstufen runter
+function pixelize(d) {
+  const q = v => Math.round(clamp(v, 0, 255) / 51) * 51;
+  for (let k = 0; k < d.length; k += 4) {
+    let r = d[k], g = d[k + 1], b = d[k + 2];
+    const l = (r + g + b) / 3;
+    r = l + (r - l) * 1.4; g = l + (g - l) * 1.4; b = l + (b - l) * 1.4;
+    d[k] = q((r - 128) * 1.18 + 142); d[k + 1] = q((g - 128) * 1.18 + 136); d[k + 2] = q((b - 128) * 1.18 + 130);
+  }
+}
+function avgHex(d, x0, y0, x1, y1) {
+  let r = 0, g = 0, b = 0, n = 0;
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) { const k = (y * 32 + x) * 4; r += d[k]; g += d[k + 1]; b += d[k + 2]; n++; }
+  const h = v => Math.round(v / n).toString(16).padStart(2, "0");
+  return `#${h(r)}${h(g)}${h(b)}`;
+}
+function openSelfieCam(done) {
+  showOverlay(`<div class="ov center"><div class="panel frame cam-panel">
+    <h2 class="pix" style="font-size:12px">PIXEL-SELFIE</h2>
+    <p class="note">Deine Kamera wird live in Pixel-Art umgerechnet. Das Bild bleibt auf deinem Gerät und wird nirgendwo hochgeladen.</p>
+    <div class="cam-wrap"><canvas id="campix" width="32" height="32"></canvas><div class="cam-frame"></div><div class="cam-msg" id="cammsg">Kamera wird gestartet…</div></div>
+    <video id="camvid" playsinline muted style="display:none"></video>
+    <div class="cam-row"><button class="btn gold" id="camshot" disabled>📸 Auslösen</button><button class="btn secondary" id="camback">Zurück</button></div>
+  </div></div>`);
+  let stream = null, raf = 0, alive = true;
+  const stop = () => { alive = false; cancelAnimationFrame(raf); if (stream) stream.getTracks().forEach(t => t.stop()); };
+  const pix = $("campix"), g = pix.getContext("2d", { willReadFrequently: true }), vid = $("camvid");
+  function frame() {
+    if (!alive || !document.body.contains(pix)) return stop();
+    if (vid.readyState >= 2 && vid.videoWidth) {
+      const vw = vid.videoWidth, vh = vid.videoHeight, sz = Math.min(vw, vh) * .7;
+      g.save(); g.translate(32, 0); g.scale(-1, 1);
+      g.drawImage(vid, (vw - sz) / 2, Math.max(0, (vh - sz) / 2 - sz * .08), sz, sz, 0, 0, 32, 32); g.restore();
+      const im = g.getImageData(0, 0, 32, 32); pixelize(im.data); g.putImageData(im, 0, 0);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  const req = navigator.mediaDevices?.getUserMedia ? navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 480, height: 480 }, audio: false }) : Promise.reject(new Error("no camera"));
+  req.then(st => {
+    if (!alive) { st.getTracks().forEach(t => t.stop()); return; }
+    stream = st; vid.srcObject = st; vid.play().catch(() => {});
+    $("cammsg").hidden = true; $("camshot").disabled = false; frame();
+  }).catch(() => { if ($("cammsg")) $("cammsg").textContent = "Keine Kamera verfügbar oder Zugriff abgelehnt. Kein Problem, das Spiel geht auch ohne."; });
+  $("camback").onclick = () => { stop(); done(false); };
+  $("camshot").onclick = () => {
+    sfx.camera();
+    const fl = $("flash"); fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go");
+    const d = g.getImageData(0, 0, 32, 32).data;
+    me.face = pix.toDataURL("image/png"); me.faceLook = { skin: avgHex(d, 12, 15, 19, 21), hair: avgHex(d, 9, 1, 22, 5) };
+    store.set("qs_face", me.face); store.set("qs_facelook", me.faceLook);
+    stop(); loadFace(); applyFaceLook();
+    setTimeout(() => done(true), 120);
+  };
+}
+// Porträt des Chairs: Pixel-Selfie, sonst die gezeichnete Figur
+function drawMyFace(g, x, y, size) {
+  g.imageSmoothingEnabled = false;
+  if (me.faceImg) { g.drawImage(me.faceImg, x, y, size, size); return; }
+  const c = document.createElement("canvas"); c.width = 42; c.height = 46;
+  drawBust(c.getContext("2d"), 21, 58, PLAYER_LOOK_BUST, 1, { t: 1, mood: "happy", blink: 1 });
+  g.fillStyle = "#9fc3ff"; g.fillRect(x, y, size, size);
+  g.drawImage(c, 0, 0, 42, 42, x, y, size, size);
+}
+
+// Badge am Lanyard: hängt als Pendel, lässt sich ziehen und schleudern
+function renderBadge(next) {
+  showOverlay(`<div class="ov center"><div class="badge-screen">
+    <div class="tagline" style="text-align:center">Dein Badge für die Q26</div>
+    <canvas id="badgec"></canvas>
+    <div class="badge-form panel frame">
+      <label class="pix" for="bname" style="font-size:10px">DEIN VORNAME</label>
+      <input id="bname" maxlength="14" placeholder="z. B. Lena" value="${esc(me.name)}" autocomplete="given-name" enterkeyhint="done">
+      <div class="cam-row"><button class="btn secondary" id="bselfie">📸 ${me.face ? "Neues Pixel-Selfie" : "Pixel-Selfie machen"}</button>${me.face ? `<button class="btn secondary" id="bnoface">✖ Selfie weg</button>` : ""}</div>
+      <button class="btn gold" id="bgo">Weiter ▶</button>
+      <small class="muted">Zieh am Badge! Name und Selfie bleiben auf deinem Gerät. Auf der Q sprechen dich die Leute dann mit Namen an.</small>
+    </div></div></div>`);
+  const cv = $("badgec"), g = cv.getContext("2d");
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const CW = Math.min(320, innerWidth - 40), CH = Math.round(CW * 1.25);
+  cv.style.width = CW + "px"; cv.style.height = CH + "px"; cv.width = CW * dpr; cv.height = CH * dpr;
+  const L = CH * .32, cardW = CW * .56, cardH = cardW * 1.36;
+  const st = { a: .5, av: 0, drop: -CH, dv: 0, drag: false, last: 0 };
+  const ax = CW / 2, ay = -6;
+  const qr = []; { let h = strHash((me.name || "Q") + "26"); for (let k = 0; k < 81; k++) { h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; qr.push(h & 1); } }
+  const card = (gg) => {
+    const w = cardW, h = cardH, x = -w / 2, y = 0;
+    gg.fillStyle = "rgba(0,0,0,.25)"; roundRect(gg, x + 4, y + 6, w, h, 12); gg.fill();
+    gg.fillStyle = "#fbfbf7"; roundRect(gg, x, y, w, h, 12); gg.fill();
+    gg.save(); roundRect(gg, x, y, w, h, 12); gg.clip();
+    const hg = gg.createLinearGradient(0, y, 0, y + h * .24); hg.addColorStop(0, "#2f6bff"); hg.addColorStop(1, "#173fae");
+    gg.fillStyle = hg; gg.fillRect(x, y, w, h * .24);
+    gg.fillStyle = "#ffd166"; gg.fillRect(x, y + h * .24, w, 3);
+    gg.restore();
+    gg.fillStyle = "#c9ccd2"; roundRect(gg, -w * .14, y + 6, w * .28, 8, 4); gg.fill();
+    gg.fillStyle = "#fff"; gg.textAlign = "center"; gg.textBaseline = "middle";
+    gg.font = `900 ${w * .12}px system-ui, -apple-system, sans-serif`; gg.fillText("Q-SUMMIT", 0, y + h * .13);
+    gg.font = `600 ${w * .055}px system-ui, sans-serif`; gg.fillStyle = "#cfe0ff"; gg.fillText("SCHLOSS MANNHEIM · 2026", 0, y + h * .2);
+    const ps = w * .42; gg.fillStyle = "#0b1640"; gg.fillRect(-ps / 2 - 3, y + h * .29 - 3, ps + 6, ps + 6);
+    drawMyFace(gg, -ps / 2, y + h * .29, ps);
+    const nm = (me.name || "DEIN NAME").toUpperCase();
+    let fs = w * .15; gg.font = `900 ${fs}px system-ui, sans-serif`; while (gg.measureText(nm).width > w * .88 && fs > 10) { fs -= 1; gg.font = `900 ${fs}px system-ui, sans-serif`; }
+    gg.fillStyle = me.name ? "#0b1640" : "#b8bccb"; gg.fillText(nm, 0, y + h * .68);
+    gg.fillStyle = "#ffd166"; roundRect(gg, -w * .27, y + h * .73, w * .54, h * .07, h * .035); gg.fill();
+    gg.fillStyle = "#0b1640"; gg.font = `800 ${w * .06}px system-ui, sans-serif`; gg.fillText("CHAIR · Q26", 0, y + h * .765);
+    const qs = w * .15, qx = w / 2 - qs - w * .07, qy = y + h - qs - w * .06, cs = qs / 9;
+    gg.fillStyle = "#0b1640"; qr.forEach((b, k) => { if (b || [0, 8, 72].includes(k)) gg.fillRect(qx + (k % 9) * cs, qy + Math.floor(k / 9) * cs, cs, cs); });
+    gg.fillStyle = "#6b7390"; gg.textAlign = "left"; gg.font = `600 ${w * .045}px system-ui, sans-serif`;
+    gg.fillText("Where innovators", x + w * .07, qy + qs * .35); gg.fillText("shape tomorrow", x + w * .07, qy + qs * .75);
+  };
+  const pos = () => [ax + Math.sin(st.a) * L, ay + Math.cos(st.a) * L + st.drop];
+  function frame(t) {
+    if (!document.body.contains(cv)) return;
+    const dt = Math.min(.033, (t - (st.last || t)) / 1000 || .016); st.last = t;
+    if (!st.drag) { st.av += -18 * Math.sin(st.a) * dt - st.av * 1.6 * dt; st.a += st.av * dt; }
+    st.dv += (-st.drop * 60 - st.dv * 9) * dt; st.drop += st.dv * dt;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, CW, CH);
+    const [cx, cy] = pos();
+    // Lanyard
+    for (const side of [-1, 1]) {
+      g.strokeStyle = "#1f4fd8"; g.lineWidth = 12; g.beginPath(); g.moveTo(ax + side * 26, ay); g.lineTo(cx + side * 6 * Math.cos(st.a), cy - 6); g.stroke();
+      g.strokeStyle = "rgba(255,255,255,.55)"; g.lineWidth = 2; g.setLineDash([3, 9]); g.beginPath(); g.moveTo(ax + side * 26, ay); g.lineTo(cx + side * 6 * Math.cos(st.a), cy - 6); g.stroke(); g.setLineDash([]);
+    }
+    g.save(); g.translate(cx, cy); g.rotate(-st.a);
+    g.fillStyle = "#9aa3b5"; g.fillRect(-9, -12, 18, 14); g.fillStyle = "#c9d0dc"; g.fillRect(-6, -9, 12, 3);
+    card(g);
+    g.restore();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  const local = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.onpointerdown = e => { st.drag = true; st.dv = 0; st.drop = 0; cv.setPointerCapture(e.pointerId); st.pa = st.a; st.pt = performance.now(); sfx.pick(); };
+  cv.onpointermove = e => {
+    if (!st.drag) return;
+    const [x, y] = local(e), na = clamp(Math.atan2(x - ax, Math.max(20, y - ay)), -1.3, 1.3), now = performance.now();
+    st.av = (na - st.a) / Math.max(.008, (now - st.pt) / 1000); st.a = na; st.pt = now;
+  };
+  cv.onpointerup = cv.onpointercancel = () => { st.drag = false; st.av = clamp(st.av, -12, 12); };
+  const inp = $("bname");
+  inp.oninput = () => { me.name = inp.value.trim().replace(/[<>]/g, "").slice(0, 14); st.av += .6; };
+  inp.onkeydown = e => { if (e.key === "Enter") $("bgo").click(); e.stopPropagation(); };
+  $("bselfie").onclick = () => openSelfieCam(() => renderBadge(next));
+  if ($("bnoface")) $("bnoface").onclick = () => { me.face = null; me.faceLook = null; store.set("qs_face", null); store.set("qs_facelook", null); loadFace(); applyFaceLook(); renderBadge(next); };
+  $("bgo").onclick = () => { store.set("qs_name", me.name); store.set("qs_badge", true); sfx.good(); next(); };
+  screenKeys = e => { if (e.key === "Escape") renderTitle(); };
+}
+
+// ---------------- Drohnenshow ----------------
+// Dronivo ist echter Partner der Q. Die Drohnen fliegen Formationen, die aus einer Zeichnung abgetastet werden.
+const droneCv = $("drones"), dctx = droneCv.getContext("2d");
+const N_DRONES = 340;
+const glowCache = new Map();
+function droneGlow(col) {
+  let c = glowCache.get(col);
+  if (c) return c;
+  c = document.createElement("canvas"); c.width = c.height = 32;
+  const g = c.getContext("2d"), gr = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+  gr.addColorStop(0, `rgba(${col},1)`); gr.addColorStop(.18, `rgba(${col},.75)`); gr.addColorStop(.45, `rgba(${col},.18)`); gr.addColorStop(1, `rgba(${col},0)`);
+  g.fillStyle = gr; g.fillRect(0, 0, 32, 32); glowCache.set(col, c); return c;
+}
+function sampleShape(draw) {
+  const w = 240, h = 120, c = document.createElement("canvas"); c.width = w; c.height = h;
+  const g = c.getContext("2d", { willReadFrequently: true }); g.fillStyle = "#fff"; g.strokeStyle = "#fff"; draw(g, w, h);
+  const d = g.getImageData(0, 0, w, h).data, pts = [];
+  for (let y = 0; y < h; y += 2) for (let x = 0; x < w; x += 2) if (d[(y * w + x) * 4 + 3] > 100) pts.push([x / w, y / h]);
+  if (!pts.length) pts.push([.5, .5]);
+  return Array.from({ length: N_DRONES }, (_, k) => pts[Math.floor((k + .5) * pts.length / N_DRONES)]);
+}
+const SHAPES = {
+  schloss: g => {
+    g.fillRect(14, 64, 212, 40);
+    g.fillRect(92, 38, 56, 66);
+    g.beginPath(); g.moveTo(86, 40); g.lineTo(120, 12); g.lineTo(154, 40); g.fill();
+    g.beginPath(); g.moveTo(8, 66); g.lineTo(30, 50); g.lineTo(210, 50); g.lineTo(232, 66); g.fill();
+    g.clearRect(110, 74, 20, 30);
+    for (let x = 24; x < 220; x += 14) if (x < 88 || x > 150) { g.clearRect(x, 72, 6, 9); g.clearRect(x, 87, 6, 9); }
+    g.beginPath(); g.arc(120, 52, 7, 0, 7); g.globalCompositeOperation = "destination-out"; g.fill(); g.globalCompositeOperation = "source-over";
+  },
+  logo: g => { g.lineWidth = 16; g.strokeRect(82, 16, 76, 76); g.fillRect(136, 72, 30, 30); },
+  heart: g => { g.beginPath(); g.moveTo(120, 104); g.bezierCurveTo(30, 52, 70, 2, 120, 34); g.bezierCurveTo(170, 2, 210, 52, 120, 104); g.fill(); },
+  text: t => g => {
+    let fs = 78; const f = () => `900 ${fs}px system-ui, -apple-system, "Segoe UI", sans-serif`;
+    g.font = f(); while (g.measureText(t).width > 226 && fs > 18) { fs -= 3; g.font = f(); }
+    g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(t, 120, 62);
+  },
+};
+let droneShow = null, droneIntroPlayed = false, droneLoopOn = false;
+function startDroneShow(seq, opts = {}) {
+  const pts = Array.from({ length: N_DRONES }, () => ({ x: .2 + Math.random() * .6, y: 1.05 + Math.random() * .25, px: 0, py: 0, tx: 0, ty: 0, del: Math.random() * .35, ph: Math.random() * 6, col: "255,255,255", pc: "255,255,255" }));
+  pts.forEach(p => { p.px = p.x; p.py = p.y; p.tx = p.x; p.ty = p.y - .5 - Math.random() * .2; });
+  droneShow = { seq: seq.map(st => ({ ...st, pts: sampleShape(st.draw) })), pts, i: -1, t0: performance.now(), dur: 1.3, hold: 0, opts, fade: 0, phase: "rise" };
+  droneCv.hidden = false;
+  if (!droneLoopOn) { droneLoopOn = true; requestAnimationFrame(droneLoop); }
+  const ds = droneShow;
+  setTimeout(() => droneShow === ds && ds.phase === "rise" && nextFormation(), 900);
+}
+function droneBox() {
+  const W2 = droneCv.clientWidth || innerWidth, H2 = droneCv.clientHeight || innerHeight, cy = droneShow.opts.cy ?? .32;
+  const bw = Math.min(W2 * .9, H2 * .9), bh = bw / 2;
+  return { x: (W2 - bw) / 2 / W2, y: (H2 * cy - bh / 2) / H2, w: bw / W2, h: bh / H2 };
+}
+function retarget(list, col, spread = 0) {
+  const now = performance.now();
+  droneShow.pts.forEach((p, k) => {
+    p.px = p.x; p.py = p.y; p.pc = p.col; p.col = Array.isArray(col) ? col[k % col.length] : col;
+    const [tx, ty] = list(k); p.tx = tx + (Math.random() - .5) * spread; p.ty = ty + (Math.random() - .5) * spread;
+  });
+  droneShow.t0 = now;
+}
+function nextFormation() {
+  const ds = droneShow;
+  if (!ds) return;
+  ds.i++;
+  if (ds.i >= ds.seq.length) return endDroneShow();
+  ds.phase = "form";
+  const st = ds.seq[ds.i], b = droneBox();
+  retarget(k => [b.x + st.pts[k][0] * b.w, b.y + st.pts[k][1] * b.h], st.color);
+  ds.hold = st.hold || 1400;
+  if (st.onShow) st.onShow();
+}
+function endDroneShow(instant) {
+  const ds = droneShow;
+  if (!ds) return;
+  const fin = ds.opts.done; ds.opts.done = null;
+  if (ds.opts.idle) {
+    ds.phase = "idle";
+    retarget(() => [Math.random(), Math.random() * .55], ["160,190,255", "255,255,255", "255,214,140"]);
+    ds.dur = instant ? .01 : 2.2;
+  } else {
+    ds.phase = "out";
+    retarget(k => [ds.pts[k].x + (Math.random() - .5) * .2, 1.2 + Math.random() * .2], ds.pts[0].col);
+    ds.dur = 2;
+    setTimeout(() => { if (droneShow === ds) { droneShow = null; droneCv.hidden = true; } }, 2100);
+  }
+  if (fin) fin();
+}
+function skipDroneShow() { if (droneShow && droneShow.phase !== "idle" && droneShow.phase !== "out") endDroneShow(true); }
+function stopDrones() { droneShow = null; droneCv.hidden = true; }
+function droneLoop(t) {
+  const ds = droneShow;
+  if (!ds) { droneLoopOn = false; return; }
+  const dpr = Math.min(2, window.devicePixelRatio || 1), W2 = droneCv.clientWidth || innerWidth, H2 = droneCv.clientHeight || innerHeight;
+  if (droneCv.width !== Math.round(W2 * dpr) || droneCv.height !== Math.round(H2 * dpr)) { droneCv.width = Math.round(W2 * dpr); droneCv.height = Math.round(H2 * dpr); }
+  const g = dctx; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W2, H2);
+  ds.fade = Math.min(1, ds.fade + .02);
+  const dark = (ds.opts.dark ?? .5) * ds.fade * (ds.phase === "out" ? Math.max(0, 1 - (t - ds.t0) / 1800) : 1);
+  if (dark > 0) { const gr = g.createLinearGradient(0, 0, 0, H2); gr.addColorStop(0, `rgba(2,5,24,${dark * 1.2})`); gr.addColorStop(1, `rgba(2,5,24,${dark * .5})`); g.fillStyle = gr; g.fillRect(0, 0, W2, H2); }
+  const el = (t - ds.t0) / 1000;
+  g.globalCompositeOperation = "lighter";
+  const idle = ds.phase === "idle", sz = Math.max(9, Math.min(16, W2 / 70));
+  let arrived = true;
+  for (const p of ds.pts) {
+    const u = clamp((el - p.del * (idle ? 2 : 1)) / ds.dur, 0, 1), e = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    if (u < 1) arrived = false;
+    p.x = p.px + (p.tx - p.px) * e; p.y = p.py + (p.ty - p.py) * e;
+    const hov = Math.sin(t / 700 + p.ph) * (idle ? 3 : 1.2), x = p.x * W2, y = p.y * H2 + hov;
+    const tw = idle ? .35 + .3 * Math.sin(t / 400 + p.ph * 3) : .95;
+    const col = u < .5 ? p.pc : p.col;
+    g.globalAlpha = tw; g.drawImage(droneGlow(col), x - sz / 2, y - sz / 2, sz, sz);
+    g.globalAlpha = tw; g.fillStyle = "#fff"; g.fillRect(x - .8, y - .8, 1.6, 1.6);
+  }
+  g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
+  if (ds.phase === "form" && arrived) { ds.phase = "hold"; ds.holdUntil = t + ds.hold; }
+  if (ds.phase === "hold" && t > ds.holdUntil) nextFormation();
+  requestAnimationFrame(droneLoop);
+}
+function titleDroneShow(reveal) {
+  if (droneIntroPlayed || SIM()) { droneIntroPlayed = true; startDroneShow([], { idle: true, dark: .25 }); endDroneShow(true); reveal(); return; }
+  droneIntroPlayed = true;
+  startDroneShow([
+    { draw: SHAPES.schloss, color: "255,214,140", hold: 1100 },
+    { draw: SHAPES.logo, color: ["90,140,255", "255,255,255"], hold: 1000 },
+    { draw: SHAPES.text("Q-SUMMIT"), color: ["255,255,255", "150,190,255"], hold: 1300 },
+    { draw: SHAPES.text("Q26"), color: ["255,209,102", "255,255,255"], hold: 900 },
+  ], { idle: true, dark: .45, done: reveal, cy: .3 });
+}
+const ratingWord = (score, free) => free ? "DANKE!" : score >= 85 ? "LEGENDÄR" : score >= 75 ? "STARK" : score >= 62 ? "GESCHAFFT" : "KNAPP!";
+
+// ---------------- Q-Wrapped ----------------
+const CHAIR_TYPES = [
+  { icon: "🚒", name: "Krisen-Feuerwehr", desc: "Wo es brennt, bist du schon da. Kaum eine Anfrage blieb liegen.", score: t => t.decisions * 1.1 - t.missed * 6 },
+  { icon: "🤝", name: "Networking-Maschine", desc: "Kein Speaker war vor dir sicher. Dein Album ist legendär.", score: t => t.selfies * 6 },
+  { icon: "☕", name: "Koffein-Kraftwerk", desc: "Dein Blut besteht zu 40 Prozent aus Kiosk-Kaffee.", score: t => t.coffees * 7 },
+  { icon: "💼", name: "Partner-Flüsterer", desc: "Die Partner wollen nächstes Jahr nur noch mit dir verhandeln.", score: t => t.top === "partner" ? 42 : 0 },
+  { icon: "🐣", name: "Ersti-Beschützer", desc: "Deine Erstis würden für dich durchs Feuer gehen. Oder zumindest Goodie Bags packen.", score: t => t.top === "erstis" ? 42 : 0 },
+  { icon: "💶", name: "Budget-Hüter", desc: "Finance hat dir einen Dankesbrief geschrieben. Auf Recyclingpapier, aus Kostengründen.", score: t => t.top === "budget" ? 42 : 0 },
+  { icon: "🎤", name: "Bühnen-Tier", desc: "Mainstage oder Dancefloor, egal: Wo ein Mikro ist, bist du.", score: t => t.hype * 45 + t.dance },
+  { icon: "🧭", name: "Schloss-Entdecker", desc: "Du kennst jeden Gang, jede Treppe und jedes knarzende Regal.", score: t => t.km * 22 + t.visited + (t.secret ? 35 : 0) },
+  { icon: "🌪️", name: "Chaos-Pilot", desc: "Geplant war wenig, geklappt hat erstaunlich viel.", score: t => t.missed * 7 },
+];
+function wrappedData() {
+  const tr = s.track, top = STATS.reduce((a, b) => s.stats[a.key] >= s.stats[b.key] ? a : b).key;
+  const locs = Object.entries(tr.loc).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const t = { decisions: s.decisions, missed: s.missed, selfies: s.selfies.size, coffees: s.coffees, top, km: tr.dist / TS * 1.3 / 1000,
+    hype: Math.max(s.hype.opening || 0, s.hype.closing || 0), dance: s.danceBest || 0, visited: s.visited.size, secret: s.flags.has("rittersaal"),
+    stairs: tr.stairs, fast: tr.fast, evening: tr.evening, pigeons: s.scared, king: s.flags.has("taubenkoenig"), locs, score: scoreNow(), free: MODE().free };
+  t.type = CHAIR_TYPES.map(c => [c, c.score(t)]).sort((a, b) => b[1] - a[1])[0][0];
+  return t;
+}
+const fmtDur = m => m >= 60 ? `${Math.floor(m / 60)} Std ${Math.round(m % 60)} Min` : `${Math.round(m)} Min`;
+function shareCard(t) {
+  const c = document.createElement("canvas"); c.width = 1080; c.height = 1920;
+  const g = c.getContext("2d");
+  const bg = g.createLinearGradient(0, 0, 1080, 1920); bg.addColorStop(0, "#0b1640"); bg.addColorStop(.55, "#1f4fd8"); bg.addColorStop(1, "#6d3bd6");
+  g.fillStyle = bg; g.fillRect(0, 0, 1080, 1920);
+  for (let k = 0; k < 160; k++) { g.fillStyle = `rgba(255,255,255,${.15 + hash(k, 2) * .5})`; const r = 1 + hash(k, 5) * 3; g.beginPath(); g.arc(hash(k, 1) * 1080, hash(1, k) * 900, r, 0, 7); g.fill(); }
+  g.textAlign = "center"; g.fillStyle = "#ffd166"; g.font = "800 44px system-ui, sans-serif"; g.fillText("Q-SUMMIT 2026 · WRAPPED", 540, 150);
+  g.fillStyle = "#0b1640"; g.fillRect(380, 210, 320, 320); drawMyFace(g, 390, 220, 300);
+  g.fillStyle = "#fff"; g.font = "900 96px system-ui, sans-serif"; g.fillText((me.name || "Chair").toUpperCase(), 540, 650);
+  g.font = "600 40px system-ui, sans-serif"; g.fillStyle = "#cfe0ff"; g.fillText(`Chair · ${MODE().icon} ${MODE().name}`, 540, 715);
+  g.font = "120px system-ui, sans-serif"; g.fillText(t.type.icon, 540, 880);
+  g.fillStyle = "#fff"; g.font = "900 64px system-ui, sans-serif"; g.fillText(t.type.name, 540, 975);
+  const stats = [[t.free ? "🎈" : t.score, t.free ? "Freispiel" : "Score"], [t.decisions, "Entscheidungen"], [t.selfies, "Speaker-Selfies"], [t.coffees, "Kaffee"]];
+  stats.forEach(([v, l], k) => {
+    const x = 120 + (k % 2) * 440, y = 1060 + Math.floor(k / 2) * 250;
+    g.fillStyle = "rgba(255,255,255,.12)"; roundRect(g, x, y, 400, 210, 28); g.fill();
+    g.fillStyle = "#fff"; g.font = "900 96px system-ui, sans-serif"; g.fillText(String(v), x + 200, y + 115);
+    g.fillStyle = "#cfe0ff"; g.font = "600 36px system-ui, sans-serif"; g.fillText(l, x + 200, y + 172);
+  });
+  if (t.locs[0]) { g.fillStyle = "#fff"; g.font = "700 44px system-ui, sans-serif"; g.fillText(`Lieblingsort: ${LOCS[t.locs[0][0]].label}`, 540, 1620); }
+  g.fillStyle = "#ffd166"; g.font = "700 40px system-ui, sans-serif"; g.fillText("Where innovators shape tomorrow", 540, 1760);
+  g.fillStyle = "#cfe0ff"; g.font = "500 34px system-ui, sans-serif"; g.fillText("Spiel selbst: jonathan-ernst.github.io/q-summit-game", 540, 1830);
+  return c;
+}
+function showWrapped(done) {
+  const t = wrappedData();
+  const nm = me.name ? esc(me.name) : "Chair";
+  const fav = t.locs[0], favTxt = fav ? `${LOCS[fav[0]].icon} ${LOCS[fav[0]].label}` : "🤷 Überall ein bisschen";
+  const maxMin = fav ? fav[1] : 1;
+  const cards = [
+    { bg: "linear-gradient(160deg,#0b1640,#1f4fd8)", html: `<div class="w-kicker">Q-Summit 2026</div><div class="w-big">Deine Q26.<br>Wrapped.</div><p>${nm}, zwei Tage Schloss liegen hinter dir. Schauen wir mal, was du so getrieben hast.</p><div class="w-emoji">🎁</div>` },
+    { bg: "linear-gradient(160deg,#1f4fd8,#00a6c8)", html: `<div class="w-kicker">Entscheidungen</div><div class="w-num">${t.decisions}</div><p>Mal hast du als Chair entschieden.${t.fast != null ? ` Die schnellste Antwort kam nach <b>${Math.max(1, Math.round(t.fast))} Minuten</b>.` : ""}</p><p>${t.evening ? `<b>${t.evening}</b> davon nach 18 Uhr, als alle anderen schon an der Bar waren.` : "Nach 18 Uhr hattest du Feierabend. Respekt."}</p>${t.missed ? `<p class="w-small">${t.missed}× hat jemand ohne dich entschieden. Passiert.</p>` : `<p class="w-small">Und keine einzige verpasst. 👀</p>`}` },
+    { bg: "linear-gradient(160deg,#6d3bd6,#e94e8a)", html: `<div class="w-kicker">Dein Lieblingsort</div><div class="w-big">${favTxt}</div><p>${fav ? fmtDur(fav[1]) : ""} hast du dort verbracht.</p><div class="w-bars">${t.locs.map(([k, m]) => `<div><span>${LOCS[k].icon} ${LOCS[k].label}</span><i style="width:${Math.max(8, m / maxMin * 100)}%"></i><small>${fmtDur(m)}</small></div>`).join("")}</div>` },
+    { bg: "linear-gradient(160deg,#0b6e4f,#3ecf8e)", html: `<div class="w-kicker">Unterwegs</div><div class="w-num">${t.km.toFixed(1).replace(".", ",")} km</div><p>bist du durchs Schloss gelaufen. ${t.stairs ? `Davon <b>${t.stairs}×</b> die Treppe ins OG und zurück.` : "Die Treppe ins OG hast du nie genommen. Speed Dating vermisst dich."}</p><p class="w-small">${t.visited} von ${Object.keys(LOCS).length} Orten entdeckt.${t.secret ? " Und einen, den es offiziell gar nicht gibt. 🕯️" : ""}</p>` },
+    { bg: "linear-gradient(160deg,#b5431f,#ffb347)", html: `<div class="w-kicker">Speaker & Koffein</div><div class="w-num">${t.selfies} 📸</div><p>Selfies mit Speakern der Q26${t.selfies >= SPEAKERS.length ? ". Das komplette Album!" : "."}</p><div class="w-num" style="font-size:44px">${t.coffees} ☕</div><p>${t.coffees >= 6 ? "Kaffee. Dein Herz schlägt im Viervierteltakt." : t.coffees ? "Kaffee. Erstaunlich wenig für einen Chair." : "Kein einziger Kaffee? Wer bist du?"}</p>` },
+    { bg: "linear-gradient(160deg,#3a4150,#8d939b)", html: `<div class="w-kicker">Tierisch</div><div class="w-emoji">🕊️</div><div class="w-num">${t.pigeons}</div><p>${t.pigeons ? "Schlosstauben hast du aufgescheucht. Die Tauben erinnern sich." : "Keine einzige Taube aufgescheucht. Die Tauben respektieren dich."}</p>${t.king ? `<p><b>👑 Und du hast den Taubenkönig besiegt.</b> Das Volk der Tauben hat einen neuen Herrscher.</p>` : ""}` },
+    { bg: "linear-gradient(160deg,#0b1640,#6d3bd6)", html: `<div class="w-kicker">Dein Chair-Typ</div><div class="w-emoji big">${t.type.icon}</div><div class="w-big">${t.type.name}</div><p>${t.type.desc}</p>` },
+    { bg: "linear-gradient(160deg,#0b1640,#1f4fd8)", share: true, html: `<div class="w-kicker">Zum Teilen</div><img class="w-card" id="wcard" alt="Deine Q26 als Bild"><div class="w-actions"><button class="btn gold" id="wsave">⬇️ Bild speichern</button>${navigator.share ? `<button class="btn secondary" id="wshare">📤 Teilen</button>` : ""}<button class="btn secondary" id="wdone">Zur Zeitung ▶</button></div>` },
+  ];
+  let k = 0, timer = 0;
+  const token = showWrapped.token = {};
+  const html = () => `<div class="wrapped" style="background:${cards[k].bg}">
+    <div class="w-prog">${cards.map((_, i) => `<span><i class="${i < k ? "full" : i === k ? "run" : ""}"></i></span>`).join("")}</div>
+    <button class="w-x" id="wx">✕</button>
+    <div class="w-body" id="wbody">${cards[k].html}</div>
+    ${cards[k].share ? "" : `<div class="w-tap"><span id="wprev"></span><span id="wnext"></span></div>`}</div>`;
+  const finish = () => { clearTimeout(timer); screenKeys = null; done(); };
+  const show = () => {
+    clearTimeout(timer);
+    if (showWrapped.token !== token) return;
+    showOverlay(html(), "wrapped-ov");
+    $("wx").onclick = finish;
+    if (cards[k].share) {
+      const c = shareCard(t), url = c.toDataURL("image/png");
+      $("wcard").src = url;
+      $("wsave").onclick = () => { const a = document.createElement("a"); a.href = url; a.download = `q26-wrapped-${(me.name || "chair").toLowerCase()}.png`; document.body.appendChild(a); a.click(); a.remove(); };
+      if ($("wshare")) $("wshare").onclick = () => c.toBlob(b => {
+        const file = new File([b], "q26-wrapped.png", { type: "image/png" });
+        const data = { title: "Meine Q26", text: `Ich war ${t.type.name} auf der Q-Summit 2026 ${t.type.icon}`, url: "https://jonathan-ernst.github.io/q-summit-game/" };
+        navigator.share(navigator.canShare?.({ files: [file] }) ? { ...data, files: [file] } : data).catch(() => {});
+      });
+      $("wdone").onclick = finish;
+    } else {
+      $("wprev").onclick = () => { if (k > 0) { k--; show(); } };
+      $("wnext").onclick = () => { k++; show(); };
+      timer = setTimeout(() => { k++; show(); }, 6000);
+    }
+    sfx.pick();
+  };
+  screenKeys = e => { if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") { if (!cards[k].share) { k++; show(); } else finish(); } if (e.key === "ArrowLeft" && k > 0) { k--; show(); } if (e.key === "Escape") finish(); };
+  show();
+}
+
+// ---------------- Geheimnisse ----------------
+// 1. Das alte Regal ganz hinten im Lagergang ist eine Tür zum Rittersaal.
+// 2. Wer genug Tauben aufscheucht, ruft den Taubenkönig.
+// 3. Konami-Code (oder 7× aufs Logo tippen): Disco-Schloss.
+const RITTER_SPOT = [3, 45], RITTER_IN = [60, 9];
+function secretChecks(dt) {
+  const p = s.player, [i, j] = tileOf(p);
+  if (i === RITTER_SPOT[0] && j === RITTER_SPOT[1] && !p.path.length) {
+    s.secretT = (s.secretT || 0) + dt;
+    if (s.secretT > .5 && !s.secretHint) { s.secretHint = true; infoToast("🕯️ Das alte Regal knarzt…"); }
+    if (s.secretT > 1.6) {
+      s.secretT = 0; s.secretHint = false;
+      fadeTo(true, () => {
+        placeAt(p, ...RITTER_IN); p.dir = "up"; s.camSnap = true; s.track.stairs += 0;
+        if (!s.flags.has("rittersaal")) { s.flags.add("rittersaal"); unlock("geheimgang"); }
+        infoToast("🏰 Ein geheimer Rittersaal!");
+        fadeTo(false, () => {});
+      });
+    }
+  } else { s.secretT = 0; s.secretHint = false; }
+  // Taubenkönig
+  if (!s.king && !s.kingDone && s.scared >= 30 && s.mode === "play") {
+    const [ki, kj] = pick(ZONES.innovillage);
+    s.king = { x: ki * TS + 8, y: kj * TS + 12, hits: 0, hop: 2, dir: 1 };
+    infoToast("👑 Der Taubenkönig ist im Schneckenhof erschienen!");
+    pushMsg("team", { from: "Franz", text: "LEUTE. Im Schneckenhof steht eine Taube mit KRONE 👑🕊️ Chair, mach was!!" });
+  }
+  const k = s.king;
+  if (k) {
+    k.hop -= dt;
+    if (k.hop < 0) { k.hop = .8 + Math.random() * 1.2; k.dir = Math.random() < .5 ? -1 : 1; const nx = k.x + k.dir * rand(4, 10); if (isWalk(Math.floor(nx / TS), Math.floor(k.y / TS))) k.x = nx; }
+    if (Math.hypot(k.x - p.x, k.y - p.y) < 20 && s.t > (k.cool || 0)) {
+      k.hits++; k.cool = s.t + .8; sfx.flap();
+      for (let n = 0; n < 14; n++) s.confetti.push({ x: k.x - cam.x, y: k.y - 10 - cam.y, vx: (Math.random() - .5) * 80, vy: -20 - Math.random() * 40, c: pick(["#ffffff", "#c9ccd2", "#ffd166"]), r: Math.random() * 6 });
+      if (k.hits >= 5) {
+        s.king = null; s.kingDone = true; s.flags.add("taubenkoenig"); unlock("taubenkoenig");
+        applyFx({ participants: 4, team: 3 }); spawnConfetti();
+        infoToast("👑 Der Taubenkönig verneigt sich. Die Tauben haben einen neuen Herrscher: dich.");
+        pushMsg("marketing", { from: "Jordis", text: "Das Video vom Taubenkönig hat 20k Views 😭👑" });
+      } else {
+        const far = ZONES.innovillage.concat(ZONES.food).filter(([a, b]) => Math.hypot(a * TS - p.x, b * TS - p.y) > 90);
+        const [ni, nj] = pick(far.length ? far : ZONES.innovillage); k.x = ni * TS + 8; k.y = nj * TS + 12;
+        infoToast(`👑 Erwischt! ${k.hits}/5 · Er flattert davon…`);
+      }
+    }
+  }
+}
+function drawKing(ctx, k, t) {
+  const x = Math.round(k.x), y = Math.round(k.y), d = k.dir, b = Math.round(Math.sin(t * 6) * 1);
+  ellipse(ctx, x, y, 7, 2, "rgba(0,0,0,.25)");
+  px(ctx, x - 7, y - 10 + b, 14, 8, "#8d939b"); px(ctx, x - 7, y - 10 + b, 14, 2, "#a3a9b1"); px(ctx, x - 6 * d - (d > 0 ? 3 : 0), y - 8 + b, 4, 3, "#5d636b");
+  px(ctx, x + (d > 0 ? 4 : -9), y - 15 + b, 5, 5, "#6b7280"); px(ctx, x + (d > 0 ? 5 : -8), y - 11 + b, 3, 2, "#4fa07a");
+  px(ctx, x + (d > 0 ? 9 : -11), y - 13 + b, 2, 2, "#d9a66b"); px(ctx, x + (d > 0 ? 6 : -7), y - 14 + b, 1, 1, "#111");
+  px(ctx, x - 2, y - 2, 2, 2, "#d77f86"); px(ctx, x + 2, y - 2, 2, 2, "#d77f86");
+  const cx = x + (d > 0 ? 4 : -9);
+  px(ctx, cx, y - 19 + b, 5, 3, "#ffd166"); px(ctx, cx, y - 21 + b, 1, 2, "#ffd166"); px(ctx, cx + 2, y - 22 + b, 1, 3, "#ffd166"); px(ctx, cx + 4, y - 21 + b, 1, 2, "#ffd166"); px(ctx, cx + 2, y - 18 + b, 1, 1, "#e63946");
+  px(ctx, x - 9, y - 12 + b, 3, 7, "#9b1c2c"); px(ctx, x - 9, y - 12 + b, 3, 1, "#ffffff");
+}
+let discoOn = false, konami = [];
+const KONAMI = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a"];
+function toggleDisco() {
+  discoOn = !discoOn;
+  $("game").classList.toggle("disco", discoOn);
+  infoToast(discoOn ? "🪩 DISCO-SCHLOSS! (nochmal zum Ausschalten)" : "Disco aus. Schade eigentlich.");
+  if (discoOn) unlock("disco");
+}
+function konamiKey(k) {
+  konami.push(k); if (konami.length > KONAMI.length) konami.shift();
+  if (konami.join() === KONAMI.join()) { konami = []; toggleDisco(); }
+}
+
 // ---------------- Update-Schleife ----------------
 function update(dt) {
   if (!s) return;
@@ -5137,6 +5757,11 @@ function update(dt) {
     s.min += dt * 1000 / MS_PER_MIN;
     s.energy = Math.max(0, s.energy - dt * 1000 / MS_PER_MIN * ENERGY_DRAIN * modFactor("drain"));
     updatePlayer(dt);
+    // Für Q-Wrapped: Wege und Aufenthaltsorte mitschreiben
+    const pl = s.player;
+    if (s.lastP) { const dd = Math.hypot(pl.x - s.lastP[0], pl.y - s.lastP[1]); if (dd < 40) s.track.dist += dd; }
+    s.lastP = [pl.x, pl.y];
+    const lk = nearestLocKey(pl.x, pl.y); s.track.loc[lk] = (s.track.loc[lk] || 0) + dt * 1000 / MS_PER_MIN;
 
     const phase = JSON.stringify(crowdWeights());
     if (phase !== s.phaseKey) { s.phaseKey = phase; for (const n of s.npcs) if (n.kind === "crowd") n.wait = Math.min(n.wait, Math.random() * 3); }
@@ -5153,7 +5778,7 @@ function update(dt) {
     expireTasks();
     if (s.mode !== "play") return;
     spawnSpeakers();
-    if (!SIM()) { updateWorldChecks(dt); updateBarks(dt); }
+    if (!SIM()) { updateWorldChecks(dt); updateBarks(dt); secretChecks(dt); }
     if (s.day === 0 && s.min >= DAYS[0].end) { endDay(); return; }
     if (!SIM() && !s.party) setMusic(isNight() ? "night" : "day");
   }
@@ -5195,7 +5820,8 @@ const LIGHTS = [
   { x: 43.5 * TS, y: 22.5 * TS, r: 40, c: "255,200,120", i: .8 }, { x: 20 * TS, y: 9.5 * TS, r: 60, c: "255,230,180", i: .5 },
   { x: 38 * TS, y: 9.5 * TS, r: 60, c: "255,230,180", i: .5 }, { x: 30 * TS, y: 5 * TS, r: 70, c: "255,140,200", i: .6 },
   { x: 16 * TS, y: 4 * TS, r: 50, c: "255,240,210", i: .5 }, { x: 37 * TS, y: 4 * TS, r: 50, c: "255,240,210", i: .5 },
-  { x: 11 * TS, y: 45 * TS, r: 50, c: "255,220,150", i: .5 }, { x: 45 * TS, y: 45 * TS, r: 50, c: "255,230,180", i: .5 },
+  { x: 11 * TS, y: 45 * TS, r: 50, c: "255,220,150", i: .5 }, { x: 3.5 * TS, y: 43.5 * TS, r: 22, c: "255,190,90", i: .9 },
+  { x: 56 * TS, y: 3.5 * TS, r: 70, c: "255,214,140", i: .9 }, { x: 64 * TS, y: 3.5 * TS, r: 70, c: "255,214,140", i: .9 }, { x: 45 * TS, y: 45 * TS, r: 50, c: "255,230,180", i: .5 },
 ];
 const BULBS = [];
 for (const pts of STRINGS) for (let k = 1; k < pts.length - 1; k += 2) BULBS.push(pts[k]);
@@ -5396,8 +6022,10 @@ function render() {
 
   const ents = s.mode === "title" ? [...s.npcs] : p.hidden ? [...s.npcs] : [...s.npcs, p];
   const drawList = ents.map(e => ({ y: e.y, e })).concat(s.pigeons.map(pg => ({ y: pg.fly ? pg.gy : pg.y, pg })));
+  if (s.king) drawList.push({ y: s.king.y, king: true });
   drawList.sort((a2, b2) => a2.y - b2.y);
   for (const d of drawList) {
+    if (d.king) { if (s.king) drawKing(ctx, s.king, s.t); continue; }
     if (d.pg) { if (d.pg.x > cx - 10 && d.pg.x < cx + cw + 10 && d.pg.y > cy - 40 && d.pg.y < cy + ch + 10) drawPigeon(ctx, d.pg, s.t); continue; }
     const e = d.e;
     if (e.x < cx - 16 || e.x > cx + cw + 16 || e.y < cy - 8 || e.y > cy + ch + 28) continue;
@@ -5411,7 +6039,7 @@ function render() {
 
   // Namensschilder und Sprechblasen landen auf der scharfen Label-Ebene
   labelsQ.length = 0;
-  const sameFloor = e => (e.y < OG_EDGE) === (p.y < OG_EDGE);
+  const sameFloor = e => floorId(e.x, e.y) === floorId(p.x, p.y);
   if (s.mode !== "title" && s.mode !== "scene" && !s.party) {
     for (const n of s.npcs) {
       if (!n.name || n.kind === "static") continue;
@@ -5463,10 +6091,10 @@ function render() {
   }
   // Die andere Etage ausblenden: Wer oben ist, sieht das Erdgeschoss nicht und umgekehrt
   if (s.mode !== "title") {
-    const up = p.y < OG_EDGE;
+    const f = floorId(p.x, p.y);
     ctx.fillStyle = "#0a1030";
-    if (up) ctx.fillRect(cx, OG_EDGE - 6, cw, cy + ch - OG_EDGE + 6);
-    else if (cy < OG_EDGE) ctx.fillRect(cx, cy, cw, OG_EDGE - cy - 6);
+    if (f === 0) { if (cy < OG_EDGE) ctx.fillRect(cx, cy, cw, OG_EDGE - cy - 6); }
+    else { const [rx, ry, rw, rh] = FLOOR_RECT[f]; ctx.beginPath(); ctx.rect(cx, cy, cw, ch); ctx.rect(rx, ry, rw, rh); ctx.fill("evenodd"); }
   }
   ctx.restore();
   drawLabels(cx, cy);
@@ -5556,6 +6184,7 @@ canvas.addEventListener("pointerdown", e => {
 
 document.addEventListener("keydown", e => {
   const k = e.key.toLowerCase();
+  if (!(e.target instanceof HTMLInputElement)) konamiKey(k);
   if (introKeys) return introKeys(e);
   if (coachKeys) return coachKeys(e);
   if (dialogKeys) return dialogKeys(e);

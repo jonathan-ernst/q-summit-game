@@ -1,4 +1,4 @@
-# Q-Summit: Feel the Q Spirit
+# Q-Summit: Where innovators shape tomorrow
 
 Ein Pixel-Art-Spiel im Browser: Du bist Chair der Q-Summit und läufst zwei Konferenztage lang durchs Schloss. Leute aus dem Team brauchen dich, das Handy klingelt ständig, und du musst Team, Erstis, Partner, Speaker, Participants und Budget bei Laune halten bis zur Afterparty. Fällt ein Wert auf 0, ist die Q vorbei.
 
@@ -15,6 +15,10 @@ Oder `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Dat
 - **Intro:** Wecker am Q-Day (Schlummern oder Aufstehen), Fahrt mit der Linie 5, Ankunft an der Haltestelle Schloss, Kamerafahrt über den Ehrenhof
 - **Karte nach dem echten Ostflügel:** Von der Haltestelle an der Bismarckstraße geht es geradeaus durch den Haupteingang ins Foyer mit Check-in, Infopoint und Garderobe. Links liegt der Lagergang, rechts der Gang zum Rest der Uni. Geradeaus kommt der Kiosk mit Couches, links davon die Mainstage (SO108), rechts Speaker-Lounge und Hackathon. Durch den Kiosk geht es raus in den Schneckenhof mit Innovillage, Bühne, Bar und Essenszelten, dahinter liegen Hays Forum und Qube
 - **1. Obergeschoss:** Die Treppe im Foyer führt in eine eigene Etage mit Speed Dating (direkt oben an der Treppe), Workshops links und rechts und der Campfire Session. Die jeweils andere Etage wird ausgeblendet
+- **Drohnenshow:** Beim Start fliegen Hunderte Pixel-Drohnen (Dronivo ist echter Partner) als Schloss, Q-Logo und Schriftzug über den Schneckenhof. Beim Finale der Afterparty schreiben sie dein Ergebnis und deinen Namen in den Himmel
+- **Badge und Pixel-Selfie:** Vor dem ersten Spiel gibst du deinen Namen ein, dein Badge hängt am Lanyard und lässt sich herumschleudern. Optional rechnet die Kamera dein Gesicht live in Pixel-Art um. Es landet auf Badge, Speaker-Selfies und Wrapped, die Figur übernimmt Haar- und Hautfarbe. Alles bleibt im Browser. Die Leute auf der Q sprechen dich mit Namen an
+- **Q-Wrapped:** Am Ende kommen Story-Karten wie bei Spotify Wrapped: Entscheidungen, Lieblingsort, gelaufene Kilometer, Selfies, Kaffee, Tauben und dein Chair-Typ. Danach gibt es eine Karte im Story-Format zum Speichern und Teilen
+- **Geheimnisse:** ein versteckter Rittersaal (hinten links im Lagergang vor dem alten Regal warten), der Taubenkönig (genug Tauben aufscheuchen) und das Disco-Schloss (Konami-Code oder siebenmal aufs Logo tippen)
 - **Vier Spielmodi:** Leicht, Normal, Chaos (weniger Zeit, mehr Anfragen, härtere Folgen) und Freispiel (kein Game Over, doppelt so viel Zeit, ohne Score). Rekorde werden pro Modus gespeichert
 - **Zufällige Tagesabläufe:** Jeder Tag würfelt eine oder zwei Tageslagen aus, etwa Regentag, Hitzewelle, Bahnstreik, Großer Andrang, Presse vor Ort, Sparkurs, Partner-Laune, Ersti-Kater oder WLAN-Ausfall. Dazu kommen Speaker in zufälliger Reihenfolge und verschobene Minigames
 - **Grafik:** Wolkenschatten über den Außenflächen, Blütenblätter im Wind, weiche Schatten, Dächer mit First und Kaminen, Marmor mit Adern, Vignette, Lichter bei Nacht und scharfe Namensschilder und Sprechblasen in voller Bildschirmauflösung
