@@ -1160,6 +1160,7 @@ const EVENTS = [
 // Hintergrund-Nachrichten in den Chats (keine Entscheidung nötig).
 // from_/to: Zeitfenster in Stunden, day: nur an diesem Tag, requires: nur nach dieser Entscheidung
 const AMBIENT = [
+  { chat: "team", from: "Julius", text: "Am Infopoint fragen dauernd Leute nach verlorenen Sachen 😅 Wer was rumliegen sieht: bitte mitbringen! 📦" },
   { chat: "team", from: "Franz", text: "Airhockey-Turnier in der Entertainment-Ecke! Wer traut sich gegen mich? 🏒😤" },
   { chat: "team", from: "Franz", text: "Ganz hinten links im Lager steht so ein uraltes Regal. Wenn man davor stehen bleibt, knarzt es 👻" },
   { chat: "team", from: "Franz", text: "Wer hat das Gaffa? 🙏" },
@@ -1673,6 +1674,8 @@ const ACHIEVEMENTS = [
   { id: "taubenkoenig", icon: "👑", name: "Taubenkönig",      desc: "Den Taubenkönig fünfmal erwischt." },
   { id: "disco",      icon: "🪩", name: "Disco-Schloss",      desc: "Das geheime Disco-Schloss eingeschaltet." },
   { id: "airhockey",  icon: "🏒", name: "Airhockey-Champion", desc: "Ein Airhockey-Match in der Entertainment-Ecke gewonnen." },
+  { id: "fundbuero",  icon: "📦", name: "Fundbüro-Held",      desc: "5 Fundsachen zum Infopoint gebracht." },
+  { id: "highfive",   icon: "✋", name: "High-Five-Maschine", desc: "15 High Fives mit dem Team." },
 ];
 
 // Zeitung am Ende: Geschichten zu Entscheidungen
@@ -2686,7 +2689,7 @@ function drawObj(ctx, o) {
     case "Ş": { // Sponsor-Wall mit Partnerlogos
       px(ctx, X, Y - 14, w, 28, "#f4f4f2"); px(ctx, X, Y - 14, w, 2, "#ffffff"); px(ctx, X, Y + 12, w, 2, "#b8bccb");
       px(ctx, X, Y - 14, w, 6, "#1f4fd8"); pixTextC(ctx, "Q-SUMMIT 2026", X + w / 2, Y - 13, "#fff");
-      BOOTH_SIGNS.slice(0, 6).forEach((n, k) => { const cx = X + 9 + (k % 3) * ((w - 18) / 2), cy = Y - 5 + Math.floor(k / 3) * 8; pixTextC(ctx, n.split(" ")[0].slice(0, 6), cx, cy, ["#e63946", "#0b1640", "#1fae74", "#2f6bff", "#9b51e0", "#ff8a3d"][k]); });
+      BOOTH_SIGNS.slice(0, 6).forEach((n, k) => { const cx = X + w / 4 + (k % 2) * (w / 2), cy = Y - 6 + Math.floor(k / 2) * 6; pixTextC(ctx, n.split(" ")[0].slice(0, 7), cx, cy, ["#e63946", "#0b1640", "#1fae74", "#2f6bff", "#9b51e0", "#ff8a3d"][k]); });
       px(ctx, X + 2, Y + 14, 2, 2, "#666"); px(ctx, X + w - 4, Y + 14, 2, 2, "#666");
       break;
     }
@@ -3424,6 +3427,7 @@ function newState() {
     energy: 80, coffees: 0, coffeeCd: 0, pigeons: [], tram: null, nextTram: 20, barks: [], nextBark: 3,
     met: new Set(), selfies: new Set(), visited: new Set(), scared: 0, runAch: new Set(), snap: null,
     diff: newState.diff || "normal", mods: [], modHistory: [], mgJit: {}, king: null, kingDone: false,
+    lost: [], carry: [], nextLost: DAYS[0].start + 30, returned: 0, highfives: 0,
     track: { loc: {}, dist: 0, stairs: 0, fast: null, evening: 0 },
     hype: {}, selfieLooks: {}, danceBest: 0, erstiMin: 100, speakerPlan: [], camPan: null, sceneWait: null, hud: false, fpPlace: null,
   };
@@ -4118,6 +4122,7 @@ function renderMinimap() {
   const k = 3 / TS;
   for (const t of s.tasks) if (t.npc) { mctx2.fillStyle = t.kind === "mg" ? "#ffd166" : (Math.floor(s.t * 3) % 2 ? "#ff5d6c" : "#fff"); mctx2.fillRect(t.npc.x * k - 3, t.npc.y * k - 7, 6, 6); }
   for (const n of s.npcs) if (n.kind === "speaker" && !s.met.has(n.sp.name)) { mctx2.fillStyle = "#9fe3ff"; mctx2.fillRect(n.x * k - 2, n.y * k - 5, 4, 4); }
+  for (const l of s.lost || []) { mctx2.fillStyle = "#ffd166"; mctx2.fillRect(l.x * k - 1.5, l.y * k - 4, 3, 3); }
   mctx2.fillStyle = "#0b1640"; mctx2.fillRect(s.player.x * k - 4, s.player.y * k - 8, 8, 8);
   mctx2.fillStyle = "#2f6bff"; mctx2.fillRect(s.player.x * k - 3, s.player.y * k - 7, 6, 6);
 }
@@ -4993,6 +4998,7 @@ function renderHow() {
       <div><span>📱</span><span>Im Handy warten Chats auf Antworten. Außerdem: Speaker-Album, Q-App und Erfolge.</span></div>
       <div><span>🎮</span><span>Minigames: Goodie Bags, Badge-Ausgabe, Infopoint, Mic-Check, Reden auf der Mainstage und der Dance-Off.</span></div>
       <div><span>📸</span><span>Echte Speaker der Q-Summit 2026 laufen durchs Schloss. Sag Hallo und sammle Selfies.</span></div>
+      <div><span>🎒</span><span>Nebenbei: Überall liegen Fundsachen rum (gelb auf der Minimap). Bring sie zum Infopoint. Und klatsch das Team ab, wenn du vorbeiläufst ✋ In der Entertainment-Ecke wartet Airhockey.</span></div>
       <div><span>⏸</span><span>Im Dashboard teilst du die Erstis auf die Stationen ein und startest Maßnahmen.</span></div>
       <div><span>☕</span><span>Deine Energie sinkt. Kaffee gibt's am Kiosk, an der Müslibar im Hays Forum, am Kaffeewagen im Schneckenhof und backstage.</span></div>
       <div><span>⌨️</span><span>Tippen oder klicken zum Laufen · WASD/Pfeile · E reden · P Handy · M Karte · Esc Pause</span></div>
@@ -5662,7 +5668,7 @@ function wrappedData() {
   const locs = Object.entries(tr.loc).sort((a, b) => b[1] - a[1]).slice(0, 3);
   const t = { decisions: s.decisions, missed: s.missed, selfies: s.selfies.size, coffees: s.coffees, top, km: tr.dist / TS * 1.3 / 1000,
     hype: Math.max(s.hype.opening || 0, s.hype.closing || 0), dance: s.danceBest || 0, visited: s.visited.size, secret: s.flags.has("rittersaal"),
-    stairs: tr.stairs, fast: tr.fast, evening: tr.evening, pigeons: s.scared, king: s.flags.has("taubenkoenig"), locs, score: scoreNow(), free: MODE().free };
+    stairs: tr.stairs, fast: tr.fast, evening: tr.evening, returned: s.returned, highfives: s.highfives, pigeons: s.scared, king: s.flags.has("taubenkoenig"), locs, score: scoreNow(), free: MODE().free };
   t.type = CHAIR_TYPES.map(c => [c, c.score(t)]).sort((a, b) => b[1] - a[1])[0][0];
   return t;
 }
@@ -5700,7 +5706,7 @@ function showWrapped(done) {
     { bg: "linear-gradient(160deg,#0b1640,#1f4fd8)", html: `<div class="w-kicker">Q-Summit 2026</div><div class="w-big">Deine Q26.<br>Wrapped.</div><p>${nm}, zwei Tage Schloss liegen hinter dir. Schauen wir mal, was du so getrieben hast.</p><div class="w-emoji">🎁</div>` },
     { bg: "linear-gradient(160deg,#1f4fd8,#00a6c8)", html: `<div class="w-kicker">Entscheidungen</div><div class="w-num">${t.decisions}</div><p>Mal hast du als Chair entschieden.${t.fast != null ? ` Die schnellste Antwort kam nach <b>${Math.max(1, Math.round(t.fast))} Minuten</b>.` : ""}</p><p>${t.evening ? `<b>${t.evening}</b> davon nach 18 Uhr, als alle anderen schon an der Bar waren.` : "Nach 18 Uhr hattest du Feierabend. Respekt."}</p>${t.missed ? `<p class="w-small">${t.missed}× hat jemand ohne dich entschieden. Passiert.</p>` : `<p class="w-small">Und keine einzige verpasst. 👀</p>`}` },
     { bg: "linear-gradient(160deg,#6d3bd6,#e94e8a)", html: `<div class="w-kicker">Dein Lieblingsort</div><div class="w-big">${favTxt}</div><p>${fav ? fmtDur(fav[1]) : ""} hast du dort verbracht.</p><div class="w-bars">${t.locs.map(([k, m]) => `<div><span>${LOCS[k].icon} ${LOCS[k].label}</span><i style="width:${Math.max(8, m / maxMin * 100)}%"></i><small>${fmtDur(m)}</small></div>`).join("")}</div>` },
-    { bg: "linear-gradient(160deg,#0b6e4f,#3ecf8e)", html: `<div class="w-kicker">Unterwegs</div><div class="w-num">${t.km.toFixed(1).replace(".", ",")} km</div><p>bist du durchs Schloss gelaufen. ${t.stairs ? `Davon <b>${t.stairs}×</b> die Treppe ins OG und zurück.` : "Die Treppe ins OG hast du nie genommen. Speed Dating vermisst dich."}</p><p class="w-small">${t.visited} von ${Object.keys(LOCS).length} Orten entdeckt.${t.secret ? " Und einen, den es offiziell gar nicht gibt. 🕯️" : ""}</p>` },
+    { bg: "linear-gradient(160deg,#0b6e4f,#3ecf8e)", html: `<div class="w-kicker">Unterwegs</div><div class="w-num">${t.km.toFixed(1).replace(".", ",")} km</div><p>bist du durchs Schloss gelaufen. ${t.stairs ? `Davon <b>${t.stairs}×</b> die Treppe ins OG und zurück.` : "Die Treppe ins OG hast du nie genommen. Speed Dating vermisst dich."}</p>${t.returned || t.highfives ? `<p>${t.returned ? `📦 <b>${t.returned}</b> Fundsachen zurückgebracht. ` : ""}${t.highfives ? `✋ <b>${t.highfives}</b> High Fives verteilt.` : ""}</p>` : ""}<p class="w-small">${t.visited} von ${Object.keys(LOCS).length} Orten entdeckt.${t.secret ? " Und einen, den es offiziell gar nicht gibt. 🕯️" : ""}</p>` },
     { bg: "linear-gradient(160deg,#b5431f,#ffb347)", html: `<div class="w-kicker">Speaker & Koffein</div><div class="w-num">${t.selfies} 📸</div><p>Selfies mit Speakern der Q26${t.selfies >= SPEAKERS.length ? ". Das komplette Album!" : "."}</p><div class="w-num" style="font-size:44px">${t.coffees} ☕</div><p>${t.coffees >= 6 ? "Kaffee. Dein Herz schlägt im Viervierteltakt." : t.coffees ? "Kaffee. Erstaunlich wenig für einen Chair." : "Kein einziger Kaffee? Wer bist du?"}</p>` },
     { bg: "linear-gradient(160deg,#3a4150,#8d939b)", html: `<div class="w-kicker">Tierisch</div><div class="w-emoji">🕊️</div><div class="w-num">${t.pigeons}</div><p>${t.pigeons ? "Schlosstauben hast du aufgescheucht. Die Tauben erinnern sich." : "Keine einzige Taube aufgescheucht. Die Tauben respektieren dich."}</p>${t.king ? `<p><b>👑 Und du hast den Taubenkönig besiegt.</b> Das Volk der Tauben hat einen neuen Herrscher.</p>` : ""}` },
     { bg: "linear-gradient(160deg,#0b1640,#6d3bd6)", html: `<div class="w-kicker">Dein Chair-Typ</div><div class="w-emoji big">${t.type.icon}</div><div class="w-big">${t.type.name}</div><p>${t.type.desc}</p>` },
@@ -5824,38 +5830,48 @@ function playAirhockey() {
     <p class="note" id="ahmsg">Maus, Finger oder Pfeiltasten. Wer zuerst 5 Tore hat, gewinnt.</p>
     <button class="btn secondary" id="ahquit">Aufhören</button></div></div>`, "pause");
   const cv = $("ahc"), g = cv.getContext("2d");
-  const TW = 240, TH = 360, R1 = 17, RP = 9, GOAL = 90;
+  const TW = 240, TH = 360, R1 = 18, RP = 9, GOAL = 96, MAXP = 620, MAXAI = 360;
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   const cssW = Math.min(300, innerWidth - 60, (innerHeight - 260) * TW / TH);
   cv.style.width = cssW + "px"; cv.style.height = cssW * TH / TW + "px";
   cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssW * TH / TW * dpr);
   const sc = cv.width / TW;
-  const me = { x: TW / 2, y: TH - 50, vx: 0, vy: 0, tx: TW / 2, ty: TH - 50 }, ai = { x: TW / 2, y: 50, vx: 0, vy: 0 };
+  const pl = { x: TW / 2, y: TH - 50, vx: 0, vy: 0, tx: TW / 2, ty: TH - 50, kvx: 0, kvy: 0 }, ai = { x: TW / 2, y: 50, vx: 0, vy: 0, tx: TW / 2, ty: 50 };
   const puck = { x: TW / 2, y: TH / 2, vx: 0, vy: 0 };
-  let score = [0, 0], over = false, pause = .8, last = performance.now(), trail = [], aiSkill = .55 + Math.random() * .2;
-  const serve = toward => { puck.x = TW / 2; puck.y = TH / 2; puck.vx = (Math.random() - .5) * 80; puck.vy = toward * 120; pause = .9; trail = []; };
+  let score = [0, 0], over = false, pause = 1, last = performance.now(), trail = [], still = 0, cornerT = 0, mouse = false;
+  const skill = .45 + Math.random() * .15;
+  const serve = toward => { Object.assign(puck, { x: TW / 2, y: TH / 2, vx: (Math.random() - .5) * 60, vy: toward * 90 }); pause = 1; trail = []; still = 0; };
   serve(Math.random() < .5 ? 1 : -1);
   const toTable = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * TW, (e.clientY - r.top) / r.height * TH]; };
-  cv.onpointerdown = cv.onpointermove = e => { const [x, y] = toTable(e); me.tx = x; me.ty = y; };
+  cv.onpointerdown = cv.onpointermove = e => { const [x, y] = toTable(e); pl.tx = x; pl.ty = y; mouse = true; };
   cv.style.touchAction = "none";
   const held = new Set();
-  mgKeys = e => { const k = e.key.toLowerCase(); if (k.startsWith("arrow") || "wasd".includes(k)) { e.preventDefault(); held.add(k); } if (k === "escape") quit(); };
+  mgKeys = e => { const k = e.key.toLowerCase(); if (k.startsWith("arrow") || "wasd".includes(k)) { e.preventDefault(); held.add(k); mouse = false; } if (k === "escape") quit(); };
   const ku = e => held.delete(e.key.toLowerCase());
   document.addEventListener("keyup", ku);
+  // Schläger fährt mit begrenzter Geschwindigkeit auf sein Ziel zu
   const movePaddle = (p, tx, ty, maxV, dt, yMin, yMax) => {
     tx = clamp(tx, R1, TW - R1); ty = clamp(ty, yMin, yMax);
     let dx = tx - p.x, dy = ty - p.y; const d = Math.hypot(dx, dy), m = maxV * dt;
     if (d > m) { dx = dx / d * m; dy = dy / d * m; }
     p.vx = dx / dt; p.vy = dy / dt; p.x += dx; p.y += dy;
   };
-  const hit = p => {
+  const capSpeed = max => { const sp = Math.hypot(puck.vx, puck.vy); if (sp > max) { puck.vx *= max / sp; puck.vy *= max / sp; } };
+  const hit = (p, max) => {
     const dx = puck.x - p.x, dy = puck.y - p.y, d = Math.hypot(dx, dy);
-    if (d >= R1 + RP || d === 0) return;
-    const nx = dx / d, ny = dy / d;
+    if (d >= R1 + RP) return;
+    const nx = d ? dx / d : 0, ny = d ? dy / d : 1;
     puck.x = p.x + nx * (R1 + RP); puck.y = p.y + ny * (R1 + RP);
     const rv = (puck.vx - p.vx) * nx + (puck.vy - p.vy) * ny;
-    if (rv < 0) { puck.vx -= 1.9 * rv * nx; puck.vy -= 1.9 * rv * ny; sfx.pick(); }
-    const sp = Math.hypot(puck.vx, puck.vy); if (sp > 720) { puck.vx *= 720 / sp; puck.vy *= 720 / sp; }
+    if (rv < 0) { puck.vx -= 1.85 * rv * nx; puck.vy -= 1.85 * rv * ny; capSpeed(max); if (Math.abs(rv) > 40) sfx.pick(); }
+  };
+  const walls = () => {
+    if (puck.x < RP) { puck.x = RP; puck.vx = Math.abs(puck.vx) * .85; }
+    if (puck.x > TW - RP) { puck.x = TW - RP; puck.vx = -Math.abs(puck.vx) * .85; }
+    const inGoal = Math.abs(puck.x - TW / 2) < GOAL / 2 - RP / 2;
+    if (puck.y < RP) { if (inGoal) return 0; puck.y = RP; puck.vy = Math.abs(puck.vy) * .85; }
+    if (puck.y > TH - RP) { if (inGoal) return 1; puck.y = TH - RP; puck.vy = -Math.abs(puck.vy) * .85; }
+    return -1;
   };
   function goal(who) {
     score[who]++; $("ahscore").textContent = `${score[0]} : ${score[1]}`;
@@ -5880,37 +5896,53 @@ function playAirhockey() {
       <div class="fxlist">${fxChips(fx)}</div><button class="btn" id="ahcont">Weiter ▶</button></div></div>`, "pause");
     $("ahcont").onclick = close;
   }
-  function close() { mgKeys = null; document.removeEventListener("keyup", ku); hideOverlay(); if (s) s.mode = "play"; }
-  function quit() { over = true; close(); }
+  function close() { over = true; mgKeys = null; document.removeEventListener("keyup", ku); hideOverlay(); if (s) s.mode = "play"; }
+  function quit() { close(); }
   $("ahquit").onclick = quit;
+  function step(dt) {
+    // Spieler: Pfeiltasten beschleunigen sanft, die Maus zieht den Schläger hinterher
+    const kx = (held.has("arrowright") || held.has("d") ? 1 : 0) - (held.has("arrowleft") || held.has("a") ? 1 : 0);
+    const ky = (held.has("arrowdown") || held.has("s") ? 1 : 0) - (held.has("arrowup") || held.has("w") ? 1 : 0);
+    if (!mouse) {
+      const f = Math.min(1, dt * 8);
+      pl.kvx += (kx * 240 - pl.kvx) * f; pl.kvy += (ky * 240 - pl.kvy) * f;
+      pl.tx = pl.x + pl.kvx * dt; pl.ty = pl.y + pl.kvy * dt;
+    }
+    movePaddle(pl, pl.tx, pl.ty, mouse ? 700 : 260, dt, TH / 2 + R1, TH - R1);
+    // Gegner: langsamer als du, passt sich dem Spielstand an und schießt nicht so hart
+    const lead = score[1] - score[0], aiV = (190 + skill * 90) * clamp(1 - lead * .1, .7, 1.2);
+    if (puck.y < TH / 2 + 10) {
+      // von hinten an den Puck ran und Richtung deines Tors schieben
+      const gx = TW / 2 - puck.x, gy = TH - puck.y, gl = Math.hypot(gx, gy) || 1;
+      ai.tx = puck.x - gx / gl * (R1 + RP - 4); ai.ty = puck.y - gy / gl * (R1 + RP - 4);
+    } else { ai.tx = TW / 2 + (puck.x - TW / 2) * .45; ai.ty = 48; }
+    movePaddle(ai, ai.tx, ai.ty, aiV, dt, R1, TH / 2 - R1);
+    if (pause > 0) { pause -= dt; return; }
+    // Puck in kleinen Schritten, damit er nicht durch Schläger rutscht
+    for (let k = 0; k < 4; k++) {
+      const h = dt / 4;
+      puck.x += puck.vx * h; puck.y += puck.vy * h;
+      const gw = walls();
+      if (gw >= 0) return goal(gw);
+      hit(pl, MAXP); hit(ai, MAXAI);
+    }
+    puck.vx *= .995; puck.vy *= .995;
+    // Liegt der Puck still (z. B. in einer Ecke), bekommt er einen Schubs zur Mitte
+    const sp = Math.hypot(puck.vx, puck.vy);
+    still = sp < 35 ? still + dt : 0;
+    const corner = (puck.x < R1 + RP || puck.x > TW - R1 - RP) && (puck.y < R1 + RP || puck.y > TH - R1 - RP);
+    cornerT = corner ? cornerT + dt : 0;
+    if ((still > (puck.y < TH / 2 ? 1.2 : 3)) || cornerT > .9) {
+      puck.vx = (TW / 2 - puck.x) * 1.3; puck.vy = (puck.y < TH / 2 ? 1 : -1) * 120; still = 0; cornerT = 0;
+      if (puck.y < TH / 2) puck.y = Math.max(puck.y, R1 + RP + 2);
+    }
+  }
   function frame(now) {
     if (over || !document.body.contains(cv)) return;
-    const dt = Math.min(.033, (now - last) / 1000); last = now;
-    // Spieler
-    if (held.size) {
-      const kx = (held.has("arrowright") || held.has("d") ? 1 : 0) - (held.has("arrowleft") || held.has("a") ? 1 : 0);
-      const ky = (held.has("arrowdown") || held.has("s") ? 1 : 0) - (held.has("arrowup") || held.has("w") ? 1 : 0);
-      me.tx = me.x + kx * 60; me.ty = me.y + ky * 60;
-    }
-    movePaddle(me, me.tx, me.ty, 900, dt, TH / 2 + R1, TH - R1);
-    // Gegner: verteidigt das Tor und greift an, wenn der Puck in seiner Hälfte ist
-    const attack = puck.y < TH / 2 && puck.vy < 120;
-    const ax = attack ? puck.x : TW / 2 + (puck.x - TW / 2) * .5, ay = attack ? puck.y - 8 : 46;
-    movePaddle(ai, ax, ay, 260 + aiSkill * 300, dt, R1, TH / 2 - R1);
-    // Puck
-    if (pause > 0) pause -= dt;
-    else {
-      puck.x += puck.vx * dt; puck.y += puck.vy * dt;
-      puck.vx *= .996; puck.vy *= .996;
-      if (puck.x < RP) { puck.x = RP; puck.vx = Math.abs(puck.vx) * .9; }
-      if (puck.x > TW - RP) { puck.x = TW - RP; puck.vx = -Math.abs(puck.vx) * .9; }
-      const inGoal = Math.abs(puck.x - TW / 2) < GOAL / 2;
-      if (puck.y < RP) { if (inGoal) return goal(0), requestAnimationFrame(frame); puck.y = RP; puck.vy = Math.abs(puck.vy) * .9; }
-      if (puck.y > TH - RP) { if (inGoal) return goal(1), requestAnimationFrame(frame); puck.y = TH - RP; puck.vy = -Math.abs(puck.vy) * .9; }
-      hit(me); hit(ai);
-    }
+    const dt = Math.min(.033, (now - last) / 1000) || .016; last = now;
+    step(dt);
+    if (over) return;
     trail.push([puck.x, puck.y]); if (trail.length > 8) trail.shift();
-    // Zeichnen
     g.setTransform(sc, 0, 0, sc, 0, 0);
     const bg = g.createLinearGradient(0, 0, 0, TH); bg.addColorStop(0, "#e9f1ff"); bg.addColorStop(1, "#d6e4ff");
     g.fillStyle = bg; g.fillRect(0, 0, TW, TH);
@@ -5922,7 +5954,7 @@ function playAirhockey() {
     for (const [k, [x, y]] of trail.entries()) { g.globalAlpha = k / trail.length * .25; g.fillStyle = "#0b1640"; g.beginPath(); g.arc(x, y, RP, 0, 7); g.fill(); }
     g.globalAlpha = 1;
     g.fillStyle = "#111"; g.beginPath(); g.arc(puck.x, puck.y, RP, 0, 7); g.fill(); g.fillStyle = "#444"; g.beginPath(); g.arc(puck.x - 2, puck.y - 2, RP * .5, 0, 7); g.fill();
-    for (const [p, col] of [[me, "#e63946"], [ai, "#2f6bff"]]) {
+    for (const [p, col] of [[pl, "#e63946"], [ai, "#2f6bff"]]) {
       g.fillStyle = "rgba(0,0,0,.18)"; g.beginPath(); g.arc(p.x + 2, p.y + 3, R1, 0, 7); g.fill();
       g.fillStyle = col; g.beginPath(); g.arc(p.x, p.y, R1, 0, 7); g.fill();
       g.fillStyle = "#ffffff55"; g.beginPath(); g.arc(p.x, p.y, R1 * .62, 0, 7); g.fill();
@@ -5932,6 +5964,72 @@ function playAirhockey() {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+}
+
+// ---------------- Nebenbei: Fundsachen und High Fives ----------------
+// Überall im Schloss liegen Sachen rum. Wer sie zum Infopoint bringt, bekommt Dank von den Besitzer:innen.
+const LOST_ITEMS = [
+  ["🎧", "AirPods-Case", "Participant Tim", "MEINE AIRPODS 😭 Ich dachte, die sind weg. Danke!!"],
+  ["🏷️", "Badge von Max M.", "Participant Max", "Ohne Badge hätte mich keiner mehr reingelassen 🙏"],
+  ["🔑", "Schlüsselbund", "eine Speaker-Assistenz", "Das sind die Autoschlüssel vom Speaker. Du hast gerade eine Krise verhindert."],
+  ["🔋", "Powerbank", "Participant Ana", "Mein Handy hat noch 2 %. Du bist ein Held."],
+  ["🧥", "Jacke", "Participant Lukas", "Die hat meine Oma gestrickt. Danke 🥹"],
+  ["💾", "USB-Stick „Pitchdeck_FINAL_v7“", "ein Startup-Team", "DAS PITCHDECK! Wir pitchen in 20 Minuten 😱🙏"],
+  ["🥤", "halbvolle Mate", "Ersti Lina", "Oh, die war noch halb voll. Danke? 😅"],
+  ["🕶️", "Sonnenbrille", "jemand von PERI", "Ah, da ist sie. Stand die ganze Zeit auf dem Kopf, oder? 😎"],
+  ["📇", "Visitenkarten-Stapel", "ein Investor", "200 Visitenkarten, und ich hatte keine mehr. Danke!"],
+  ["🧣", "Schal", "Participant Jana", "Mein Lieblingsschal! ❤️"],
+  ["🍌", "einzelne Banane", "niemanden", "Keiner meldet sich. Die Banane bleibt ein Mysterium. 🍌"],
+  ["🪪", "Studierendenausweis", "Participant Felix", "Ohne den komm ich nicht in die Mensa. Lebensretter!"],
+];
+const LOST_ZONES = ["hall", "kiosk", "innovillage", "food", "og", "hays", "vorplatz", "lounge"];
+const HIGH_FIVES = ["✋ High Five!", "✋ Yes!", "🙌 Let's go!", "✋ Q26!", "🙌 Chair!"];
+function nebenbeiChecks(dt) {
+  const p = s.player;
+  // Neue Fundsache, höchstens drei liegen gleichzeitig rum
+  if (s.min >= s.nextLost && s.lost.length < 3 && !s.party) {
+    s.nextLost = s.min + rand(25, 45);
+    const used = new Set([...s.lost, ...s.carry].map(l => l.item[1]));
+    const free = LOST_ITEMS.filter(l => !used.has(l[1]));
+    const [i, j] = pick(ZONES[pick(LOST_ZONES)]);
+    if (free.length) s.lost.push({ x: i * TS + 8, y: j * TS + 11, item: pick(free), ph: Math.random() * 6 });
+  }
+  for (const l of [...s.lost]) if (Math.hypot(l.x - p.x, l.y - p.y) < 14 && floorId(l.x, l.y) === floorId(p.x, p.y)) {
+    s.lost = s.lost.filter(x => x !== l); s.carry.push(l); sfx.pick();
+    infoToast(`${l.item[0]} ${l.item[1]} gefunden! Bring's zum Infopoint im Foyer (🎒 ${s.carry.length})`);
+  }
+  const ip = LOCS.hall;
+  if (s.carry.length && Math.hypot(ip.x * TS + 8 - p.x, ip.y * TS + 12 - p.y) < 30) {
+    const back = s.carry; s.carry = [];
+    s.returned += back.length;
+    back.forEach((l, k) => setTimeout(() => s && pushMsg("team", { from: "Infopoint", text: `${l.item[0]} ${l.item[1]} geht an ${l.item[2]}: „${l.item[3]}“`, silent: k > 0 }), 400 + k * 1100));
+    applyFx({ participants: Math.min(4, back.length * 2) });
+    infoToast(`📦 ${back.length === 1 ? "Fundsache" : `${back.length} Fundsachen`} am Infopoint abgegeben!`);
+    if (s.returned >= 5) unlock("fundbuero");
+  }
+  // High Fives: Wer am Team vorbeiläuft, klatscht ab
+  for (const n of s.npcs) {
+    if (n.kind !== "team" || n.task || (n.hf || 0) > s.t) continue;
+    if (Math.hypot(n.x - p.x, n.y - p.y) < 13) {
+      n.hf = s.t + 45; s.highfives++;
+      s.barks = s.barks.filter(b => b.npc !== n);
+      s.barks.push({ npc: n, text: pick(HIGH_FIVES), until: s.t + 1.8 });
+      sfx.pick();
+      if (s.highfives >= 15) unlock("highfive");
+    }
+  }
+}
+function drawLostItems(ctx) {
+  const p = s.player;
+  for (const l of s.lost) {
+    if (floorId(l.x, l.y) !== floorId(p.x, p.y)) continue;
+    const tw = Math.sin(s.t * 4 + l.ph), pr = 6 + (Math.sin(s.t * 3 + l.ph) + 1) * 2;
+    ctx.strokeStyle = `rgba(255,209,102,${.55 + .35 * Math.sin(s.t * 3 + l.ph)})`; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.ellipse(l.x, l.y, pr, pr * .45, 0, 0, Math.PI * 2); ctx.stroke();
+    ellipse(ctx, l.x, l.y, 4, 1, "rgba(0,0,0,.25)");
+    if (tw > .3) { const gx = Math.round(l.x + 5), gy = Math.round(l.y - 13); px(ctx, gx - 2, gy, 5, 1, "#fff8d0"); px(ctx, gx, gy - 2, 1, 5, "#fff8d0"); }
+    labelsQ.push({ k: "emoji", x: l.x, y: l.y - 5 + Math.round(Math.sin(s.t * 3 + l.ph) * 1.5), text: l.item[0], size: 1.15 });
+  }
 }
 
 // ---------------- Update-Schleife ----------------
@@ -5974,7 +6072,7 @@ function update(dt) {
     expireTasks();
     if (s.mode !== "play") return;
     spawnSpeakers();
-    if (!SIM()) { updateWorldChecks(dt); updateBarks(dt); secretChecks(dt); }
+    if (!SIM()) { updateWorldChecks(dt); updateBarks(dt); secretChecks(dt); nebenbeiChecks(dt); }
     if (s.day === 0 && s.min >= DAYS[0].end) { endDay(); return; }
     if (!SIM() && !s.party) setMusic(isNight() ? "night" : "day");
   }
@@ -6163,7 +6261,7 @@ function drawLabels(cx, cy) {
   lctx.textAlign = "center"; lctx.textBaseline = "middle";
   for (const L of labelsQ) {
     const x = (L.x - cx) * f, y = (L.y - cy) * f;
-    if (L.k === "emoji") { lctx.font = `${fs * 1.3}px system-ui`; lctx.fillText(L.text, x, y); continue; }
+    if (L.k === "emoji") { lctx.font = `${fs * 1.3 * (L.size || 1)}px system-ui`; lctx.fillText(L.text, x, y); continue; }
     if (L.k === "name") {
       lctx.font = `700 ${fs * .85}px system-ui, -apple-system, sans-serif`;
       const w = lctx.measureText(L.text).width + fs * .9, h = fs * 1.35;
@@ -6239,6 +6337,7 @@ function render() {
 
   // Namensschilder und Sprechblasen landen auf der scharfen Label-Ebene
   labelsQ.length = 0;
+  if (s.mode !== "title") drawLostItems(ctx);
   const sameFloor = e => floorId(e.x, e.y) === floorId(p.x, p.y);
   if (s.mode !== "title" && s.mode !== "scene" && !s.party) {
     for (const n of s.npcs) {
