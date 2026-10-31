@@ -42,6 +42,10 @@
   #world.zoom { filter: brightness(1.15) blur(1px); }
   #labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity .2s; }
   #world.zoom + #labels { opacity: 0; }
+  .ah-panel { display: grid; gap: 10px; justify-items: center; padding: 14px; }
+  .ah-head { display: flex; justify-content: space-between; align-items: center; width: 100%; font-weight: 800; }
+  .ah-head b { font-family: var(--pix); font-size: 18px; color: var(--warn); }
+  #ahc { border-radius: 14px; box-shadow: 0 0 0 4px #0b1640, 0 8px 0 rgba(0,0,0,.4); cursor: none; }
   #drones { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9; }
   .title-wrap { transition: opacity .9s, transform .9s; }
   .title-wrap.intro { opacity: 0; transform: translateY(24px); pointer-events: none; }
@@ -637,46 +641,47 @@ const LOCS = {
   partnercheckin:{ x: 24, y: 47, label: "Partner-Check-in",     icon: "🤝" },
   sponsorwall:   { x: 35, y: 44, label: "Sponsor-Wall",         icon: "🏅" },
   treppe:        { x: 29, y: 46, label: "Treppe",               icon: "🛍️" },
-  hall:          { x: 24, y: 44, label: "Foyer & Infopoint",    icon: "ℹ️" },
-  lager:         { x: 6,  y: 18, label: "Lager",                icon: "📦" },
-  erstiraum:     { x: 7,  y: 27, label: "Ersti-Basis",          icon: "🐣" },
+  hall:          { x: 23, y: 44, label: "Foyer & Infopoint",    icon: "ℹ️" },
+  lager:         { x: 12, y: 46, label: "Lager",                icon: "📦" },
+  erstiraum:     { x: 17, y: 35, label: "Ersti-Basis",          icon: "🐣" },
   kiosk:         { x: 28, y: 37, label: "Kiosk",                icon: "🥤" },
   wc:            { x: 33, y: 38, label: "Toiletten",            icon: "🚻" },
-  so108:         { x: 11, y: 39, label: "SO108",                icon: "🎤" },
-  buehne:        { x: 12, y: 35, label: "Mainstage SO108",      icon: "🎙️" },
-  lounge:        { x: 41, y: 37, label: "Speaker-Lounge",       icon: "🛋️" },
-  hackathon:     { x: 48, y: 41, label: "Hackathon-Raum",       icon: "💻" },
+  so108:         { x: 6,  y: 38, label: "SO108",                icon: "🎤" },
+  buehne:        { x: 7,  y: 32, label: "Mainstage SO108",      icon: "🎙️" },
+  lounge:        { x: 13, y: 40, label: "Backstage",            icon: "🛋️" },
+  hackathon:     { x: 42, y: 41, label: "Hackathon-Raum",       icon: "💻" },
+  qube:          { x: 50, y: 37, label: "Qube",                 icon: "🦁" },
   speeddating:   { x: 29, y: 6,  label: "Speed Dating",         icon: "💞" },
   workshops:     { x: 22, y: 7,  label: "Workshops",            icon: "🛠️" },
   campfire:      { x: 43, y: 7,  label: "Campfire Session",     icon: "🔥" },
-  hays:          { x: 17, y: 17, label: "Hays Forum",           icon: "🥣" },
-  qube:          { x: 36, y: 17, label: "Qube",                 icon: "🦁" },
-  innovillage:   { x: 25, y: 28, label: "Innovillage",          icon: "⛺" },
-  food:          { x: 13, y: 30, label: "Essenszelte",          icon: "🍕" },
-  entertainment: { x: 25, y: 31, label: "Entertainment-Ecke",   icon: "🏒" },
-  abend:         { x: 27, y: 25, label: "Schneckenhof-Bühne",   icon: "🪩" },
+  hays:          { x: 8,  y: 25, label: "Hays Forum",           icon: "🥣" },
+  innovillage:   { x: 27, y: 28, label: "Innovillage",          icon: "⛺" },
+  food:          { x: 19, y: 30, label: "Essenszelte",          icon: "🍕" },
+  entertainment: { x: 27, y: 31, label: "Entertainment-Ecke",   icon: "🏒" },
+  abend:         { x: 29, y: 25, label: "Schneckenhof-Bühne",   icon: "🪩" },
+  ausgang:       { x: 29, y: 15, label: "Ausgang hinten",       icon: "🚪" },
   ehrenhof:      { x: 67, y: 33, label: "Ehrenhof",             icon: "🏰" },
 };
 
 // Das Team aus dem Organigramm. Du selbst spielst den Chair.
 const TEAM = {
-  Amelie:    { role: "Head of Operations",          home: "hall",          hair: "#6b4226", long: true, glasses: true },
+  Amelie:    { role: "Board Operations",            home: "hall",          hair: "#6b4226", long: true, glasses: true },
   Anna:      { role: "Operations · Participants",   home: "checkin",       hair: "#2b1d14", long: true },
   Luca:      { role: "Operations · Concept",        home: "so108",         hair: "#7a5230" },
   Otto:      { role: "Operations · Concept",        home: "so108",         hair: "#a57442" },
   Sophie:    { role: "Operations · OC",             home: "hays",          hair: "#5a3a22", long: true },
   Madeleine: { role: "Operations · OC",             home: "treppe",        hair: "#e3c27a", long: true },
-  Lennart:   { role: "Head of Partner",             home: "innovillage",   hair: "#d9b35f", glasses: true },
+  Lennart:   { role: "Board Partner Relations",         home: "innovillage",   hair: "#d9b35f", glasses: true },
   Nick:      { role: "Partner · Startup & VC",      home: "qube",          hair: "#5a3a22" },
   Ciaran:    { role: "Partner · Startup & VC",      home: "qube",          hair: "#d8b46a" },
   Lenny:     { role: "Partner · Corporate",         home: "innovillage",   hair: "#6b4a2a" },
   Jaan:      { role: "Partner · Corporate",         home: "innovillage",   hair: "#8a6038" },
   Valentin:  { role: "Partner · Speaker",           home: "lounge",        hair: "#2b1d14" },
   Annika:    { role: "Partner · Speaker",           home: "lounge",        hair: "#2b1d14", long: true },
-  Lea:       { role: "Head of Finance",             home: "hays",          hair: "#3a2618", long: true },
+  Lea:       { role: "Board Finance",               home: "hays",          hair: "#3a2618", long: true },
   Kevin:     { role: "Finance",                     home: "hays",          hair: "#2b1d14", glasses: true },
   Johannes:  { role: "Finance",                     home: "hays",          hair: "#2b1d14" },
-  Jonathan:  { role: "Head of PR",                  home: "hall",          hair: "#6b4226" },
+  Jonathan:  { role: "Board PR",                    home: "hall",          hair: "#6b4226" },
   Adrian:    { role: "PR · Growth & Partnerships",  home: "innovillage",   hair: "#3a2618" },
   Andreas:   { role: "PR · Growth & Partnerships",  home: "innovillage",   hair: "#8a6038" },
   Jordis:    { role: "PR · Marketing",              home: "innovillage",   hair: "#5a3a22", long: true },
@@ -691,7 +696,7 @@ const PLAYER_LOOK = { hair: "#6b4226", skin: "#f1c7a5", shirt: "#1f4fd8", team: 
 
 // Gruppenchats auf dem Handy
 const CHATS = [
-  { id: "board",     name: "Q26 Board 💙",     av: "💙", sub: "Jonathan, Lea, Amelie, Lennart, Vanessa, Julius, Du" },
+  { id: "board",     name: "Q26 Board 💙",     av: "💙", sub: "Amelie, Jonathan, Lea, Lennart, Du" },
   { id: "team",      name: "Q26 Team",         av: "🔵", sub: "112 Mitglieder" },
   { id: "erstis",    name: "OC Erstis 🐣",      av: "🐣", sub: "Sophie, Madeleine, 38 Erstis" },
   { id: "partner",   name: "Partner Division", av: "💼", sub: "Lennart, Nick, Ciaran, Lenny, Jaan, Valentin, Annika, Du" },
@@ -894,7 +899,7 @@ const EVENTS = [
     b: { label: "Einfach den Schildern folgen!", fx: { speaker: -10 } } },
 
   // ===================== TAG 2 =====================
-  { id: "kater", day: 2, from: 8, to: 10, chat: "board", who: "Vanessa",
+  { id: "kater", day: 2, from: 8, to: 10, chat: "team", who: "Vanessa",
     text: "Das halbe Team ist sehr müde vom Themenabend 🥴 Check-in macht in 20 Minuten auf.",
     a: { label: "Erst Frühstück an der Müslibar fürs Team.", fx: { team: 10, participants: -5 } },
     b: { label: "Kaffee und los.", fx: { team: -10 } } },
@@ -1011,9 +1016,9 @@ const EVENTS = [
     b: { label: "Das klären wir nach der Q.", fx: { team: -10 } } },
 
   { id: "lounge", from: 9, to: 18, loc: "lounge", who: "Valentin",
-    text: "Ein Speaker will drei Freunde mit in die Speaker-Lounge bringen.",
+    text: "Ein Speaker will drei Freunde mit in den Backstage-Raum bringen.",
     a: { label: "Na gut.", fx: { speaker: 10, partner: -5, budget: -5 } },
-    b: { label: "Die Lounge ist nur für Speaker.", fx: { speaker: -10, partner: 5 } } },
+    b: { label: "Backstage ist nur für Speaker.", fx: { speaker: -10, partner: 5 } } },
 
   { id: "feedback", day: 2, from: 15, to: 20, chat: "marketing", who: "Jordis",
     text: "Feedback-Umfrage jetzt rausschicken oder erst nach der Afterparty? 📝",
@@ -1057,7 +1062,7 @@ const EVENTS = [
     b: { label: "Der fährt gleich wieder, keine Panik.", fx: { erstis: -10 } } },
 
   { id: "wasser", from: 10, to: 18, loc: "lounge", who: "Annika",
-    text: "In der Speaker-Lounge gibt es kein Wasser mehr, und gleich kommt die nächste Keynote-Speakerin.",
+    text: "Im Backstage gibt es kein Wasser mehr, und gleich kommt die nächste Keynote-Speakerin.",
     a: { label: "Ersti mit zwei Kisten losschicken.", fx: { speaker: 5, erstis: -5 } },
     b: { label: "Leitungswasser in Karaffen.", fx: { speaker: -5, budget: 5 } } },
 
@@ -1141,7 +1146,7 @@ const EVENTS = [
     a: { label: "Wegschicken, wir brauchen die Zelte noch.", fx: { budget: -10, partner: 5 } },
     b: { label: "Die ersten Booths schon abbauen.", fx: { partner: -10, team: -5 } } },
 
-  { id: "erstis_party", day: 2, from: 15, to: 19, chat: "board", who: "Vanessa",
+  { id: "erstis_party", day: 2, from: 15, to: 19, chat: "team", who: "Vanessa",
     text: "Die Erstis fragen, ob sie schon zur Afterparty dürfen, wenn ihre Station leer ist 🥺",
     a: { label: "Ja, sie haben es verdient.", fx: { erstis: 10, team: -5 } },
     b: { label: "Erst wenn alles abgebaut ist.", fx: { erstis: -10, team: 5 } } },
@@ -1155,7 +1160,8 @@ const EVENTS = [
 // Hintergrund-Nachrichten in den Chats (keine Entscheidung nötig).
 // from_/to: Zeitfenster in Stunden, day: nur an diesem Tag, requires: nur nach dieser Entscheidung
 const AMBIENT = [
-  { chat: "team", from: "Franz", text: "Hinten im Lager, am Ende vom langen Gang links, steht so ein uraltes Regal. Wenn man davor stehen bleibt, knarzt es 👻" },
+  { chat: "team", from: "Franz", text: "Airhockey-Turnier in der Entertainment-Ecke! Wer traut sich gegen mich? 🏒😤" },
+  { chat: "team", from: "Franz", text: "Ganz hinten links im Lager steht so ein uraltes Regal. Wenn man davor stehen bleibt, knarzt es 👻" },
   { chat: "team", from: "Franz", text: "Wer hat das Gaffa? 🙏" },
   { chat: "team", from: "Jordis", text: "Bitte alle um 9:15 zum Gruppenfoto auf die Treppe!! 📸", day: 1, to: 9.2 },
   { chat: "team", from: "Ben", text: "Hat jemand ein USB-C-Kabel?" },
@@ -1194,9 +1200,9 @@ const AMBIENT = [
   { chat: "board", from: "Jonathan", text: "Wer übernimmt das Interview mit dem Mannheimer Morgen?" },
   { chat: "board", from: "Lea", text: "Bitte keine spontanen Ausgaben ohne mich 😅" },
   { chat: "board", from: "Amelie", text: "Abbauplan für morgen kommt heute Abend", day: 1, from_: 16 },
-  { chat: "board", from: "Vanessa", text: "Ihr macht das alle so gut 🥹" },
+  { chat: "team", from: "Vanessa", text: "Ihr macht das alle so gut 🥹" },
   { chat: "partner", from: "Nick", text: "Qube läuft, 3 Investoren sind richtig begeistert", day: 2 },
-  { chat: "partner", from: "Valentin", text: "Speaker-Lounge braucht Nachschub an Wasser" },
+  { chat: "partner", from: "Valentin", text: "Backstage braucht Nachschub an Wasser" },
   { chat: "partner", from: "Annika", text: "Nächster Speaker ist im Haus ✅" },
   { chat: "partner", from: "Lenny", text: "Corporate-Booths alle besetzt 👌" },
   { chat: "partner", from: "Ciaran", text: "Pitch-Reihenfolge fürs Battle steht", day: 2, to: 14 },
@@ -1226,13 +1232,13 @@ const AMBIENT = [
   { chat: "team", from: "Ciaran", text: "Ein VC hat gefragt, ob wir nächstes Jahr ein zweites Qube machen 👀", day: 2 },
   { chat: "team", from: "Franz", text: "Rekord an der Fußballwand: 11 Treffer in 30 Sekunden ⚽🔥" },
   { chat: "team", from: "Vanessa", text: "Mittagspause-Rotation: bitte im Plan eintragen!", from_: 11, to: 14 },
-  { chat: "erstis", from: "Ersti Lina", text: "Ich hab gerade einen Speaker zur Lounge gebracht und er hat mir seine Visitenkarte gegeben 🥹" },
+  { chat: "erstis", from: "Ersti Lina", text: "Ich hab gerade einen Speaker backstage gebracht und er hat mir seine Visitenkarte gegeben 🥹" },
   { chat: "erstis", from: "Ersti Mara", text: "Die Garderobe ist wieder leer, wir haben Kapazität!", from_: 13 },
   { chat: "erstis", from: "Ersti Tom", text: "Meine Füße 🦶😭" , from_: 15 },
   { chat: "erstis", from: "Ersti Paul", text: "Darf ich mir auch eine Goodie Bag nehmen?? 👉👈" },
   { chat: "erstis", from: "Ersti Lina", text: "Wer will tauschen: Check-in gegen Booth-Support?" },
   { chat: "board", from: "Lennart", text: "Hauptsponsor will nächstes Jahr verlängern 💼🔥", day: 2, from_: 13 },
-  { chat: "board", from: "Julius", text: "Teamstimmung ist gut, aber alle sind müde" , from_: 15 },
+  { chat: "team", from: "Julius", text: "Teamstimmung ist gut, aber alle sind müde" , from_: 15 },
   { chat: "board", from: "Jonathan", text: "Closing-Folien sind fertig. Wer liest gegen?", day: 2, from_: 14, to: 18 },
   { chat: "finance", from: "Kevin", text: "Kassenbuch ist up to date 📒" },
   { chat: "finance", from: "Johannes", text: "Wer hat die Quittung vom Baumarkt?? 🧾" },
@@ -1295,7 +1301,7 @@ const SCENES = [
     { walk: ["player", 30, 56] },
     { fp: "ehrenhof" },
     { say: ["Amelie", "Guten Morgen, Chair! ☀️ Heute ist es soweit: Q26. 700 Leute, zwei Tage, ein Schloss."] },
-    { say: ["Amelie", "Da vorne ist der Haupteingang. Im Foyer ist rechts der Check-in, links checken die Partner ein. Um 10 Uhr ist Opening auf der Mainstage: durch den Kiosk und dann links den Gang runter."] },
+    { say: ["Amelie", "Da vorne ist der Haupteingang. Im Foyer ist rechts der Check-in, links checken die Partner ein. Um 10 Uhr ist Opening in der SO108: durch den Kiosk und dann links den langen Gang bis ganz nach hinten."] },
     { say: ["Amelie", "Speed Dating, Workshops und Campfire Sessions sind oben: im Foyer einfach die Treppe hoch. Geradeaus durch den Kiosk kommst du raus in den Schneckenhof zum Innovillage."] },
     { say: ["Amelie", "Wer ein ❗ über dem Kopf hat, braucht dich. Warte nicht zu lang, sonst entscheiden die Leute ohne dich."] },
     { say: ["Amelie", "Und wenn du Speaker siehst: Sag Hallo und frag nach einem Selfie 📸 Ich glaub, im Schneckenhof sind schon die ersten Partner."] },
@@ -1304,8 +1310,8 @@ const SCENES = [
   ] },
   { id: "opening", day: 0, at: 9 * 60 + 58, steps: [
     { seat: true },
-    { place: "player", x: 11, y: 35, dir: "down" },
-    { place: "Jonathan", x: 13, y: 35, dir: "down" },
+    { place: "player", x: 6, y: 32, dir: "down" },
+    { place: "Jonathan", x: 8, y: 32, dir: "down" },
     { cam: "buehne" },
     { lights: true },
     { wait: 500 },
@@ -1314,8 +1320,8 @@ const SCENES = [
     { wait: 900 },
   ] },
   { id: "abend", day: 0, at: 19 * 60, steps: [
-    { place: "Emi", x: 27, y: 24, dir: "down" },
-    { place: "player", x: 27, y: 26, dir: "up" },
+    { place: "Emi", x: 29, y: 24, dir: "down" },
+    { place: "player", x: 29, y: 26, dir: "up" },
     { cam: "abend" },
     { wait: 600 },
     { fp: "schneckenhof" },
@@ -1333,8 +1339,8 @@ const SCENES = [
   ] },
   { id: "pitch", day: 1, at: 19 * 60 + 15, steps: [
     { seat: true },
-    { place: "Nick", x: 13, y: 35, dir: "down" },
-    { place: "player", x: 11, y: 35, dir: "down" },
+    { place: "Nick", x: 8, y: 32, dir: "down" },
+    { place: "player", x: 6, y: 32, dir: "down" },
     { cam: "buehne" },
     { lights: true },
     { wait: 500 },
@@ -1344,8 +1350,8 @@ const SCENES = [
   ] },
   { id: "closing", day: 1, at: 19 * 60 + 35, steps: [
     { seat: true },
-    { place: "player", x: 11, y: 35, dir: "down" },
-    { place: "Jonathan", x: 13, y: 35, dir: "down" },
+    { place: "player", x: 6, y: 32, dir: "down" },
+    { place: "Jonathan", x: 8, y: 32, dir: "down" },
     { cam: "buehne" },
     { lights: true },
     { wait: 500 },
@@ -1355,10 +1361,10 @@ const SCENES = [
   ] },
   { id: "afterparty", day: 1, at: 20 * 60 + 15, steps: [
     { party: true },
-    { place: "player", x: 27, y: 25, dir: "up" },
-    { place: "Lennart", x: 29, y: 25, dir: "left" },
-    { place: "Jonathan", x: 25, y: 25, dir: "right" },
-    { place: "Ben", x: 27, y: 24, dir: "down" },
+    { place: "player", x: 29, y: 25, dir: "up" },
+    { place: "Lennart", x: 31, y: 25, dir: "left" },
+    { place: "Jonathan", x: 27, y: 25, dir: "right" },
+    { place: "Ben", x: 29, y: 24, dir: "down" },
     { cam: "abend" },
     { confetti: true },
     { wait: 1200 },
@@ -1392,16 +1398,16 @@ const GOODIES_WRONG = [["🔌", "Kabel"], ["🎈", "Luftballon"], ["🍹", "Aper
 // Infopoint: Fragen nach dem Weg und die richtigen Orte
 const INFO_PLACES = {
   "SO108": "🎤", "Hays Forum": "🥣", "Garderobe": "🧥", "Innovillage": "⛺", "Qube": "🦁", "Hackathon-Raum": "💻",
-  "Essenszelte": "🍕", "Entertainment-Ecke": "🏒", "Check-in": "🧾", "Speaker-Lounge": "🛋️", "Treppenhaus": "🛍️",
+  "Essenszelte": "🍕", "Entertainment-Ecke": "🏒", "Check-in": "🧾", "Backstage": "🛋️", "Treppenhaus": "🛍️",
   "Schneckenhof-Bühne": "🪩", "Haltestelle": "🚋", "Speed Dating": "💞", "Workshops": "🛠️", "Kiosk": "🥤", "Campfire Session": "🔥", "Toiletten": "🚻", "Partner-Check-in": "🤝",
 };
 const INFO_QUESTIONS = [
   ["Wo ist die Mainstage?", "SO108"], ["Wo gibt's Frühstück?", "Hays Forum"], ["Wo kann ich meine Jacke abgeben?", "Garderobe"],
   ["Wo sind die Partner-Booths?", "Innovillage"], ["Wo pitchen Startups vor Investoren?", "Qube"], ["Wo ist der Hackathon?", "Hackathon-Raum"],
   ["Wo gibt's Mittagessen?", "Essenszelte"], ["Wo steht der Airhockey-Tisch?", "Entertainment-Ecke"], ["Ich hab mein Badge verloren!", "Check-in"],
-  ["Wo finde ich die Speaker?", "Speaker-Lounge"], ["Wo ist das Pitchbattle?", "SO108"], ["Gibt's noch Goodie Bags?", "Treppenhaus"],
+  ["Wo finde ich die Speaker?", "Backstage"], ["Wo ist das Pitchbattle?", "SO108"], ["Gibt's noch Goodie Bags?", "Treppenhaus"],
   ["Wo ist die Müslibar?", "Hays Forum"], ["Wo ist die Fußballwand?", "Entertainment-Ecke"], ["Wo kann man Startups treffen?", "Innovillage"],
-  ["Wo gibt's die Poke Bowls?", "Essenszelte"], ["Wo ist die Closing Speech?", "SO108"], ["Ich bin Speaker, wo kann ich mich vorbereiten?", "Speaker-Lounge"],
+  ["Wo gibt's die Poke Bowls?", "Essenszelte"], ["Wo ist die Closing Speech?", "SO108"], ["Ich bin Speaker, wo kann ich mich vorbereiten?", "Backstage"],
   ["Wo spricht Eva Spannagl von OpenAI?", "SO108"], ["Wo ist der Stand von PERI?", "Innovillage"], ["Wo ist heute Abend der Themenabend?", "Schneckenhof-Bühne"],
   ["Wo gibt's Rothaus und Lillet?", "Schneckenhof-Bühne"], ["Wie komm ich zum Hauptbahnhof?", "Haltestelle"], ["Wo ist der Stand von Dronivo?", "Innovillage"],
   ["Wo gibt's yfood?", "Essenszelte"], ["Wo ist das Speed Dating?", "Speed Dating"], ["Wo finden die Workshops statt?", "Workshops"],
@@ -1556,7 +1562,7 @@ const SPEAKERS = [
 ];
 const SPEAKER_LINES = [
   "Was für eine Location! Studiert ihr hier wirklich jeden Tag im Schloss?",
-  "Ich bin etwas früh dran. Wo ist denn die Speaker-Lounge?",
+  "Ich bin etwas früh dran. Wo ist denn der Backstage-Raum?",
   "Die Energie hier ist toll. So viele Studierende, die gründen wollen!",
   "Ich hab gehört, das ganze Team besteht aus Studierenden. Respekt!",
   "Gibt es hier irgendwo einen guten Kaffee?",
@@ -1666,6 +1672,7 @@ const ACHIEVEMENTS = [
   { id: "geheimgang", icon: "🕯️", name: "Geheimgang",         desc: "Den versteckten Rittersaal gefunden." },
   { id: "taubenkoenig", icon: "👑", name: "Taubenkönig",      desc: "Den Taubenkönig fünfmal erwischt." },
   { id: "disco",      icon: "🪩", name: "Disco-Schloss",      desc: "Das geheime Disco-Schloss eingeschaltet." },
+  { id: "airhockey",  icon: "🏒", name: "Airhockey-Champion", desc: "Ein Airhockey-Match in der Entertainment-Ecke gewonnen." },
 ];
 
 // Zeitung am Ende: Geschichten zu Entscheidungen
@@ -1828,39 +1835,40 @@ function door(x, y) { grid[y][x] = "D"; }
   for (const [x, y] of [[53, 2], [68, 2], [53, 9], [68, 9]]) obj(x, y, 1, 1, "p");
 
   // ---- Schneckenhof-Block ----
-  // Hinterflügel mit Hays Forum und Qube
-  rect(10, 14, 36, 8, "#");
-  rect(11, 15, 16, 5, ".");
-  rect(28, 15, 17, 5, "c");
-  rect(10, 20, 36, 1, "W"); rect(10, 21, 36, 1, "V");
-  for (const [x, y] of [[18, 20], [18, 21], [36, 20], [36, 21]]) door(x, y);
+  // Hinten: Flügel mit Durchgang nach draußen, dahinter ist das Schloss zu Ende
+  rect(0, 14, 54, 4, "-");
+  rect(3, 15, 18, 2, "w"); rect(38, 15, 14, 2, "w");
+  rect(15, 20, 31, 1, "W"); rect(15, 21, 31, 1, "V");
+  rect(29, 18, 2, 4, "G");            // Durchgang raus aus dem Schloss
+  // Links: Hays Forum neben dem Innovillage, darunter die SO108 als äußerste Wand
+  rect(2, 21, 13, 21, "#");
+  rect(3, 22, 11, 8, ".");            // Hays Forum
+  rect(3, 31, 8, 11, "_");            // SO108
+  rect(4, 31, 6, 2, "S");
+  for (let y = 34; y <= 40; y++) { rect(3, y, 3, 1, "s"); rect(8, y, 3, 1, "s"); }
+  rect(12, 31, 2, 6, ":");            // Aufgang vom Gang hoch zum Hays Forum
   // Schneckenhof
-  rect(10, 22, 36, 11, "g");
-  // Linker Flügel: großes Lager hinten, Ersti-Basis, langer Gang nach vorne
-  rect(2, 14, 8, 19, "#");
-  rect(3, 15, 7, 7, "c");
-  rect(6, 23, 3, 9, ".");
-  // Vorderbau: Mainstage mit Gang, Kiosk mit Toiletten, Speaker-Lounge, Hackathon; davor Foyer und die zwei langen Gänge
-  rect(2, 33, 52, 17, "#");
-  rect(3, 22, 2, 25, "c");            // langer Gang links, vom Foyer bis hinten ins Lager
-  rect(3, 45, 18, 2, "c");
-  rect(6, 34, 12, 8, "_");            // Mainstage SO108
-  rect(7, 34, 10, 2, "S");
-  for (let y = 37; y <= 40; y++) { rect(6, y, 5, 1, "s"); rect(13, y, 5, 1, "s"); }
-  rect(19, 37, 4, 2, ":");            // schmaler Gang Kiosk → Mainstage
-  rect(19, 34, 4, 2, ".");            // Backstage
+  rect(15, 22, 31, 11, "g");
+  // Vorderbau: langer Gang Kiosk → SO108, Kiosk mit Toiletten, Hackathon, Qube; davor Foyer und die zwei langen Gänge
+  rect(14, 33, 40, 17, "#");
+  rect(2, 42, 13, 8, "#");
+  rect(12, 37, 11, 2, ":");           // langer Gang vom Kiosk zur SO108
+  rect(15, 34, 8, 2, ".");            // Ersti-Basis
+  rect(12, 40, 6, 2, ".");            // Backstage
   rect(19, 40, 4, 2, "c");            // Technik
   rect(24, 34, 10, 8, ".");           // Kiosk
   rect(35, 34, 3, 3, ":"); rect(35, 39, 3, 3, ":"); // Toiletten
-  rect(39, 34, 5, 8, ".");            // Speaker-Lounge
-  rect(45, 34, 8, 8, "c");            // Hackathon
+  rect(39, 34, 8, 8, "c");            // Hackathon
+  rect(48, 34, 5, 8, "c");            // Qube
+  rect(3, 43, 18, 2, "c");            // langer Gang links, voller Lagerkram
+  rect(3, 46, 18, 2, "c");            // Lager, Richtung Schlosswand
   rect(22, 43, 16, 5, ":");           // Foyer
   rect(39, 45, 14, 2, ":");           // langer Gang rechts zur Uni
   rect(29, 43, 2, 3, "E");
   rect(2, 48, 52, 1, "W"); rect(2, 49, 52, 1, "V");
-  for (const [x, y] of [[28, 33], [29, 33], [18, 37], [18, 38], [23, 37], [23, 38], [20, 36], [20, 39], [34, 35], [34, 40],
-    [26, 42], [27, 42], [32, 42], [33, 42], [41, 42], [41, 43], [41, 44], [49, 42], [49, 43], [49, 44], [5, 27],
-    [21, 45], [21, 46], [38, 45], [38, 46], [53, 45], [53, 46]]) door(x, y);
+  for (const [x, y] of [[14, 26], [14, 27], [12, 30], [13, 30], [11, 37], [11, 38], [28, 33], [29, 33], [23, 37], [23, 38], [18, 36], [14, 39], [20, 39],
+    [34, 35], [34, 40], [26, 42], [27, 42], [32, 42], [33, 42], [43, 42], [43, 43], [43, 44], [50, 42], [50, 43], [50, 44],
+    [21, 43], [21, 44], [10, 45], [11, 45], [38, 45], [38, 46], [53, 45], [53, 46]]) door(x, y);
   // Haupteingang: drei Doppeltüren
   for (const x of [26, 27, 29, 30, 32, 33]) { door(x, 48); door(x, 49); }
 
@@ -1884,61 +1892,61 @@ function door(x, y) { grid[y][x] = "D"; }
   obj(43, 4, 2, 2, "F");
   for (const [x, y] of [[41, 3], [46, 3], [41, 6], [46, 6], [42, 2], [45, 2]]) obj(x, y, 1, 1, "Ü");
   obj(13, 9, 1, 1, "p"); obj(46, 9, 1, 1, "p"); obj(27, 10, 1, 1, "u"); obj(32, 10, 1, 1, "u");
-  // Hays Forum und Qube
-  obj(12, 15, 4, 1, "m");
-  for (const [x, y] of [[14, 18], [20, 17], [24, 18]]) obj(x, y, 1, 1, "r");
-  obj(26, 15, 1, 1, "p");
-  obj(30, 15, 2, 2, "N");
-  for (const [x, y] of [[34, 18], [39, 17], [42, 16]]) obj(x, y, 1, 1, "r");
-  obj(44, 19, 1, 1, "p");
+  // Hinten draußen
+  for (const x of [6, 12, 18, 41, 47]) obj(x, 15, 1, 1, "t");
+  // Hays Forum
+  obj(4, 22, 4, 1, "m");
+  for (const [x, y] of [[5, 25], [9, 24], [7, 27], [11, 27], [12, 23]]) obj(x, y, 1, 1, "r");
+  obj(13, 22, 1, 1, "p"); obj(3, 29, 1, 1, "p");
   // Schneckenhof: Bühne, Bar, Innovillage, Essen, Entertainment
-  obj(24, 22, 8, 2, "Z");
-  rect(23, 24, 10, 3, "d");
-  obj(11, 22, 3, 1, "y");
+  obj(26, 22, 8, 2, "Z");
+  rect(25, 24, 10, 3, "d");
+  obj(16, 22, 3, 1, "y");
   obj(43, 22, 1, 1, "Y");
-  const tents = [[11, 25], [16, 25], [37, 25], [42, 25], [11, 28], [16, 28], [37, 28], [42, 28]];
+  const tents = [[16, 25], [20, 25], [37, 25], [42, 25], [16, 28], [20, 28], [37, 28], [42, 28]];
   tents.forEach(([x, y], k) => obj(x, y, 3, 2, "T", { name: BOOTH_SIGNS[k], k }));
-  for (const [x, y] of [[21, 27], [34, 27], [21, 31], [35, 31], [27, 28]]) obj(x, y, 1, 1, "q");
-  obj(24, 30, 2, 1, "a");
+  for (const [x, y] of [[23, 27], [35, 27], [23, 31], [36, 31], [30, 28]]) obj(x, y, 1, 1, "q");
+  obj(26, 30, 2, 1, "a");
   obj(45, 29, 1, 2, "f");
-  rect(30, 29, 4, 2, "o");
-  obj(11, 31, 3, 2, "K", { name: FOOD_SIGNS[0] }); obj(15, 31, 3, 2, "K", { name: FOOD_SIGNS[1] }); obj(41, 31, 3, 2, "K", { name: FOOD_SIGNS[2] });
-  // Lager hinten links, mit dem alten Regal
-  obj(3, 15, 1, 2, "Ï");
-  obj(5, 15, 2, 1, "I"); obj(7, 15, 2, 1, "I");
-  for (const [x, y] of [[9, 17], [6, 20], [8, 20], [9, 21], [5, 19]]) obj(x, y, 1, 1, "J");
-  // Langer Gang links: überall steht Lagerkram rum
-  for (const [x, y] of [[4, 25], [4, 30], [4, 36], [4, 41], [8, 46], [13, 45], [17, 46]]) obj(x, y, 1, 1, "J");
-  obj(10, 45, 2, 1, "I");
-  // Ersti-Basis
-  obj(6, 23, 2, 1, "I"); obj(7, 26, 1, 1, "r"); obj(7, 29, 1, 1, "r"); obj(8, 31, 1, 1, "p");
-  // Mainstage SO108 und Nebenräume
-  obj(8, 34, 1, 1, "l");
-  obj(7, 33, 10, 1, "X");
-  obj(19, 34, 2, 1, "v"); obj(22, 35, 1, 1, "p");
-  obj(19, 41, 2, 1, "I"); obj(21, 40, 2, 1, "I");
+  rect(31, 29, 4, 2, "o");
+  obj(16, 31, 3, 2, "K", { name: FOOD_SIGNS[0] }); obj(20, 31, 3, 2, "K", { name: FOOD_SIGNS[1] }); obj(41, 31, 3, 2, "K", { name: FOOD_SIGNS[2] });
+  // SO108
+  obj(5, 31, 1, 1, "l");
+  obj(4, 30, 6, 1, "X");
+  // Ersti-Basis, Backstage, Technik
+  obj(15, 34, 2, 1, "I"); obj(20, 35, 1, 1, "r"); obj(22, 34, 1, 1, "p");
+  obj(15, 41, 2, 1, "v"); obj(17, 40, 1, 1, "C"); obj(12, 41, 1, 1, "p");
+  obj(21, 40, 2, 1, "I"); obj(19, 41, 1, 1, "J");
   // Kiosk mit Fotobox, daneben die Toiletten
   obj(24, 34, 3, 1, "Q");
   obj(33, 34, 1, 2, "M");
   obj(30, 37, 2, 1, "v"); obj(25, 39, 2, 1, "v"); obj(30, 40, 2, 1, "v");
   obj(24, 41, 1, 1, "p");
   obj(35, 34, 3, 1, "Ţ"); obj(35, 41, 3, 1, "Ţ");
-  // Speaker-Lounge
-  obj(40, 35, 2, 1, "v"); obj(40, 39, 2, 1, "v"); obj(42, 37, 1, 1, "r"); obj(43, 34, 1, 1, "C"); obj(39, 41, 1, 1, "p");
   // Hackathon
-  for (const y of [36, 39]) { obj(45, y, 3, 1, "e"); obj(49, y, 3, 1, "e"); }
-  obj(45, 33, 8, 1, "H");
+  for (const y of [36, 39]) { obj(39, y, 3, 1, "e"); obj(43, y, 3, 1, "e"); }
+  obj(39, 33, 8, 1, "H");
+  // Qube
+  obj(49, 34, 2, 2, "N");
+  for (const [x, y] of [[51, 37], [49, 39]]) obj(x, y, 1, 1, "r");
+  obj(52, 41, 1, 1, "p");
+  // Langer Gang links mit Lagerkram, darunter das Lager mit dem alten Regal
+  for (const [x, y] of [[6, 44], [13, 43], [17, 44], [4, 43]]) obj(x, y, 1, 1, "J");
+  obj(8, 43, 2, 1, "I");
+  obj(3, 46, 1, 2, "Ï");
+  for (const x of [6, 13, 16]) obj(x, 47, 2, 1, "I");
+  for (const [x, y] of [[9, 47], [15, 46], [19, 47], [20, 46]]) obj(x, y, 1, 1, "J");
   // Foyer: Treppe geradeaus, links Partner-Check-in, rechts Check-in und Sponsor-Wall
   obj(28, 43, 1, 3, "|"); obj(31, 43, 1, 3, "|");
   obj(26, 44, 2, 1, "j");
-  obj(22, 43, 1, 2, "h");
+  obj(25, 43, 1, 2, "h");
   obj(23, 43, 2, 1, "i");
   obj(22, 46, 4, 1, "Ğ");
   obj(34, 46, 4, 1, "k");
   obj(34, 43, 4, 1, "Ş");
   obj(37, 44, 1, 1, "p");
   // Gang rechts zur Uni
-  obj(43, 45, 1, 1, "p"); obj(47, 46, 1, 1, "J"); obj(51, 45, 1, 1, "p");
+  obj(41, 45, 1, 1, "p"); obj(47, 46, 1, 1, "J"); obj(52, 45, 1, 1, "p");
   // Draußen: zwei Bäume und Fahnenmasten im Grün, gegenüber die Quadrate
   obj(18, 53, 1, 1, "t"); obj(41, 53, 1, 1, "t");
   for (const x of [22, 25, 34, 37]) obj(x, 53, 1, 1, "Ƒ");
@@ -1956,12 +1964,12 @@ function door(x, y) { grid[y][x] = "D"; }
 const PORTALS = new Map();
 const pkey = (i, j) => j * W + i;
 for (const i of [29, 30]) { PORTALS.set(pkey(i, 43), [i, 10]); PORTALS.set(pkey(i, 11), [i, 44]); }
-PORTALS.set(pkey(60, 10), [4, 18]); // Geheimtreppe zurück ins Lager
+PORTALS.set(pkey(60, 10), [5, 46]); // Geheimtreppe zurück ins Lager
 
 const WALK = new Set([",", "g", "-", "B", ":", ".", "_", "c", "s", "S", "D", "w", "o", "d", "G", "E"]);
 const isWalk = (i, j) => i >= 0 && j >= 0 && i < W && j < H && WALK.has(grid[j][i]);
 // Kaffee-Punkte: Kaffeemaschine in der Lounge, Kaffeewagen im Schneckenhof, Müslibar im Hays Forum
-const COFFEE = [[43, 34], [43, 22], [13, 15], [14, 15], [25, 34]];
+const COFFEE = [[17, 40], [43, 22], [5, 22], [6, 22], [25, 34]];
 
 function nearestWalkable(i, j) {
   if (isWalk(i, j)) return [i, j];
@@ -2003,7 +2011,7 @@ function findPath(from, to) {
 // Zonen, in denen sich die Crowd aufhält
 const ZONE_RECTS = {
   vorplatz: [0, 50, 54, 8], ehrenhof: [63, 16, 9, 40], hall: [22, 43, 16, 5], kiosk: [24, 34, 10, 8], og: [13, 2, 34, 9],
-  hays: [11, 15, 16, 5], qube: [28, 15, 17, 5], innovillage: [10, 24, 36, 6], food: [10, 30, 36, 3], abend: [22, 24, 12, 3], lounge: [39, 34, 5, 8],
+  hays: [3, 22, 11, 8], qube: [48, 34, 5, 8], innovillage: [15, 24, 31, 6], food: [15, 30, 31, 3], abend: [24, 24, 12, 3], lounge: [12, 40, 6, 2],
 };
 const ZONES = {};
 for (const [k, [x, y, w, h]] of Object.entries(ZONE_RECTS)) {
@@ -2202,8 +2210,8 @@ function drawGround(ctx, c, X, Y, i, j) {
       px(ctx, X, Y, 16, 16, "#3a9e49"); px(ctx, X, Y + 15, 16, 1, "#2b7c37");
       if (grid[j][i - 1] !== "o") px(ctx, X, Y, 2, 16, "#f2f2f2");
       if (grid[j][i + 1] !== "o") px(ctx, X + 14, Y, 2, 16, "#f2f2f2");
-      if (i === 33 && j === 29) { ellipse(ctx, X + 8, Y + 10, 2, 1, "#111"); px(ctx, X + 8, Y + 2, 1, 8, "#eee"); px(ctx, X + 9, Y + 2, 4, 3, "#e33"); }
-      if (i === 30 && j === 30) circ(ctx, X + 6, Y + 8, 1, "#fff");
+      if (i === 34 && j === 29) { ellipse(ctx, X + 8, Y + 10, 2, 1, "#111"); px(ctx, X + 8, Y + 2, 1, 8, "#eee"); px(ctx, X + 9, Y + 2, 4, 3, "#e33"); }
+      if (i === 31 && j === 30) circ(ctx, X + 6, Y + 8, 1, "#fff");
       break;
     }
     case "d": {
@@ -2725,9 +2733,9 @@ function drawObj(ctx, o) {
 const mapCanvas = document.createElement("canvas");
 mapCanvas.width = W * TS; mapCanvas.height = H * TS;
 const SIGNS = [
-  ["HAYS FORUM", 14, 20], ["QUBE", 40, 20], ["KIOSK", 31, 33], ["MAINSTAGE", 23, 36], ["SO108", 18, 36], ["WC", 34, 38],
-  ["LOUNGE", 40, 44], ["HACKATHON", 47, 44], ["LAGER", 21, 44], ["ZUR UNI", 38, 44], ["TREPPE ZUM OG", 29.5, 42],
-  ["ERSTI-BASIS", 5, 25], ["LAGER", 7, 22], ["SPEED DATING", 29.5, 8], ["WORKSHOP", 18, 8],
+  ["HAYS FORUM", 8, 30], ["HAYS FORUM", 14, 25], ["SO108", 11, 36], ["MAINSTAGE", 23, 36], ["KIOSK", 31, 33], ["WC", 34, 38],
+  ["ERSTI-BASIS", 17, 36], ["BACKSTAGE", 16, 39], ["HACKATHON", 41, 44], ["QUBE", 51, 44], ["LAGER", 13, 45], ["ZUR UNI", 38, 44],
+  ["TREPPE ZUM OG", 29.5, 42], ["AUSGANG", 26, 19], ["SPEED DATING", 29.5, 8], ["WORKSHOP", 18, 8],
   ["WORKSHOP", 24, 8], ["WORKSHOP", 39, 8], ["CAMPFIRE", 45, 8], ["ERDGESCHOSS", 29.5, 11.6], ["1. OBERGESCHOSS", 6, 6],
 ];
 (function prerenderMap() {
@@ -2777,7 +2785,7 @@ const SIGNS = [
 
 // Lichterketten über dem Schneckenhof
 const STRINGS = [];
-[[[10.2, 24.5], [45.8, 24.5]], [[10.2, 27.5], [45.8, 27.5]], [[10.2, 30.5], [45.8, 30.5]], [[19, 22.2], [19, 32.8]], [[36, 22.2], [36, 32.8]]].forEach(([[x1, y1], [x2, y2]]) => {
+[[[15.2, 24.5], [45.8, 24.5]], [[15.2, 27.5], [45.8, 27.5]], [[15.2, 30.5], [45.8, 30.5]], [[24, 22.2], [24, 32.8]], [[36, 22.2], [36, 32.8]]].forEach(([[x1, y1], [x2, y2]]) => {
   const pts = [];
   for (let k = 0; k <= 24; k++) {
     const t = k / 24, sag = Math.sin(Math.PI * t) * 10;
@@ -2914,11 +2922,11 @@ function drawTram(ctx, tr) {
 // Gespräche, Reden und Story-Momente werden aus deiner Sicht gezeigt: Ort im Hintergrund, die Person groß davor.
 const PLACE_OF = {
   haltestelle: "street", ehrenhof: "ehrenhof", eingang: "ehrenhof", checkin: "foyer", treppe: "foyer", hall: "foyer",
-  lager: "foyer", partnercheckin: "foyer", sponsorwall: "foyer", erstiraum: "foyer", wc: "lounge", kiosk: "lounge", speeddating: "lounge", workshops: "so108", campfire: "lounge", so108: "so108", buehne: "so108", lounge: "lounge", hackathon: "hackathon", hays: "hays", qube: "qube",
+  ausgang: "schneckenhof", lager: "foyer", partnercheckin: "foyer", sponsorwall: "foyer", erstiraum: "foyer", wc: "lounge", kiosk: "lounge", speeddating: "lounge", workshops: "so108", campfire: "lounge", so108: "so108", buehne: "so108", lounge: "lounge", hackathon: "hackathon", hays: "hays", qube: "qube",
   innovillage: "schneckenhof", food: "food", entertainment: "schneckenhof", abend: "schneckenhof",
 };
 const PLACE_NAMES = {
-  street: "Bismarckstraße · Haltestelle Schloss", ehrenhof: "Haupteingang · Bismarckstraße", foyer: "Foyer Ostflügel", so108: "SO108 · Mainstage", lounge: "Speaker-Lounge",
+  street: "Bismarckstraße · Haltestelle Schloss", ehrenhof: "Haupteingang · Bismarckstraße", foyer: "Foyer Ostflügel", so108: "SO108 · Mainstage", lounge: "Backstage",
   hackathon: "Hackathon-Raum", hays: "Hays Forum", qube: "Qube", schneckenhof: "Schneckenhof · Innovillage", food: "Schneckenhof · Essenszelte",
   party: "Schneckenhof · Afterparty", bedroom: "Zuhause", tram: "Linie 5 Richtung Schloss",
 };
@@ -3437,11 +3445,11 @@ const SECRET_NPCS = [
     lines: ["Ah, Besuch! Ich habe dieses Schloss bauen lassen. Dass hier einmal Startups vor Investoren pitchen, hätte ich mir nicht träumen lassen.", "Nimm diesen Taler. Für das Budget. Und erzähl Finance nicht, woher er kommt. 🪙"] },
   { name: "Ex-Chair", role: "Geist einer früheren Q", x: 57, y: 4, dir: "down", look: { hair: "#c9d2e8", skin: "#e9eef7", shirt: "#9fb3e6", long: false, style: 2 },
     lines: ["Wer einmal eine Q organisiert hat, kommt nie ganz weg. Wir tagen hier jedes Jahr. 👻", "Tipp: Lass die Erstis Pause machen. Ein müder Ersti ist ein trauriger Ersti."] },
-  { name: "Ex-Head of Finance", role: "Geist einer früheren Q", x: 63, y: 4, dir: "down", look: { hair: "#d9dfee", skin: "#e9eef7", shirt: "#9fd0c8", long: true, glasses: true },
+  { name: "Ex-Board Finance", role: "Geist einer früheren Q", x: 63, y: 4, dir: "down", look: { hair: "#d9dfee", skin: "#e9eef7", shirt: "#9fd0c8", long: true, glasses: true },
     lines: ["Das Budget ist immer knapper, als man denkt. Oder größer. Keiner weiß es genau. Bis heute nicht."] },
-  { name: "Ex-Head of Partner", role: "Geist einer früheren Q", x: 58, y: 6, dir: "up", look: { hair: "#e0e4ee", skin: "#e9eef7", shirt: "#c8b3e6", style: 3 },
+  { name: "Ex-Board Partner Relations", role: "Geist einer früheren Q", x: 58, y: 6, dir: "up", look: { hair: "#e0e4ee", skin: "#e9eef7", shirt: "#c8b3e6", style: 3 },
     lines: ["Schon den Taubenkönig getroffen? Nein? Dann scheuch mehr Tauben auf. Viel mehr. 🕊️👑"] },
-  { name: "Ex-Head of PR", role: "Geist einer früheren Q", x: 62, y: 6, dir: "up", look: { hair: "#d0d8ea", skin: "#e9eef7", shirt: "#e6b3c8", long: true, style: 1 },
+  { name: "Ex-Board PR", role: "Geist einer früheren Q", x: 62, y: 6, dir: "up", look: { hair: "#d0d8ea", skin: "#e9eef7", shirt: "#e6b3c8", long: true, style: 1 },
     lines: ["Psst. Kennst du den Konami-Code? Oben, oben, unten, unten, links, rechts, links, rechts, B, A. Probier's mal aus. 🪩"] },
 ];
 function secretTalk(n) {
@@ -3456,6 +3464,7 @@ function secretTalk(n) {
 }
 function initWorld() {
   s.npcs = [];
+  { const ah = makeNPC({ kind: "game", name: "🏒 Airhockey", role: "Entertainment-Ecke" }); placeAt(ah, 27, 31); s.npcs.push(ah); }
   for (const c of SECRET_NPCS) { const n = makeNPC({ kind: "secret", name: c.name, role: c.role, look: c.look, cfg: c, dir: c.dir }); placeAt(n, c.x, c.y); n.dir = c.dir; s.npcs.push(n); }
   for (const [name, t] of Object.entries(TEAM)) {
     const n = makeNPC({ kind: "team", name, role: t.role, home: t.home, speed: 46,
@@ -3913,7 +3922,7 @@ function facing(a, b) {
   return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
 }
 
-// Speaker treffen: Selfie fürs Album oder Begleitung zur Lounge
+// Speaker treffen: Selfie fürs Album oder Begleitung in den Backstage
 function openSpeakerDialog(npc) {
   keys.clear();
   const sp = npc.sp;
@@ -3924,7 +3933,7 @@ function openSpeakerDialog(npc) {
       text: `Hi! Ich bin ${sp.name} von ${sp.org}. ${npc.line}`, later: () => {},
       options: [
         { label: "📸 Kurzes Selfie für die Q-Story?", hint: "🎤", onPick: () => takeSelfie(npc) },
-        { label: "Willkommen! Ich bring Sie zur Speaker-Lounge.", hint: "🎤", onPick: () => {
+        { label: "Willkommen! Ich bring Sie in den Backstage.", hint: "🎤", onPick: () => {
           s.met.add(sp.name); applyFx({ speaker: 4 });
           npc.path = findPath(tileOf(npc), [LOCS.lounge.x, LOCS.lounge.y]);
           reactAndLeave({ speaker: 4 });
@@ -4142,7 +4151,7 @@ function openMap() {
 // ---------------- Tutorial (Coach Marks) ----------------
 const COACH = [
   ["stats", "Das sind deine sechs Werte: Team, Erstis, Partner, Speaker, Participants und Budget. Fällt einer auf 0, ist die Q vorbei."],
-  ["clockcard", "Uhrzeit, Tagesfortschritt und was als Nächstes ansteht. ☕ ist deine Energie: Kaffee gibt's in der Lounge, an der Müslibar und am Kaffeewagen."],
+  ["clockcard", "Uhrzeit, Tagesfortschritt und was als Nächstes ansteht. ☕ ist deine Energie: Kaffee gibt's am Kiosk, an der Müslibar im Hays Forum, am Kaffeewagen und backstage."],
   ["taskbtn", "Hier stehen alle offenen Aufgaben. Antippen zeigt die Liste, mit „Hinlaufen“ läufst du direkt hin."],
   ["phonebtn", "Dein Handy: Gruppenchats, Speaker-Album, die Q-App mit dem Ablauf und deine Erfolge."],
   ["pausebtn", "Pause und Dashboard: Hier teilst du die Erstis auf die Stationen ein. Am Check-in fehlen gleich Leute!"],
@@ -4935,7 +4944,7 @@ function renderTitle() {
   const best = bestScore("normal"), bestChaos = bestScore("chaos");
   showOverlay(`<div class="ov bottom"><div class="title-wrap intro" id="twrap">
     <div class="logo"><div class="sub">SCHLOSS MANNHEIM · 2026</div><div class="q">Q-SUMMIT</div><div class="sub">WHERE INNOVATORS SHAPE TOMORROW</div></div>
-    <p class="title-foot">Du bist Chair der Q-Summit. Zwei Tage im Schloss, sechs Divisions, ein Handy, das nie still ist.</p>
+    <p class="title-foot">Du bist Chair der Q-Summit. Zwei Tage im Schloss, fünf Divisions, ein Handy, das nie still ist.</p>
     <div class="menu">
       <button class="btn gold" id="start">▶ Neues Spiel</button>
       <div class="menu-row">
@@ -4985,7 +4994,7 @@ function renderHow() {
       <div><span>🎮</span><span>Minigames: Goodie Bags, Badge-Ausgabe, Infopoint, Mic-Check, Reden auf der Mainstage und der Dance-Off.</span></div>
       <div><span>📸</span><span>Echte Speaker der Q-Summit 2026 laufen durchs Schloss. Sag Hallo und sammle Selfies.</span></div>
       <div><span>⏸</span><span>Im Dashboard teilst du die Erstis auf die Stationen ein und startest Maßnahmen.</span></div>
-      <div><span>☕</span><span>Deine Energie sinkt. Kaffee gibt's in der Lounge, an der Müslibar und am Kaffeewagen im Schneckenhof.</span></div>
+      <div><span>☕</span><span>Deine Energie sinkt. Kaffee gibt's am Kiosk, an der Müslibar im Hays Forum, am Kaffeewagen im Schneckenhof und backstage.</span></div>
       <div><span>⌨️</span><span>Tippen oder klicken zum Laufen · WASD/Pfeile · E reden · P Handy · M Karte · Esc Pause</span></div>
     </div>
     <button class="btn" id="back">Zurück</button></div></div>`, "pause");
@@ -5187,8 +5196,8 @@ function walkToNPC(npc) {
   s.pendingTalk = npc;
   s.player.path = findPath(tileOf(s.player), tileOf(npc));
 }
-const wantsTalk = n => n && (n.task || n.kind === "secret" || (n.kind === "speaker" && !s.met.has(n.sp.name)));
-function talkTo(n) { if (n.kind === "secret") return secretTalk(n); if (n.task) openTaskDialog(n.task); else if (n.kind === "speaker") openSpeakerDialog(n); }
+const wantsTalk = n => n && (n.task || n.kind === "secret" || n.kind === "game" || (n.kind === "speaker" && !s.met.has(n.sp.name)));
+function talkTo(n) { if (n.kind === "game") return playAirhockey(); if (n.kind === "secret") return secretTalk(n); if (n.task) openTaskDialog(n.task); else if (n.kind === "speaker") openSpeakerDialog(n); }
 
 function updatePlayer(dt) {
   const p = s.player;
@@ -5222,7 +5231,7 @@ function updatePlayer(dt) {
 
 const ROAM = ["lounge", "so108", "innovillage", "hays", "innovillage", "hall", "kiosk", "speeddating", "workshops"];
 function updateNPC(n, dt) {
-  if (n.kind === "static" || n.kind === "secret") return;
+  if (n.kind === "static" || n.kind === "secret" || n.kind === "game") return;
   if (n.path.length) { moveAlong(n, dt); return; }
   n.frame = 0;
   if (n.task) { if (s.mode === "play") n.dir = facing(n, s.player); return; }
@@ -5735,7 +5744,7 @@ function showWrapped(done) {
 // 1. Das alte Regal ganz hinten im Lagergang ist eine Tür zum Rittersaal.
 // 2. Wer genug Tauben aufscheucht, ruft den Taubenkönig.
 // 3. Konami-Code (oder 7× aufs Logo tippen): Disco-Schloss.
-const RITTER_SPOT = [3, 17], RITTER_IN = [60, 9];
+const RITTER_SPOT = [4, 46], RITTER_IN = [60, 9];
 function secretChecks(dt) {
   const p = s.player, [i, j] = tileOf(p);
   if (i === RITTER_SPOT[0] && j === RITTER_SPOT[1] && !p.path.length) {
@@ -5800,6 +5809,129 @@ function toggleDisco() {
 function konamiKey(k) {
   konami.push(k); if (konami.length > KONAMI.length) konami.shift();
   if (konami.join() === KONAMI.join()) { konami = []; toggleDisco(); }
+}
+
+// ---------------- Airhockey in der Entertainment-Ecke ----------------
+// Freiwilliges Minigame: erst auf 5 Tore gewinnt. Steuerung mit Maus, Finger oder Pfeiltasten.
+const AH_RIVALS = ["Franz", "Emi", "Jordis", "Adrian", "Andreas"];
+function playAirhockey() {
+  if (!s || s.mode !== "play") return;
+  s.mode = "mg"; keys.clear();
+  const rival = pick(AH_RIVALS);
+  showOverlay(`<div class="ov center"><div class="panel frame ah-panel">
+    <div class="ah-head"><span>🔴 Du</span><b id="ahscore">0 : 0</b><span>${rival} 🔵</span></div>
+    <canvas id="ahc"></canvas>
+    <p class="note" id="ahmsg">Maus, Finger oder Pfeiltasten. Wer zuerst 5 Tore hat, gewinnt.</p>
+    <button class="btn secondary" id="ahquit">Aufhören</button></div></div>`, "pause");
+  const cv = $("ahc"), g = cv.getContext("2d");
+  const TW = 240, TH = 360, R1 = 17, RP = 9, GOAL = 90;
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const cssW = Math.min(300, innerWidth - 60, (innerHeight - 260) * TW / TH);
+  cv.style.width = cssW + "px"; cv.style.height = cssW * TH / TW + "px";
+  cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssW * TH / TW * dpr);
+  const sc = cv.width / TW;
+  const me = { x: TW / 2, y: TH - 50, vx: 0, vy: 0, tx: TW / 2, ty: TH - 50 }, ai = { x: TW / 2, y: 50, vx: 0, vy: 0 };
+  const puck = { x: TW / 2, y: TH / 2, vx: 0, vy: 0 };
+  let score = [0, 0], over = false, pause = .8, last = performance.now(), trail = [], aiSkill = .55 + Math.random() * .2;
+  const serve = toward => { puck.x = TW / 2; puck.y = TH / 2; puck.vx = (Math.random() - .5) * 80; puck.vy = toward * 120; pause = .9; trail = []; };
+  serve(Math.random() < .5 ? 1 : -1);
+  const toTable = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * TW, (e.clientY - r.top) / r.height * TH]; };
+  cv.onpointerdown = cv.onpointermove = e => { const [x, y] = toTable(e); me.tx = x; me.ty = y; };
+  cv.style.touchAction = "none";
+  const held = new Set();
+  mgKeys = e => { const k = e.key.toLowerCase(); if (k.startsWith("arrow") || "wasd".includes(k)) { e.preventDefault(); held.add(k); } if (k === "escape") quit(); };
+  const ku = e => held.delete(e.key.toLowerCase());
+  document.addEventListener("keyup", ku);
+  const movePaddle = (p, tx, ty, maxV, dt, yMin, yMax) => {
+    tx = clamp(tx, R1, TW - R1); ty = clamp(ty, yMin, yMax);
+    let dx = tx - p.x, dy = ty - p.y; const d = Math.hypot(dx, dy), m = maxV * dt;
+    if (d > m) { dx = dx / d * m; dy = dy / d * m; }
+    p.vx = dx / dt; p.vy = dy / dt; p.x += dx; p.y += dy;
+  };
+  const hit = p => {
+    const dx = puck.x - p.x, dy = puck.y - p.y, d = Math.hypot(dx, dy);
+    if (d >= R1 + RP || d === 0) return;
+    const nx = dx / d, ny = dy / d;
+    puck.x = p.x + nx * (R1 + RP); puck.y = p.y + ny * (R1 + RP);
+    const rv = (puck.vx - p.vx) * nx + (puck.vy - p.vy) * ny;
+    if (rv < 0) { puck.vx -= 1.9 * rv * nx; puck.vy -= 1.9 * rv * ny; sfx.pick(); }
+    const sp = Math.hypot(puck.vx, puck.vy); if (sp > 720) { puck.vx *= 720 / sp; puck.vy *= 720 / sp; }
+  };
+  function goal(who) {
+    score[who]++; $("ahscore").textContent = `${score[0]} : ${score[1]}`;
+    who === 0 ? sfx.good() : sfx.bad();
+    $("ahmsg").textContent = who === 0 ? pick(["TOOOR! 🔥", "Unhaltbar!", "Was für ein Schuss!"]) : pick([`${rival} jubelt 😤`, "Gegentor…", "Der war dreckig."]);
+    if (score[0] >= 5 || score[1] >= 5) return finish();
+    serve(who === 0 ? -1 : 1);
+  }
+  function finish() {
+    over = true; document.removeEventListener("keyup", ku);
+    const won = score[0] > score[1];
+    const first = !s.flags.has(`ah${s.day}`);
+    const fx = won ? (first ? { team: 3, participants: 2 } : { team: 1 }) : { team: 1 };
+    s.flags.add(`ah${s.day}`);
+    if (won) unlock("airhockey");
+    if (won && score[1] === 0) pushMsg("team", { from: rival, text: "5:0?? Revanche. Sofort. 😤🏒" });
+    applyFx(fx, true); addLog(rival, `🏒 Airhockey ${score[0]}:${score[1]}`, fx);
+    mgKeys = e => { if (e.key === "Enter" || e.key === "Escape") close(); };
+    showOverlay(`<div class="ov center"><div class="result frame"><div class="big">${won ? "🏆" : "🏒"}</div>
+      <h2>${won ? `${score[0]}:${score[1]} gewonnen!` : `${score[0]}:${score[1]} verloren`}</h2>
+      <p class="muted">${won ? `${rival} will Revanche. Die Entertainment-Ecke hat einen neuen Champion.` : `${rival} feiert, als wäre das Pitchbattle gewonnen.`}</p>
+      <div class="fxlist">${fxChips(fx)}</div><button class="btn" id="ahcont">Weiter ▶</button></div></div>`, "pause");
+    $("ahcont").onclick = close;
+  }
+  function close() { mgKeys = null; document.removeEventListener("keyup", ku); hideOverlay(); if (s) s.mode = "play"; }
+  function quit() { over = true; close(); }
+  $("ahquit").onclick = quit;
+  function frame(now) {
+    if (over || !document.body.contains(cv)) return;
+    const dt = Math.min(.033, (now - last) / 1000); last = now;
+    // Spieler
+    if (held.size) {
+      const kx = (held.has("arrowright") || held.has("d") ? 1 : 0) - (held.has("arrowleft") || held.has("a") ? 1 : 0);
+      const ky = (held.has("arrowdown") || held.has("s") ? 1 : 0) - (held.has("arrowup") || held.has("w") ? 1 : 0);
+      me.tx = me.x + kx * 60; me.ty = me.y + ky * 60;
+    }
+    movePaddle(me, me.tx, me.ty, 900, dt, TH / 2 + R1, TH - R1);
+    // Gegner: verteidigt das Tor und greift an, wenn der Puck in seiner Hälfte ist
+    const attack = puck.y < TH / 2 && puck.vy < 120;
+    const ax = attack ? puck.x : TW / 2 + (puck.x - TW / 2) * .5, ay = attack ? puck.y - 8 : 46;
+    movePaddle(ai, ax, ay, 260 + aiSkill * 300, dt, R1, TH / 2 - R1);
+    // Puck
+    if (pause > 0) pause -= dt;
+    else {
+      puck.x += puck.vx * dt; puck.y += puck.vy * dt;
+      puck.vx *= .996; puck.vy *= .996;
+      if (puck.x < RP) { puck.x = RP; puck.vx = Math.abs(puck.vx) * .9; }
+      if (puck.x > TW - RP) { puck.x = TW - RP; puck.vx = -Math.abs(puck.vx) * .9; }
+      const inGoal = Math.abs(puck.x - TW / 2) < GOAL / 2;
+      if (puck.y < RP) { if (inGoal) return goal(0), requestAnimationFrame(frame); puck.y = RP; puck.vy = Math.abs(puck.vy) * .9; }
+      if (puck.y > TH - RP) { if (inGoal) return goal(1), requestAnimationFrame(frame); puck.y = TH - RP; puck.vy = -Math.abs(puck.vy) * .9; }
+      hit(me); hit(ai);
+    }
+    trail.push([puck.x, puck.y]); if (trail.length > 8) trail.shift();
+    // Zeichnen
+    g.setTransform(sc, 0, 0, sc, 0, 0);
+    const bg = g.createLinearGradient(0, 0, 0, TH); bg.addColorStop(0, "#e9f1ff"); bg.addColorStop(1, "#d6e4ff");
+    g.fillStyle = bg; g.fillRect(0, 0, TW, TH);
+    g.strokeStyle = "#1f4fd8"; g.lineWidth = 3; g.strokeRect(1.5, 1.5, TW - 3, TH - 3);
+    g.strokeStyle = "#e63946"; g.lineWidth = 2; g.beginPath(); g.moveTo(0, TH / 2); g.lineTo(TW, TH / 2); g.stroke();
+    g.beginPath(); g.arc(TW / 2, TH / 2, 34, 0, 7); g.stroke();
+    g.strokeStyle = "#1f4fd855"; g.lineWidth = 6; g.strokeRect(TW / 2 - 12, TH / 2 - 12, 24, 24); g.fillStyle = "#1f4fd855"; g.fillRect(TW / 2 + 6, TH / 2 + 6, 9, 9);
+    g.fillStyle = "#0b1640"; g.fillRect(TW / 2 - GOAL / 2, 0, GOAL, 5); g.fillRect(TW / 2 - GOAL / 2, TH - 5, GOAL, 5);
+    for (const [k, [x, y]] of trail.entries()) { g.globalAlpha = k / trail.length * .25; g.fillStyle = "#0b1640"; g.beginPath(); g.arc(x, y, RP, 0, 7); g.fill(); }
+    g.globalAlpha = 1;
+    g.fillStyle = "#111"; g.beginPath(); g.arc(puck.x, puck.y, RP, 0, 7); g.fill(); g.fillStyle = "#444"; g.beginPath(); g.arc(puck.x - 2, puck.y - 2, RP * .5, 0, 7); g.fill();
+    for (const [p, col] of [[me, "#e63946"], [ai, "#2f6bff"]]) {
+      g.fillStyle = "rgba(0,0,0,.18)"; g.beginPath(); g.arc(p.x + 2, p.y + 3, R1, 0, 7); g.fill();
+      g.fillStyle = col; g.beginPath(); g.arc(p.x, p.y, R1, 0, 7); g.fill();
+      g.fillStyle = "#ffffff55"; g.beginPath(); g.arc(p.x, p.y, R1 * .62, 0, 7); g.fill();
+      g.fillStyle = col; g.beginPath(); g.arc(p.x, p.y, R1 * .42, 0, 7); g.fill();
+    }
+    if (pause > 0) { g.fillStyle = "#0b1640"; g.font = "800 22px system-ui, sans-serif"; g.textAlign = "center"; g.fillText("BEREIT?", TW / 2, TH / 2 + 60); }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
 }
 
 // ---------------- Update-Schleife ----------------
@@ -5876,16 +6008,18 @@ function dayTint() {
 }
 
 const LIGHTS = [
-  { x: 28 * TS, y: 23 * TS, r: 90, c: "255,170,80", i: 1, stage: true },
-  { x: 12 * TS, y: 35 * TS, r: 80, c: "170,110,255", i: .9 }, { x: 28 * TS, y: 37 * TS, r: 70, c: "255,220,160", i: .7 },
+  { x: 30 * TS, y: 23 * TS, r: 90, c: "255,170,80", i: 1, stage: true },
+  { x: 7 * TS, y: 32 * TS, r: 80, c: "170,110,255", i: .9 }, { x: 28 * TS, y: 37 * TS, r: 70, c: "255,220,160", i: .7 },
   { x: 26 * TS, y: 45 * TS, r: 70, c: "255,230,180", i: .7 }, { x: 34 * TS, y: 45 * TS, r: 60, c: "255,230,180", i: .6 },
-  { x: 41 * TS, y: 37 * TS, r: 60, c: "255,200,140", i: .7 }, { x: 21 * TS, y: 38 * TS, r: 40, c: "255,230,180", i: .5 }, { x: 48 * TS, y: 37 * TS, r: 70, c: "120,170,255", i: .6 },
-  { x: 18 * TS, y: 17 * TS, r: 60, c: "255,230,180", i: .6 }, { x: 36 * TS, y: 17 * TS, r: 60, c: "60,220,255", i: .6 },
+  { x: 14 * TS, y: 40.5 * TS, r: 50, c: "255,200,140", i: .7 }, { x: 42 * TS, y: 37 * TS, r: 70, c: "120,170,255", i: .6 },
+  { x: 8 * TS, y: 25 * TS, r: 70, c: "255,230,180", i: .6 }, { x: 50 * TS, y: 37 * TS, r: 60, c: "60,220,255", i: .6 },
   { x: 43.5 * TS, y: 22.5 * TS, r: 40, c: "255,200,120", i: .8 }, { x: 20 * TS, y: 9.5 * TS, r: 60, c: "255,230,180", i: .5 },
   { x: 38 * TS, y: 9.5 * TS, r: 60, c: "255,230,180", i: .5 }, { x: 30 * TS, y: 5 * TS, r: 70, c: "255,140,200", i: .6 },
   { x: 16 * TS, y: 4 * TS, r: 50, c: "255,240,210", i: .5 }, { x: 37 * TS, y: 4 * TS, r: 50, c: "255,240,210", i: .5 },
-  { x: 11 * TS, y: 45.5 * TS, r: 40, c: "255,220,150", i: .4 }, { x: 6 * TS, y: 18 * TS, r: 50, c: "255,220,150", i: .5 }, { x: 3.5 * TS, y: 15.5 * TS, r: 22, c: "255,190,90", i: .9 },
-  { x: 56 * TS, y: 3.5 * TS, r: 70, c: "255,214,140", i: .9 }, { x: 64 * TS, y: 3.5 * TS, r: 70, c: "255,214,140", i: .9 }, { x: 45 * TS, y: 45 * TS, r: 50, c: "255,230,180", i: .5 },
+  { x: 11 * TS, y: 44 * TS, r: 50, c: "255,220,150", i: .4 }, { x: 11 * TS, y: 47 * TS, r: 50, c: "255,220,150", i: .4 },
+  { x: 3.5 * TS, y: 46.5 * TS, r: 22, c: "255,190,90", i: .9 }, { x: 17 * TS, y: 37.5 * TS, r: 50, c: "255,230,180", i: .5 },
+  { x: 45 * TS, y: 45.5 * TS, r: 50, c: "255,230,180", i: .5 }, { x: 18 * TS, y: 35 * TS, r: 40, c: "255,220,150", i: .5 },
+  { x: 56 * TS, y: 3.5 * TS, r: 70, c: "255,214,140", i: .9 }, { x: 64 * TS, y: 3.5 * TS, r: 70, c: "255,214,140", i: .9 },
 ];
 const BULBS = [];
 for (const pts of STRINGS) for (let k = 1; k < pts.length - 1; k += 2) BULBS.push(pts[k]);
@@ -5897,26 +6031,26 @@ function hslToRgb(h) {
 
 function drawDynamicMap(ctx, a) {
   // Tanzfläche
-  if (a > .2 || s.party) for (let j = 24; j <= 26; j++) for (let i = 23; i <= 32; i++) {
+  if (a > .2 || s.party) for (let j = 24; j <= 26; j++) for (let i = 25; i <= 34; i++) {
     const hue = (s.t * (s.party ? 120 : 40) + (i + j) * 30) % 360, on = s.party ? .55 + .45 * Math.sin(s.t * 8 + i * 1.3 + j) : .35;
     ctx.fillStyle = `rgba(${hslToRgb(hue)},${on * .55})`; ctx.fillRect(i * TS + 1, j * TS + 1, 14, 14);
   }
   // LED-Wand der Bühne im Schneckenhof
-  const sx = 24 * TS + 12, sy = 22 * TS + 5, sw = 8 * TS - 24, sh = 13;
+  const sx = 26 * TS + 12, sy = 22 * TS + 5, sw = 8 * TS - 24, sh = 13;
   px(ctx, sx, sy, sw, sh, "#0d1020");
   if (a > .2 || s.party) {
     for (let k = 0; k < 14; k++) { const hgt = Math.round(3 + Math.abs(Math.sin(s.t * 6 + k)) * 9); px(ctx, sx + 4 + k * 7, sy + sh - hgt, 5, hgt, `rgb(${hslToRgb((s.t * 60 + k * 25) % 360)})`); }
     pixTextC(ctx, s.party ? "AFTERPARTY" : "THEMENABEND", sx + sw / 2, sy + 1, "#ffffff");
   } else { px(ctx, sx + 1, sy + 1, sw - 2, sh - 2, "#1f4fd8"); pixTextC(ctx, "Q-SUMMIT 2026", sx + sw / 2, sy + 4, "#ffffff"); }
   // Leinwand in SO108
-  const X = 7 * TS + 2, Y = 33 * TS + 3, w = 10 * TS - 4;
+  const X = 4 * TS + 2, Y = 30 * TS + 3, w = 6 * TS - 4;
   const orgs = SPEAKERS.filter(x => x.day === s.day + 1).map(x => x.org.toUpperCase());
   const slide = s.mode === "scene" ? "Q-SUMMIT 2026" : orgs[Math.floor(s.t / 6) % orgs.length] || "Q-SUMMIT";
   px(ctx, X, Y, w, 11, "#e9eefc"); px(ctx, X, Y, 10, 11, "#1f4fd8"); pixText(ctx, "Q", X + 3, Y + 3, "#fff");
-  pixTextC(ctx, slide.replace(/[^A-Z0-9ÄÖÜ &.\-]/g, "").slice(0, 30), X + w / 2 + 5, Y + 3, "#0b1640");
+  pixTextC(ctx, slide.replace(/[^A-Z0-9ÄÖÜ &.\-]/g, "").slice(0, 18), X + w / 2 + 5, Y + 3, "#0b1640");
   // Countdown im Hackathon-Raum
   const left = Math.max(0, s.day === 0 ? (24 * 60 - s.min) + 11 * 60 : 11 * 60 - s.min);
-  const hx = 45 * TS + 2, hy = 33 * TS + 4;
+  const hx = 39 * TS + 2, hy = 33 * TS + 4;
   px(ctx, hx, hy, 8 * TS - 4, 10, "#0b1a2a");
   pixTextC(ctx, `${String(Math.floor(left / 60)).padStart(2, "0")}:${String(Math.floor(left % 60)).padStart(2, "0")} BIS ABGABE`, hx + 4 * TS - 2, hy + 3, left > 0 ? "#3ecf8e" : "#ffd166");
   // Q-Summit-Fahnen an den Masten im Grün vor dem Eingang
@@ -6085,7 +6219,8 @@ function render() {
     ctx.beginPath(); ctx.ellipse(s.tapMark.x, s.tapMark.y, r, r * .5, 0, 0, Math.PI * 2); ctx.stroke();
   }
 
-  const ents = s.mode === "title" ? [...s.npcs] : p.hidden ? [...s.npcs] : [...s.npcs, p];
+  const vis = s.npcs.filter(n => n.kind !== "game");
+  const ents = s.mode === "title" || p.hidden ? vis : [...vis, p];
   const drawList = ents.map(e => ({ y: e.y, e })).concat(s.pigeons.map(pg => ({ y: pg.fly ? pg.gy : pg.y, pg })));
   if (s.king) drawList.push({ y: s.king.y, king: true });
   drawList.sort((a2, b2) => a2.y - b2.y);
@@ -6136,7 +6271,7 @@ function render() {
     for (const L of lights) {
       if (L.x < cx - L.r || L.x > cx + cw + L.r || L.y < cy - L.r || L.y > cy + ch + L.r) continue;
       let col = L.c;
-      if (s.party && L.y < 33 * TS && L.y > 21 * TS && L.x > 10 * TS && L.x < 46 * TS) col = hslToRgb((s.t * 90 + L.x) % 360);
+      if (s.party && L.y < 33 * TS && L.y > 21 * TS && L.x > 15 * TS && L.x < 46 * TS) col = hslToRgb((s.t * 90 + L.x) % 360);
       const flick = s.party ? .6 + .4 * Math.sin(s.t * 10 + L.x) : 1;
       const g = ctx.createRadialGradient(L.x, L.y, 0, L.x, L.y, L.r);
       g.addColorStop(0, `rgba(${col},${a * L.i * .5 * flick})`); g.addColorStop(1, "rgba(0,0,0,0)");
@@ -6147,7 +6282,7 @@ function render() {
   if (s.stageLights > 0) {
     ctx.globalCompositeOperation = "lighter";
     for (let k2 = 0; k2 < 3; k2++) {
-      const lx = (8 + k2 * 3.5) * TS + Math.sin(s.t * 2 + k2) * 20, ly = 35 * TS;
+      const lx = (5 + k2 * 2) * TS + Math.sin(s.t * 2 + k2) * 14, ly = 32 * TS;
       const g = ctx.createRadialGradient(lx, ly, 0, lx, ly, 50);
       g.addColorStop(0, `rgba(${["255,120,220", "120,170,255", "255,210,120"][k2]},${.35 * Math.min(1, s.stageLights)})`); g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g; ctx.fillRect(lx - 50, ly - 50, 100, 100);
@@ -6220,7 +6355,7 @@ function updateHud() {
     talkTarget = near;
     const b = $("talkbtn");
     b.hidden = !near;
-    if (near) b.innerHTML = `<span class="key">E</span>${near.kind === "speaker" && !near.task ? "📸" : "💬"} ${near.name}`;
+    if (near) b.innerHTML = near.kind === "game" ? `<span class="key">E</span>${near.name} spielen` : `<span class="key">E</span>${near.kind === "speaker" && !near.task ? "📸" : "💬"} ${near.name}`;
   }
 }
 
