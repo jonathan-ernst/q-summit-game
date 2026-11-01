@@ -37,7 +37,7 @@
   p { margin: 0; line-height: 1.4; }
   h1, h2, h3 { margin: 0; font-weight: 700; }
 
-  #game { position: fixed; inset: 0; overflow: hidden; background: var(--ink); }
+  #game { position: fixed; inset: 0; overflow: hidden; overflow: clip; background: var(--ink); }
   #world { position: absolute; inset: 0; width: 100%; height: 100%; display: block; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; cursor: pointer; transform-origin: 50% 50%; transition: transform .28s cubic-bezier(.5,0,.75,0), filter .28s; }
   #world.zoom { filter: brightness(1.15) blur(1px); }
   #labels { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity .2s; }
@@ -110,7 +110,7 @@
   .glass { background: rgba(6, 16, 64, .74); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); border: 2px solid rgba(160, 185, 255, .18); border-radius: 10px; box-shadow: 0 4px 0 rgba(0,0,0,.35); }
 
   /* ---------- HUD ---------- */
-  #hud { position: absolute; left: 0; right: 0; top: 0; padding: max(8px, env(safe-area-inset-top)) 10px 0; display: grid; gap: 6px; z-index: 5; pointer-events: none; transition: opacity .3s, transform .3s; }
+  #hud { position: absolute; left: 0; right: 0; top: 0; padding: max(8px, env(safe-area-inset-top)) 10px 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; z-index: 5; pointer-events: none; transition: opacity .3s, transform .3s; }
   #hud.off { opacity: 0; transform: translateY(-20px); }
   #hud > * { pointer-events: auto; }
   .hud-row { display: flex; gap: 8px; align-items: flex-start; }
@@ -127,13 +127,13 @@
   #dayfill { height: 100%; background: linear-gradient(90deg, #ffd166, #ff8a3d, #7b5bd0); transition: width 1s linear; }
   #nextup { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #nextup b { color: var(--text); font-weight: 600; }
-  .hud-btns { display: flex; gap: 6px; }
+  .hud-btns { display: flex; gap: 6px; flex-shrink: 0; }
   .hbtn { appearance: none; border: 0; cursor: pointer; width: 44px; height: 44px; border-radius: 10px; font-size: 19px; position: relative; display: grid; place-items: center; }
   .hbtn:active { transform: translateY(2px); }
   #pausedot { position: absolute; top: -3px; right: -3px; width: 12px; height: 12px; border-radius: 50%; background: var(--bad); border: 2px solid var(--ink); }
 
   .stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; max-width: 560px; }
-  .stat { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 3px 5px; padding: 4px 6px 5px; border-radius: 8px; transition: box-shadow .3s, transform .2s; }
+  .stat { min-width: 0; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 3px 5px; padding: 4px 6px 5px; border-radius: 8px; transition: box-shadow .3s, transform .2s; }
   .stat .ic { font-size: 13px; line-height: 1; }
   .stat .v { font-family: var(--pix); font-size: 9px; text-align: right; }
   .stat .bar { grid-column: 1 / -1; height: 5px; background: #00000066; border-radius: 2px; overflow: hidden; }
@@ -551,8 +551,16 @@
     #minimap { width: 180px; }
     .dlg-text { font-size: 22px; }
   }
+  /* Touch-Geräte: Tastenkürzel ausblenden, die man dort nicht drücken kann */
+  @media (hover: none) and (pointer: coarse) {
+    .k, .key, .mode .k { display: none !important; }
+  }
   @media (max-width: 380px) {
     .stat .v { font-size: 8px; }
+    .stat { padding: 4px 4px 5px; gap: 3px 2px; }
+    .stat .ic { font-size: 11px; }
+    .hbtn { width: 40px; height: 40px; font-size: 17px; }
+    #clock { letter-spacing: 0; }
     #clock { font-size: 10px; }
     #minimap { width: 104px; }
   }
@@ -3409,6 +3417,8 @@ let SCALE = 2;
 const cam = { x: 0, y: 0 };
 const keys = new Set();
 let actx = null, muted = store.get("qs_mute", false), musicOn = store.get("qs_music", true);
+// Sparmodus: "auto" schaltet bei dauerhaft niedriger Bildrate selbst um, sonst fest an/aus
+let lowFxPref = store.get("qs_lowfx", "auto"), lowFx = lowFxPref === "on";
 const SIM = () => !!window.__sim;
 
 function newState() {
@@ -3864,7 +3874,8 @@ function openDialog({ name, role, look, avatar, text, options, later, onNext, ti
     if (n % 6 === 0) sfx.type();
     if (n >= full.length) finish();
   }, 22);
-  textEl.onclick = finish;
+  // Antippen: erst Text fertig zeigen, dann (ohne Auswahl) weiter. Auf dem Handy muss man so nicht "Weiter" treffen
+  textEl.onclick = () => { if (!optsEl.hidden && !options && $("dialog").contains(textEl)) { sfx.pick(); closeDialog(true); onNext && onNext(); } else finish(); };
   optsEl.querySelectorAll(".dlg-opt").forEach(b => b.onclick = () => {
     sfx.pick();
     if (b.dataset.next) { closeDialog(true); onNext && onNext(); }
@@ -4898,6 +4909,7 @@ function renderPause() {
       <button class="btn" id="resume">Weiter ▶</button>
       <button class="btn secondary" id="psmute">${muted ? "🔇 Ton aus" : "🔊 Ton an"}</button>
       <button class="btn secondary" id="psmusic">${musicOn ? "🎵 Musik an" : "🎵 Musik aus"}</button>
+      <button class="btn secondary" id="pslow">${lowFx ? "🔋 Sparmodus an" : "✨ Volle Grafik"}${lowFxPref === "auto" ? " <small style=\"opacity:.6\">(auto)</small>" : ""}</button>
       <button class="btn secondary" id="psmenu">Hauptmenü</button>
     </div></div>`, "pause");
   const o = ov();
@@ -4921,6 +4933,7 @@ function renderPause() {
   $("resume").onclick = closePause;
   $("psmute").onclick = () => { muted = !muted; store.set("qs_mute", muted); musicVolume(); renderPause(); };
   $("psmusic").onclick = () => { musicOn = !musicOn; store.set("qs_music", musicOn); musicVolume(); renderPause(); };
+  $("pslow").onclick = () => { lowFx = !lowFx; lowFxPref = lowFx ? "on" : "off"; store.set("qs_lowfx", lowFxPref); renderPause(); };
   $("psmenu").onclick = () => { screenKeys = null; renderTitle(); };
 }
 
@@ -4941,17 +4954,53 @@ function resetUi() {
   $("notif").classList.remove("show"); $("toasts").innerHTML = "";
 }
 
+// Spielstand: Checkpoint am Morgen von Tag 2, damit ein geschlossener Tab nicht alles kostet
+const SAVE_KEY = "qs_save", SAVE_SKIP = new Set(["npcs", "player", "pigeons", "tram", "barks", "confetti", "tasks", "king", "lost", "carry", "camPan", "sceneWait", "curMg", "pendingTalk", "tapMark", "camTarget"]);
+function saveGame() {
+  if (SIM() || !s) return;
+  try {
+    const data = JSON.stringify(s, function (k, v) {
+      if (this === s && SAVE_SKIP.has(k)) return undefined;
+      if (k === "task" || k === "npc") return v ? true : v;
+      return v instanceof Set ? { __set: [...v] } : v;
+    });
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 1, at: Date.now(), state: data }));
+  } catch {}
+}
+function loadSave() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+    if (!raw || raw.v !== 1) return null;
+    const st = JSON.parse(raw.state, (k, v) => v && typeof v === "object" && Array.isArray(v.__set) ? new Set(v.__set) : v);
+    return st && st.day === 1 && MODES[st.diff] ? { at: raw.at, state: st } : null;
+  } catch { return null; }
+}
+function clearSave() { try { localStorage.removeItem(SAVE_KEY); } catch {} }
+function continueGame() {
+  const sv = loadSave();
+  if (!sv) return renderTitle();
+  ensureAudio(); stopDrones();
+  newState.diff = sv.state.diff;
+  s = Object.assign(newState(), sv.state);
+  for (const c of Object.values(s.chat)) for (const m of c.msgs) if (m.task) m.answered = true;
+  initWorld();
+  resetUi(); hideOverlay();
+  renderStats(); updateTaskBar(); updatePhoneBadge();
+  renderDayIntro();
+}
+
 function renderTitle() {
   s = newState(); s.min = 19 * 60 + 40; initWorld(); s.mode = "title";
   resetUi(); showHud(false); renderStats(); updateTaskBar(); updatePhoneBadge();
   lastClock = "";
   setMusic("title");
-  const best = bestScore("normal"), bestChaos = bestScore("chaos");
+  const best = bestScore("normal"), bestChaos = bestScore("chaos"), sv = loadSave();
   showOverlay(`<div class="ov bottom"><div class="title-wrap intro" id="twrap">
     <div class="logo"><div class="sub">SCHLOSS MANNHEIM · 2026</div><div class="q">Q-SUMMIT</div><div class="sub">WHERE INNOVATORS SHAPE TOMORROW</div></div>
     <p class="title-foot">Du bist Chair der Q-Summit. Zwei Tage im Schloss, fünf Divisions, ein Handy, das nie still ist.</p>
     <div class="menu">
-      <button class="btn gold" id="start">▶ Neues Spiel</button>
+      ${sv ? `<button class="btn gold" id="cont">▶ Weiterspielen · ${DAYS[1].title} <small style="opacity:.7">${MODES[sv.state.diff].icon} ${MODES[sv.state.diff].name}</small></button>` : ""}
+      <button class="btn ${sv ? "secondary" : "gold"}" id="start">${sv ? "✨" : "▶"} Neues Spiel</button>
       <div class="menu-row">
         <button class="btn secondary" id="how">❓ So geht's</button>
         <button class="btn secondary" id="achbtn">🏆 ${achSet.size}/${ACHIEVEMENTS.length}</button>
@@ -4962,6 +5011,7 @@ function renderTitle() {
   </div></div>`, "title");
   const begin = () => { ensureAudio(); store.get("qs_badge", false) ? renderModeSelect() : renderBadge(renderModeSelect); };
   $("start").onclick = begin;
+  if (sv) $("cont").onclick = continueGame;
   const reveal = () => { const w = $("twrap"); if (w) w.classList.remove("intro"); };
   titleDroneShow(reveal);
   ov().onpointerdown = () => { if ($("twrap")?.classList.contains("intro")) { skipDroneShow(); reveal(); } };
@@ -4969,7 +5019,7 @@ function renderTitle() {
   $("how").onclick = renderHow;
   $("achbtn").onclick = renderAchievements;
   $("snd").onclick = () => { ensureAudio(); muted = !muted; store.set("qs_mute", muted); musicVolume(); if (!muted) setMusic("title"); $("snd").textContent = `${muted ? "🔇" : "🔊"} Ton`; };
-  screenKeys = e => { if ($("twrap")?.classList.contains("intro")) { skipDroneShow(); reveal(); return; } if (e.key === "Enter") begin(); };
+  screenKeys = e => { if ($("twrap")?.classList.contains("intro")) { skipDroneShow(); reveal(); return; } if (e.key === "Enter") sv ? continueGame() : begin(); };
   const kick = () => { ensureAudio(); setMusic(null); setMusic("title"); window.removeEventListener("pointerdown", kick); };
   window.addEventListener("pointerdown", kick);
 }
@@ -5020,6 +5070,7 @@ function startGame(diff) {
   if (typeof diff !== "string") diff = store.get("qs_diff", "normal");
   if (!MODES[diff]) diff = "normal";
   newState.diff = diff;
+  clearSave();
   s = newState();
   for (const q of MG_QUESTS) s.mgJit[q.id] = rand(-15, 20);
   rollMods();
@@ -5086,6 +5137,7 @@ function endDay() {
   resetUi();
   initWorld();
   renderStats(); updateTaskBar();
+  saveGame();
   renderDayIntro();
 }
 
@@ -5114,6 +5166,7 @@ function paper({ headline, lead, stamp, extra = "" }) {
 }
 
 function renderGameOver(stat) {
+  clearSave();
   s.mode = "screen";
   resetUi(); showHud(false);
   if (stat.key === "budget") unlock("pleite");
@@ -5131,6 +5184,7 @@ function renderGameOver(stat) {
 }
 
 function renderEnd() {
+  clearSave();
   if (SIM()) return renderEndPaper();
   s.mode = "screen"; resetUi(); showHud(false); stopDrones();
   showWrapped(renderEndPaper);
@@ -5843,7 +5897,8 @@ function playAirhockey() {
   const serve = toward => { Object.assign(puck, { x: TW / 2, y: TH / 2, vx: (Math.random() - .5) * 60, vy: toward * 90 }); pause = 1; trail = []; still = 0; };
   serve(Math.random() < .5 ? 1 : -1);
   const toTable = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * TW, (e.clientY - r.top) / r.height * TH]; };
-  cv.onpointerdown = cv.onpointermove = e => { const [x, y] = toTable(e); pl.tx = x; pl.ty = y; mouse = true; };
+  // Mit dem Finger sitzt der Schläger etwas darüber, sonst verdeckt ihn die Hand
+  cv.onpointerdown = cv.onpointermove = e => { const [x, y] = toTable(e); pl.tx = x; pl.ty = y - (e.pointerType === "touch" ? 34 : 0); mouse = true; };
   cv.style.touchAction = "none";
   const held = new Set();
   mgKeys = e => { const k = e.key.toLowerCase(); if (k.startsWith("arrow") || "wasd".includes(k)) { e.preventDefault(); held.add(k); mouse = false; } if (k === "escape") quit(); };
@@ -6183,7 +6238,7 @@ let vignette = null, vignetteKey = "";
 function drawAtmosphere(ctx, cx, cy, cw, ch) {
   const night = nightAlpha(), day = 1 - Math.min(1, night * 1.6);
   // Wolkenschatten
-  if (day > .05) {
+  if (day > .05 && !lowFx) {
     if (shadowCanvas.width !== cw || shadowCanvas.height !== ch) { shadowCanvas.width = cw; shadowCanvas.height = ch; }
     const g = shadowCanvas.getContext("2d");
     g.globalCompositeOperation = "source-over"; g.clearRect(0, 0, cw, ch);
@@ -6203,7 +6258,7 @@ function drawAtmosphere(ctx, cx, cy, cw, ch) {
   // Regen: schräge Tropfen und kleine Spritzer, nur draußen
   if (hasMod("rain") && !s.party) {
     ctx.fillStyle = "rgba(190,215,255,.55)";
-    for (let k = 0; k < 140; k++) {
+    for (let k = 0, n = lowFx ? 50 : 140; k < n; k++) {
       const sp = 200 + hash(k, 5) * 120, x = cx + hash(k, 7) * (cw + 60) - 30, y0 = cy + ((hash(k, 3) * (ch + 40) + s.t * sp) % (ch + 40)) - 20;
       const xx = Math.round(x - (y0 - cy) * .12), yy = Math.round(y0);
       if (!isOutdoorPx(xx, yy)) continue;
@@ -6218,7 +6273,7 @@ function drawAtmosphere(ctx, cx, cy, cw, ch) {
   }
   if (hasMod("heat") && day > .3) { ctx.fillStyle = `rgba(255,170,80,${.07 * day})`; ctx.fillRect(cx, cy, cw, ch); }
   // Blütenblätter (April!) tagsüber, nachts ein paar Glühwürmchen im Schlossgarten
-  if (petals.length < (s.party || hasMod("rain") ? 0 : 26) && Math.random() < .3) {
+  if (petals.length < (s.party || hasMod("rain") || lowFx ? 0 : 26) && Math.random() < .3) {
     const x = cx + Math.random() * cw, y = cy + Math.random() * ch;
     if (isOutdoorPx(x, y)) petals.push({ x, y, z: 10 + Math.random() * 20, vx: 6 + Math.random() * 8, ph: Math.random() * 6, life: 4 + Math.random() * 4, t: 0, c: day > .5 ? (Math.random() < .5 ? "#ffd1dc" : "#fff4f7") : "#fff3a0" });
   }
@@ -6252,7 +6307,7 @@ const labelsQ = [];
 const lc = $("labels"), lctx = lc.getContext("2d");
 function roundRect(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
 function drawLabels(cx, cy) {
-  const r = canvas.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const r = canvas.getBoundingClientRect(), dpr = lowFx ? 1 : Math.min(2, window.devicePixelRatio || 1);
   const W2 = Math.round(r.width * dpr), H2 = Math.round(r.height * dpr);
   if (lc.width !== W2 || lc.height !== H2) { lc.width = W2; lc.height = H2; }
   lctx.clearRect(0, 0, W2, H2);
@@ -6260,22 +6315,25 @@ function drawLabels(cx, cy) {
   const f = W2 / canvas.width, fs = Math.max(10, Math.min(15, SCALE * 2.6)) * dpr;
   lctx.textAlign = "center"; lctx.textBaseline = "middle";
   for (const L of labelsQ) {
-    const x = (L.x - cx) * f, y = (L.y - cy) * f;
+    let x = (L.x - cx) * f; const y = (L.y - cy) * f;
     if (L.k === "emoji") { lctx.font = `${fs * 1.3 * (L.size || 1)}px system-ui`; lctx.fillText(L.text, x, y); continue; }
     if (L.k === "name") {
       lctx.font = `700 ${fs * .85}px system-ui, -apple-system, sans-serif`;
       const w = lctx.measureText(L.text).width + fs * .9, h = fs * 1.35;
+      x = clamp(x, w / 2 + 4, W2 - w / 2 - 4);
       roundRect(lctx, x - w / 2, y - h / 2, w, h, h / 2);
       lctx.fillStyle = L.sp ? "rgba(88,40,150,.92)" : L.team ? "rgba(31,79,216,.92)" : "rgba(7,22,80,.85)"; lctx.fill();
       lctx.lineWidth = dpr; lctx.strokeStyle = "rgba(255,255,255,.25)"; lctx.stroke();
       lctx.fillStyle = "#fff"; lctx.fillText(L.text, x, y + dpr * .5);
     } else {
       lctx.font = `600 ${fs}px system-ui, -apple-system, sans-serif`;
-      const w = lctx.measureText(L.text).width + fs * 1.2, h = fs * 1.7;
+      const w = lctx.measureText(L.text).width + fs * 1.2, h = fs * 1.7, tipX = x;
+      x = clamp(x, w / 2 + 4, W2 - w / 2 - 4);
       lctx.save(); lctx.shadowColor = "rgba(0,0,0,.3)"; lctx.shadowOffsetY = 2 * dpr; lctx.shadowBlur = 4 * dpr;
       roundRect(lctx, x - w / 2, y - h, w, h, fs * .5);
       lctx.fillStyle = "#fff"; lctx.fill();
-      lctx.beginPath(); lctx.moveTo(x - fs * .35, y - 1); lctx.lineTo(x, y + fs * .5); lctx.lineTo(x + fs * .35, y - 1); lctx.fill();
+      const tx = clamp(tipX, x - w / 2 + fs * .6, x + w / 2 - fs * .6);
+      lctx.beginPath(); lctx.moveTo(tx - fs * .35, y - 1); lctx.lineTo(tx, y + fs * .5); lctx.lineTo(tx + fs * .35, y - 1); lctx.fill();
       lctx.restore();
       lctx.fillStyle = "#0b1640"; lctx.fillText(L.text, x, y - h / 2 + dpr * .5);
     }
@@ -6366,7 +6424,7 @@ function render() {
       if (hash(wx, wy) < .35) continue;
       ctx.fillStyle = `rgba(255,190,100,${a * .9})`; ctx.fillRect(wx, wy, ww, wh);
     }
-    const lights = LIGHTS.concat(GLOWS).concat(BULBS.map(([x, y]) => ({ x, y: y + 1, r: 8, c: "255,210,120", i: .7 })));
+    const lights = lowFx ? LIGHTS : LIGHTS.concat(GLOWS).concat(BULBS.map(([x, y]) => ({ x, y: y + 1, r: 8, c: "255,210,120", i: .7 })));
     for (const L of lights) {
       if (L.x < cx - L.r || L.x > cx + cw + L.r || L.y < cy - L.r || L.y > cy + ch + L.r) continue;
       let col = L.c;
@@ -6467,6 +6525,8 @@ function resize() {
   fpResize();
 }
 window.addEventListener("resize", resize);
+// Fokus auf ein Element weiter unten darf den Spielbereich nicht verschieben (passierte auf kleinen Handys)
+$("game").addEventListener("scroll", () => { $("game").scrollTop = 0; $("game").scrollLeft = 0; });
 
 canvas.addEventListener("pointerdown", e => {
   if (!s || s.mode !== "play") return;
@@ -6521,8 +6581,18 @@ function step() {
   lastT = now;
   update(dt); render(); updateHud(); fpRender(dt);
 }
+// Bildrate beobachten: Bleibt sie im Spiel ein paar Sekunden unter ~30 fps, Sparmodus an
+const fpsWatch = { avg: 1 / 60, slow: 0, last: performance.now() };
+function watchFps() {
+  const now = performance.now(), d = (now - fpsWatch.last) / 1000;
+  fpsWatch.last = now;
+  if (lowFx || lowFxPref !== "auto" || document.hidden || d > .5 || !s || s.mode !== "play") { fpsWatch.slow = 0; return; }
+  fpsWatch.avg += (d - fpsWatch.avg) * .05;
+  fpsWatch.slow = fpsWatch.avg > 1 / 30 ? fpsWatch.slow + d : 0;
+  if (fpsWatch.slow > 4) { lowFx = true; infoToast("🔋 Sparmodus an, damit es flüssiger läuft (Pause → Grafik)"); }
+}
 // Fallback, falls requestAnimationFrame pausiert (z. B. im Hintergrund-Tab)
-requestAnimationFrame(function loop() { step(); requestAnimationFrame(loop); });
+requestAnimationFrame(function loop() { watchFps(); step(); requestAnimationFrame(loop); });
 setInterval(() => { if (performance.now() - lastT > 60) step(); }, 30);
 
 resize();

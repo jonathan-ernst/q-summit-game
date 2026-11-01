@@ -31,6 +31,8 @@ Oder `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Dat
 - **Leben in der Welt:** Sprechblasen, Schlosstauben, Straßenbahnen, Energie und Kaffee, Tag-Nacht-Wechsel mit leuchtenden Fenstern, Musik
 - **16 Erfolge**, die im Browser gespeichert bleiben, und ein Tutorial beim ersten Start
 - **Pause & Dashboard** (⏸ oder Esc): Übersicht, Ersti-Schichtplan, Maßnahmen, Ablauf, Log
+- **Spielstand:** Am Morgen von Tag 2 wird automatisch gespeichert. Wer den Tab schließt, macht im Titelmenü mit „Weiterspielen“ dort weiter
+- **Handy und schwache Geräte:** Laufen per Antippen, Dialoge per Tipp auf den Text weiter, Tastenkürzel werden auf Touch-Geräten ausgeblendet. Läuft das Spiel ein paar Sekunden unter 30 fps, schaltet es in den Sparmodus (ohne Wolkenschatten und Blütenblätter, weniger Lichter). Umschalten im Pausemenü
 - **Ende:** Titelseite des „Quadrate-Kurier“ mit Foto von der Afterparty und Geschichten zu deinen Entscheidungen
 
 ## Inhalte ergänzen
