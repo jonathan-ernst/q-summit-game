@@ -39,10 +39,11 @@ Oder `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Dat
 
 Online: **https://jonathan-ernst.github.io/q-summit-game/taubenalarm/** (Ordner `taubenalarm/`, ebenfalls eine einzelne HTML-Datei)
 
-Ein Arena-Actionspiel im Schneckenhof: Die Schlosstauben haben die Q gekapert, du hältst den Hof 20 Wellen lang mit der Konfettikanone. Nach jeder Welle wählst du 1 von 3 Upgrades (Goodie-Bags, Mic-Drop, Drohnen-Buddy, WLAN-Blitz …). In Welle 10 kommt der Taubenkönig, in Welle 20 die Goldene Taube, danach geht es endlos weiter. Der Tag läuft mit: Nachmittag, Sonnenuntergang, Nacht mit Lichterketten.
+Ein Arena-Actionspiel im Schneckenhof: Die Schlosstauben haben die Q gekapert, du hältst den Hof 20 Wellen lang mit der Konfettikanone. Nach jeder Welle wählst du 1 von 3 aus 29 Upgrades (Goodie-Bags, Mic-Drop, Drohnen-Buddy, WLAN-Blitz, Konfetti-Explosion, Doppel-Dash …). In Welle 10 kommt der Taubenkönig, in Welle 20 die Goldene Taube, danach geht es endlos weiter. Der Tag läuft mit: Nachmittag, Sonnenuntergang, Nacht mit Lichterketten.
 
 - **Steuerung:** WASD laufen, Maus zielen, Leertaste Dash (kurz unverwundbar), E Drohnenschwarm. Auf dem Handy links ziehen zum Laufen, rechts ziehen zum Zielen. Gamepad geht auch
-- **Gegner:** Tauben, Krümeldiebe, Sturztauben (rote Linie), Gurr-Spucker, Dicke Tauben (platzen in drei) und Kackbomber (raus aus dem Schatten)
+- **Gegner:** Tauben, Krümeldiebe, Sturztauben (rote Linie), Gurr-Spucker, Dicke Tauben (platzen in drei), Kackbomber (raus aus dem Schatten), Taubenschwärme in Formation, Schildtauben (von vorne kugelsicher) und Taubennester, aus denen Küken schlüpfen
+- **Figuren:** Der Chair, Ersti, Board Finance, Board PR, Board Partner Relations, Board Operations und der Goldene Chair. Jede Figur hat eigene Stärken und wird über ein Ziel freigeschaltet (Welle 5, 25.000 Punkte, Taubenkönig besiegen …)
 - **Punkte:** Multiplikator bis ×5 für schnelle Abschüsse, halbiert sich bei Treffern. Bonus für perfekte Wellen. Rekorde bleiben im Browser
 - **Ton** ist standardmäßig aus und lässt sich in den Einstellungen einschalten
 
