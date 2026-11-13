@@ -35,6 +35,17 @@ Oder `index.html` im Browser öffnen. Das ganze Spiel steckt in dieser einen Dat
 - **Handy und schwache Geräte:** Laufen per Antippen, Dialoge per Tipp auf den Text weiter, Tastenkürzel werden auf Touch-Geräten ausgeblendet. Läuft das Spiel ein paar Sekunden unter 30 fps, schaltet es in den Sparmodus (ohne Wolkenschatten und Blütenblätter, weniger Lichter). Umschalten im Pausemenü
 - **Ende:** Titelseite des „Quadrate-Kurier“ mit Foto von der Afterparty und Geschichten zu deinen Entscheidungen
 
+## Bonusspiel: Taubenalarm
+
+Online: **https://jonathan-ernst.github.io/q-summit-game/taubenalarm/** (Ordner `taubenalarm/`, ebenfalls eine einzelne HTML-Datei)
+
+Ein Arena-Actionspiel im Schneckenhof: Die Schlosstauben haben die Q gekapert, du hältst den Hof 20 Wellen lang mit der Konfettikanone. Nach jeder Welle wählst du 1 von 3 Upgrades (Goodie-Bags, Mic-Drop, Drohnen-Buddy, WLAN-Blitz …). In Welle 10 kommt der Taubenkönig, in Welle 20 die Goldene Taube, danach geht es endlos weiter. Der Tag läuft mit: Nachmittag, Sonnenuntergang, Nacht mit Lichterketten.
+
+- **Steuerung:** WASD laufen, Maus zielen, Leertaste Dash (kurz unverwundbar), E Drohnenschwarm. Auf dem Handy links ziehen zum Laufen, rechts ziehen zum Zielen. Gamepad geht auch
+- **Gegner:** Tauben, Krümeldiebe, Sturztauben (rote Linie), Gurr-Spucker, Dicke Tauben (platzen in drei) und Kackbomber (raus aus dem Schatten)
+- **Punkte:** Multiplikator bis ×5 für schnelle Abschüsse, halbiert sich bei Treffern. Bonus für perfekte Wellen. Rekorde bleiben im Browser
+- **Ton** ist standardmäßig aus und lässt sich in den Einstellungen einschalten
+
 ## Inhalte ergänzen
 
 Alles Inhaltliche steht oben im Script, vor dem Abschnitt `ENGINE`:
